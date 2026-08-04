@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { FEATURED, FEATURED_PER_GALLERY, GALLERIES } from '../../data/site';
+import { COVERS, FEATURED, FEATURED_PER_GALLERY, GALLERIES } from '../../data/site';
 import { featuredPhotos, photoAt } from '../../utils/photos';
 
 interface Props {
@@ -72,12 +72,33 @@ const featured = featuredPhotos(FEATURED, FEATURED_PER_GALLERY);
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>
     <div class="cards">
       {
-        GALLERIES.map((slug) => (
-          <a class="card" href={getRelativeLocaleUrl(locale, slug as Route)}>
-            <h3 class="card__title">{dict.galleries[slug].title}</h3>
-            <p class="card__desc">{dict.galleries[slug].description}</p>
-          </a>
-        ))
+        GALLERIES.map((slug) => {
+          // Обложка та же, что уходит в превью ссылки (COVERS): раздел выглядит
+          // одинаково и на главной, и в мессенджере, а менять её по-прежнему
+          // в одном месте — src/data/site.ts.
+          const cover = photoAt(COVERS[slug] ?? '');
+
+          return (
+            <a class="card" href={getRelativeLocaleUrl(locale, slug as Route)}>
+              {cover && (
+                <Picture
+                  src={cover}
+                  alt=""
+                  formats={['avif', 'webp']}
+                  widths={[400, 800]}
+                  sizes="(min-width: 700px) 33vw, 100vw"
+                  loading="lazy"
+                  decoding="async"
+                  pictureAttributes={{ class: 'card__media' }}
+                  class="card__image"
+                />
+              )}
+              <div class="card__scrim" />
+              <h3 class="card__title">{dict.galleries[slug].title}</h3>
+              <p class="card__desc">{dict.galleries[slug].description}</p>
+            </a>
+          );
+        })
       }
     </div>
   </section>

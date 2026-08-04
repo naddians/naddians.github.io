@@ -5,7 +5,10 @@
   --fg: #ededed;
   --muted: #8a8a8e;
   --line: #1e1e21;
-  --accent: #e10600;
+  /* Сигнальный красный, высветлен с #e10600 (2026-08-04): на фоне #0a0a0b тот
+     давал контраст 3,98 при норме 4,5 — почта в блоке контактов не проходила
+     проверку доступности. Этот оттенок даёт 5,1 и остаётся тем же сигналом. */
+  --accent: #ff1e00;
 
   --gap: 8px;
   --pad: clamp(20px, 5vw, 48px);
@@ -331,6 +334,29 @@ h3 {
   border-color: #34343a;
 }
 
+/* Обложка раздела лежит фоном карточки, текст — поверх затемнения. */
+.card__media {
+  position: absolute;
+  inset: 0;
+}
+
+.card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 11, 0.15) 0%,
+    rgba(10, 10, 11, 0.65) 55%,
+    rgba(10, 10, 11, 0.95) 100%
+  );
+}
+
 .card__title {
   font-size: 1.375rem;
   position: relative;
@@ -338,7 +364,10 @@ h3 {
 
 .card__desc {
   margin: 6px 0 0;
-  color: var(--muted);
+  /* Не var(--muted): приглушённый серый рассчитан на ровную тёмную плашку, а
+     здесь под текстом фотография — на светлых её местах контраст падал до 2,7
+     при норме 4,5. Этот оттенок держит 4,5+ даже над самым светлым кадром. */
+  color: #dcdce0;
   font-size: 0.875rem;
   position: relative;
 }
