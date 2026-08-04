@@ -1,0 +1,73 @@
+{
+  "name": "Nadia Stelmashuk",
+  "tagline": "Motosport fotografkinja · Beograd i ceo svet",
+  "nav": {
+    "track": "Staza",
+    "portraits": "Portreti",
+    "atmosphere": "Atmosfera",
+    "about": "O meni",
+    "contact": "Kontakt"
+  },
+  "galleries": {
+    "track": {
+      "title": "Staza",
+      "description": "Bolidi u pokretu: panning, apeksi, zone kočenja"
+    },
+    "portraits": {
+      "title": "Portreti",
+      "description": "Vozači, timovi, podijum, emocije"
+    },
+    "atmosphere": {
+      "title": "Atmosfera",
+      "description": "Tribine, navijači, detalji uz stazu, noć"
+    }
+  },
+  "home": {
+    "galleriesTitle": "Galerije",
+    "aboutLink": "O meni"
+  },
+  "about": {
+    "title": "O meni",
+    "base": "Bazirana u Beogradu, snimam širom sveta",
+    "bio": [],
+    "eventsTitle": "Odrađeni događaji",
+    "gearTitle": "Oprema",
+    "collabsTitle": "Saradnje"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "intro": "Za angažmane, printove i licenciranje — pišite mi direktno."
+  },
+  "gallery": {
+    "empty": "Fotografije uskoro."
+  },
+  "footer": {
+    "rights": "Sva prava zadržana."
+  },
+  "meta": {
+    "home": {
+      "title": "Nadia Stelmashuk — motosport fotografkinja",
+      "description": "Formula 1 i motosport fotografija. Bazirana u Beogradu, snimam širom sveta."
+    },
+    "track": {
+      "title": "Staza — Nadia Stelmashuk",
+      "description": "Bolidi Formule 1 u pokretu: panning, apeksi i zone kočenja."
+    },
+    "portraits": {
+      "title": "Portreti — Nadia Stelmashuk",
+      "description": "Vozači, timovi i emocije sa podijuma iz paddocka Formule 1."
+    },
+    "atmosphere": {
+      "title": "Atmosfera — Nadia Stelmashuk",
+      "description": "Tribine, navijači i detalji trkačkog vikenda uz stazu."
+    },
+    "about": {
+      "title": "O meni — Nadia Stelmashuk",
+      "description": "Motosport fotografkinja iz Beograda. Formula 1, Formula 2 i Porsche Supercup na Spa-Francorchamps i Silverstone."
+    },
+    "contact": {
+      "title": "Kontakt — Nadia Stelmashuk",
+      "description": "Kontaktirajte me za motosport angažmane, printove i licenciranje fotografija."
+    }
+  }
+}

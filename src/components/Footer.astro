@@ -1,0 +1,35 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { t, type Locale } from '../i18n';
+import { CONTACTS } from '../data/site';
+import { mailtoLink } from '../utils/obfuscate';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <p style="margin:0">© {year} {dict.name}. {dict.footer.rights}</p>
+
+    <nav class="footer__links" aria-label={dict.contact.title}>
+      <span set:html={mailtoLink(CONTACTS.email)} />
+      <a class="contact-link" href={`https://t.me/${CONTACTS.telegram}`} rel="me noopener">
+        Telegram
+      </a>
+      <a
+        class="contact-link"
+        href={`https://instagram.com/${CONTACTS.instagram}`}
+        rel="me noopener"
+      >
+        Instagram
+      </a>
+      <a href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
+    </nav>
+  </div>
+</footer>

@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t, type Locale } from '../../i18n';
+import { CONTACTS } from '../../data/site';
+import { mailtoLink } from '../../utils/obfuscate';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<Base locale={locale} route={'contact'}>
+  <div class="wrap page-head">
+    <h1>{dict.contact.title}</h1>
+    <p>{dict.contact.intro}</p>
+  </div>
+
+  <dl class="wrap contacts">
+    <div>
+      <dt>Email</dt>
+      <dd><span set:html={mailtoLink(CONTACTS.email)} /></dd>
+    </div>
+    <div>
+      <dt>Telegram</dt>
+      <dd>
+        <a class="contact-link" href={`https://t.me/${CONTACTS.telegram}`} rel="me noopener">
+          @{CONTACTS.telegram}
+        </a>
+      </dd>
+    </div>
+    <div>
+      <dt>Instagram</dt>
+      <dd>
+        <a
+          class="contact-link"
+          href={`https://instagram.com/${CONTACTS.instagram}`}
+          rel="me noopener"
+        >
+          @{CONTACTS.instagram}
+        </a>
+      </dd>
+    </div>
+  </dl>
+</Base>

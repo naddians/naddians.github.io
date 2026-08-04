@@ -1,0 +1,73 @@
+{
+  "name": "Nadia Stelmashuk",
+  "tagline": "Motorsport photographer · Belgrade & worldwide",
+  "nav": {
+    "track": "Track",
+    "portraits": "Portraits",
+    "atmosphere": "Atmosphere",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "galleries": {
+    "track": {
+      "title": "Track",
+      "description": "Cars in motion: panning, apexes, braking zones"
+    },
+    "portraits": {
+      "title": "Portraits",
+      "description": "Drivers, teams, podium, emotion"
+    },
+    "atmosphere": {
+      "title": "Atmosphere",
+      "description": "Grandstands, fans, trackside details, night"
+    }
+  },
+  "home": {
+    "galleriesTitle": "Galleries",
+    "aboutLink": "About me"
+  },
+  "about": {
+    "title": "About",
+    "base": "Based in Belgrade, shooting worldwide",
+    "bio": [],
+    "eventsTitle": "Events shot",
+    "gearTitle": "Gear",
+    "collabsTitle": "Collaborations"
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "For assignments, prints and licensing — write to me directly."
+  },
+  "gallery": {
+    "empty": "Photographs are coming soon."
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  },
+  "meta": {
+    "home": {
+      "title": "Nadia Stelmashuk — Motorsport Photographer",
+      "description": "Formula 1 and motorsport photography by Nadia Stelmashuk. Based in Belgrade, shooting worldwide."
+    },
+    "track": {
+      "title": "Track — Nadia Stelmashuk",
+      "description": "Formula 1 cars in motion: panning shots, apexes and braking zones."
+    },
+    "portraits": {
+      "title": "Portraits — Nadia Stelmashuk",
+      "description": "Drivers, teams and podium emotion from the Formula 1 paddock."
+    },
+    "atmosphere": {
+      "title": "Atmosphere — Nadia Stelmashuk",
+      "description": "Grandstands, fans and trackside details of a race weekend."
+    },
+    "about": {
+      "title": "About — Nadia Stelmashuk",
+      "description": "Motorsport photographer based in Belgrade. Formula 1, Formula 2 and Porsche Supercup at Spa-Francorchamps and Silverstone."
+    },
+    "contact": {
+      "title": "Contact — Nadia Stelmashuk",
+      "description": "Get in touch for motorsport assignments, prints and image licensing."
+    }
+  }
+}

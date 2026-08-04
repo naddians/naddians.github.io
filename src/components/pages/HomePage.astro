@@ -1,0 +1,61 @@
+---
+import { Picture } from 'astro:assets';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Base from '../../layouts/Base.astro';
+import { t, type Locale, type Route } from '../../i18n';
+import { GALLERIES } from '../../data/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+
+// Герой-кадр: src/photos/hero.jpg. Пока файла нет — тёмная подложка.
+const heroModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/photos/hero.{jpg,jpeg,png,JPG,JPEG,PNG}',
+  { eager: true },
+);
+const hero = Object.values(heroModules)[0]?.default;
+---
+
+<Base locale={locale} route={''}>
+  <section class:list={['hero', !hero && 'hero--empty']}>
+    {
+      hero ? (
+        <Picture
+          src={hero}
+          alt=""
+          formats={['avif', 'webp']}
+          widths={[640, 1024, 1600, 2000]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          pictureAttributes={{ class: 'hero__placeholder' }}
+          style="width:100%;height:100%;object-fit:cover"
+        />
+      ) : (
+        <div class="hero__placeholder" />
+      )
+    }
+    <div class="wrap hero__inner">
+      <h1 class="hero__title">{dict.name}</h1>
+      <p class="hero__tagline">{dict.tagline}</p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="section__title">{dict.home.galleriesTitle}</h2>
+    <div class="cards">
+      {
+        GALLERIES.map((slug) => (
+          <a class="card" href={getRelativeLocaleUrl(locale, slug as Route)}>
+            <h3 class="card__title">{dict.galleries[slug].title}</h3>
+            <p class="card__desc">{dict.galleries[slug].description}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>

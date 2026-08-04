@@ -1,0 +1,59 @@
+---
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import { HTML_LANG, LOCALES, metaKeyFor, t, type Locale, type Route } from '../i18n';
+import { CONTACTS } from '../data/site';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+  /** Абсолютный URL картинки для превью ссылки. Появится, когда будут фотографии (ТЗ §10). */
+  ogImage?: string;
+}
+
+const { locale, route, ogImage } = Astro.props;
+const dict = t(locale);
+const meta = dict.meta[metaKeyFor(route)];
+
+const canonical = getAbsoluteLocaleUrl(locale, route);
+const alternates = LOCALES.map((code) => ({
+  code: HTML_LANG[code],
+  href: getAbsoluteLocaleUrl(code, route),
+}));
+
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: dict.name,
+  jobTitle: locale === 'sr' ? 'Motosport fotografkinja' : 'Motorsport photographer',
+  address: { '@type': 'PostalAddress', addressLocality: 'Belgrade', addressCountry: 'RS' },
+  url: getAbsoluteLocaleUrl(locale, ''),
+  email: `mailto:${CONTACTS.email}`,
+  sameAs: [
+    `https://instagram.com/${CONTACTS.instagram}`,
+    `https://t.me/${CONTACTS.telegram}`,
+  ],
+  knowsAbout: ['Formula 1', 'Formula 2', 'Motorsport photography'],
+};
+---
+
+<title>{meta.title}</title>
+<meta name="description" content={meta.description} />
+<link rel="canonical" href={canonical} />
+
+{alternates.map((alt) => <link rel="alternate" hreflang={alt.code} href={alt.href} />)}
+<link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl('en', route)} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={dict.name} />
+<meta property="og:locale" content={locale === 'sr' ? 'sr_RS' : 'en_GB'} />
+<meta property="og:title" content={meta.title} />
+<meta property="og:description" content={meta.description} />
+<meta property="og:url" content={canonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+
+{
+  (route === '' || route === 'about') && (
+    <script type="application/ld+json" set:html={JSON.stringify(personLd)} is:inline />
+  )
+}

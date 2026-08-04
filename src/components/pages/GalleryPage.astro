@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+import PhotoGrid from '../PhotoGrid.astro';
+import { t, type Locale, type Route } from '../../i18n';
+import type { GallerySlug } from '../../data/site';
+
+interface Props {
+  locale: Locale;
+  gallery: GallerySlug;
+}
+
+const { locale, gallery } = Astro.props;
+const dict = t(locale);
+const meta = dict.galleries[gallery];
+---
+
+<Base locale={locale} route={gallery as Route}>
+  <div class="wrap page-head">
+    <h1>{meta.title}</h1>
+    <p>{meta.description}</p>
+  </div>
+  <PhotoGrid gallery={gallery} locale={locale} />
+</Base>

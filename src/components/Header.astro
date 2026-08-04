@@ -1,0 +1,54 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { LOCALES, LOCALE_NAMES, t, type Locale, type Route } from '../i18n';
+import { GALLERIES } from '../data/site';
+
+interface Props {
+  locale: Locale;
+  route: Route;
+}
+
+const { locale, route } = Astro.props;
+const dict = t(locale);
+
+const links: { route: Route; label: string }[] = [
+  ...GALLERIES.map((slug) => ({ route: slug as Route, label: dict.nav[slug] })),
+  { route: 'about', label: dict.nav.about },
+];
+---
+
+<header class="header">
+  <div class="wrap header__inner">
+    <a class="header__name" href={getRelativeLocaleUrl(locale, '')}>{dict.name}</a>
+
+    <nav class="nav" aria-label={locale === 'sr' ? 'Glavna navigacija' : 'Main navigation'}>
+      {
+        links.map((link) => (
+          <a
+            href={getRelativeLocaleUrl(locale, link.route)}
+            aria-current={route === link.route ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="lang">
+      {
+        LOCALES.map((code, i) => (
+          <>
+            {i > 0 && <span aria-hidden="true">/</span>}
+            <a
+              href={getRelativeLocaleUrl(code, route)}
+              aria-current={code === locale ? 'true' : undefined}
+              hreflang={code}
+            >
+              {LOCALE_NAMES[code]}
+            </a>
+          </>
+        ))
+      }
+    </div>
+  </div>
+</header>
