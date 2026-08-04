@@ -1,0 +1,62 @@
+---
+import { CONTACTS } from '../data/site';
+import { entities } from '../utils/obfuscate';
+
+interface Props {
+  locale: 'en' | 'sr';
+  /** Компактный вариант — для страницы «Обо мне». */
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+
+// Иконки нарисованы прямо здесь: ни одного запроса к чужому домену (ТЗ §9).
+const telegram = `https://t.me/${CONTACTS.telegram}`;
+const instagram = `https://instagram.com/${CONTACTS.instagram}`;
+---
+
+<div class:list={['contact-buttons', compact && 'contact-buttons--compact']}>
+  <span
+    set:html={`<a class="contact-button" href="mailto:${entities(CONTACTS.email)}" aria-label="Email">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <rect x="2.75" y="5" width="18.5" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="m4 7.5 8 5.5 8-5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg><span>Email</span></a>`}
+  />
+
+  <a class="contact-button" href={telegram} rel="me noopener" aria-label="Telegram">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+      <path
+        d="M21.2 4.3 2.9 11.2c-.9.3-.9 1.6.1 1.9l4.6 1.4 1.7 5.1c.3.8 1.3 1 1.9.3l2.4-2.6 4.6 3.4c.7.5 1.7.1 1.9-.7l3-14.5c.2-.9-.7-1.6-1.9-1.2Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linejoin="round"></path>
+      <path
+        d="m7.6 14.5 9.8-7.1-6.6 8.4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+    <span>Telegram</span>
+  </a>
+
+  <a class="contact-button" href={instagram} rel="me noopener" aria-label="Instagram">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+      <rect
+        x="3.25"
+        y="3.25"
+        width="17.5"
+        height="17.5"
+        rx="5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"></rect>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+      <circle cx="17.2" cy="6.8" r="1.2" fill="currentColor"></circle>
+    </svg>
+    <span>Instagram</span>
+  </a>
+</div>

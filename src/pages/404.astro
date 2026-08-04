@@ -1,0 +1,65 @@
+---
+import { Picture } from 'astro:assets';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { HTML_LANG, t } from '../i18n';
+import { photoAt } from '../utils/photos';
+import '../styles/global.css';
+
+// Своя разметка вместо общего макета: странице 404 не нужны canonical,
+// hreflang и микроразметка — её не индексируют.
+const locale = 'en';
+const dict = t(locale);
+const hero = photoAt('hero.jpg') ?? photoAt('hero_demo.jpg');
+---
+
+<!doctype html>
+<html lang={HTML_LANG[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <title>{dict.notfound.title} — {dict.name}</title>
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+  </head>
+  <body>
+    <Header locale={locale} route={''} />
+
+    <main class="main" id="main">
+      <section class="hero notfound">
+        {
+          hero ? (
+            <Picture
+              class="hero__image"
+              src={hero}
+              alt=""
+              formats={['avif', 'webp']}
+              widths={[640, 1024, 1600]}
+              sizes="100vw"
+              loading="eager"
+              fetchpriority="high"
+              pictureAttributes={{ class: 'hero__placeholder' }}
+            />
+          ) : (
+            <div class="hero__placeholder" />
+          )
+        }
+        <div class="hero__scrim"></div>
+
+        <div class="wrap hero__inner">
+          <p class="notfound__code">{dict.notfound.code}</p>
+          <h1 class="hero__title">{dict.notfound.title}</h1>
+          <p class="notfound__text">{dict.notfound.text}</p>
+          <a class="notfound__back" href={getRelativeLocaleUrl(locale, '')}>
+            {dict.notfound.back}
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <Footer locale={locale} />
+  </body>
+</html>

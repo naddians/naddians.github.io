@@ -1,65 +1,45 @@
 ---
 import { Picture } from 'astro:assets';
-import { t, type Locale } from '../i18n';
-import type { GallerySlug } from '../data/site';
+import type { Photo } from '../utils/photos';
 
 interface Props {
-  gallery: GallerySlug;
-  locale: Locale;
+  photos: Photo[];
+  /** Сколько первых кадров грузить сразу — остальные лениво. */
+  eagerCount?: number;
+  /** Первый кадр — главный на экране (нет героя выше). Тогда ему высокий приоритет. */
+  leading?: boolean;
 }
 
-const { gallery, locale } = Astro.props;
-const dict = t(locale);
+const { photos, eagerCount = 2, leading = true } = Astro.props;
 
-// Всё содержимое папки попадает в галерею автоматически — это и есть
-// «положить файл и запушить» из ТЗ §7. Порядок задаёт префикс NN- в имени.
-const modules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/photos/**/*.{jpg,jpeg,png,JPG,JPEG,PNG}',
-  { eager: true },
-);
+/**
+ * Кадр в сетке шире 1200px не показывается никогда: три колонки в контейнере
+ * 1600px дают 528 CSS-пикселей, то есть 1056 на экране с двойной плотностью.
+ * Варианты 1600 и 2000 браузер бы качал зря, а сборка их зря считала.
+ */
+const LADDER = [400, 800, 1200];
 
-const photos = Object.entries(modules)
-  .filter(([path]) => path.startsWith(`/src/photos/${gallery}/`))
-  .sort(([a], [b]) => a.localeCompare(b, 'en'))
-  .map(([path, mod]) => ({ alt: altFromPath(path), image: mod.default }));
-
-/** «10-spa-2026-eau-rouge.jpg» → «Spa 2026 eau rouge». Подписи не видны, это alt (ТЗ §6). */
-function altFromPath(path: string): string {
-  const file = path.split('/').pop() ?? '';
-  const text = file
-    .replace(/\.[^.]+$/, '')
-    .replace(/^\d+[-_]/, '')
-    .replace(/[-_]+/g, ' ')
-    .trim();
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-/** Ширины из ТЗ §7, обрезанные по исходнику: апскейл бессмысленен, потолок 2000px. */
 function widthsFor(width: number): number[] {
-  const ladder = [400, 800, 1200, 1600, 2000].filter((w) => w < Math.min(width, 2000));
-  return [...ladder, Math.min(width, 2000)];
+  const max = Math.min(width, LADDER[LADDER.length - 1]);
+  return [...LADDER.filter((w) => w < max), max];
 }
 
 const SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
 ---
 
-{
-  photos.length === 0 ? (
-    <p class="wrap empty">{dict.gallery.empty}</p>
-  ) : (
-    <div class="wrap grid">
-      {photos.map((photo, i) => (
-        <Picture
-          src={photo.image}
-          alt={photo.alt}
-          formats={['avif', 'webp']}
-          widths={widthsFor(photo.image.width)}
-          sizes={SIZES}
-          loading={i < 3 ? 'eager' : 'lazy'}
-          fetchpriority={i === 0 ? 'high' : undefined}
-          decoding="async"
-        />
-      ))}
-    </div>
-  )
-}
+<div class="grid">
+  {
+    photos.map((photo, i) => (
+      <Picture
+        src={photo.image}
+        alt={photo.alt}
+        formats={['avif', 'webp']}
+        widths={widthsFor(photo.image.width)}
+        sizes={SIZES}
+        loading={i < eagerCount ? 'eager' : 'lazy'}
+        fetchpriority={leading && i === 0 ? 'high' : undefined}
+        decoding="async"
+      />
+    ))
+  }
+</div>

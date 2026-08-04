@@ -1,35 +1,40 @@
 {
   "name": "Nadia Stelmashuk",
+  "slogan": "Capturing the emotions",
   "tagline": "Motorsport photographer · Belgrade & worldwide",
   "nav": {
-    "track": "Track",
-    "portraits": "Portraits",
-    "atmosphere": "Atmosphere",
+    "track": "On-Track",
+    "people": "People",
+    "atmosphere": "Circuit",
     "about": "About",
     "contact": "Contact"
   },
   "galleries": {
     "track": {
-      "title": "Track",
+      "title": "On-Track Action",
       "description": "Cars in motion: panning, apexes, braking zones"
     },
-    "portraits": {
-      "title": "Portraits",
-      "description": "Drivers, teams, podium, emotion"
+    "people": {
+      "title": "People & Moments",
+      "description": "Drivers, teams and fans up close — portraits and emotion"
     },
     "atmosphere": {
-      "title": "Atmosphere",
-      "description": "Grandstands, fans, trackside details, night"
+      "title": "Circuit & Atmosphere",
+      "description": "Wide views of the circuit: grandstands, trackside details, night"
     }
   },
   "home": {
+    "selectedTitle": "Selected work",
     "galleriesTitle": "Galleries",
     "aboutLink": "About me"
   },
   "about": {
     "title": "About",
     "base": "Based in Belgrade, shooting worldwide",
-    "bio": [],
+    "bio": [
+      "Motorsport wasn't where I started. I came to it from other work with a camera — then I stood at my first race weekend and understood I'd be back. F1, F2, the Porsche Mobil 1 Supercup: I go where I can, and I go on my own terms. Shooting for myself taught me the thing I keep: I bring a point of view to a weekend, not a checklist.",
+      "What I'm after is emotion — the tension of a lap that's going wrong, the noise you feel in your chest, the way an entire grandstand leans the same direction at once. That's the picture I want. Everything else is a means to it: smoke, sparks, rain, low sun across the tarmac, a panning frame that's mostly blur. I use whatever carries the feeling of that particular moment, and I'll lose frames trying."
+    ],
     "eventsTitle": "Events shot",
     "gearTitle": "Gear",
     "collabsTitle": "Collaborations"
@@ -38,8 +43,18 @@
     "title": "Contact",
     "intro": "For assignments, prints and licensing — write to me directly."
   },
+  "cta": {
+    "title": "Let's work together",
+    "text": "Available for race weekends, assignments and image licensing."
+  },
   "gallery": {
     "empty": "Photographs are coming soon."
+  },
+  "notfound": {
+    "code": "404",
+    "title": "Missed the apex",
+    "text": "This page went off the track. Everything worth seeing is back on the racing line.",
+    "back": "Back to the racing line"
   },
   "footer": {
     "rights": "All rights reserved."
@@ -50,16 +65,16 @@
       "description": "Formula 1 and motorsport photography by Nadia Stelmashuk. Based in Belgrade, shooting worldwide."
     },
     "track": {
-      "title": "Track — Nadia Stelmashuk",
+      "title": "On-Track Action — Nadia Stelmashuk",
       "description": "Formula 1 cars in motion: panning shots, apexes and braking zones."
     },
-    "portraits": {
-      "title": "Portraits — Nadia Stelmashuk",
-      "description": "Drivers, teams and podium emotion from the Formula 1 paddock."
+    "people": {
+      "title": "People & Moments — Nadia Stelmashuk",
+      "description": "Drivers, teams and fans up close: portraits and emotion from a Formula 1 race weekend."
     },
     "atmosphere": {
-      "title": "Atmosphere — Nadia Stelmashuk",
-      "description": "Grandstands, fans and trackside details of a race weekend."
+      "title": "Circuit & Atmosphere — Nadia Stelmashuk",
+      "description": "Wide views of a Formula 1 circuit: grandstands, trackside details and night."
     },
     "about": {
       "title": "About — Nadia Stelmashuk",

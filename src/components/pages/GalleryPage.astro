@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import type { GallerySlug } from '../../data/site';
+import { photosIn } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -12,6 +13,7 @@ interface Props {
 const { locale, gallery } = Astro.props;
 const dict = t(locale);
 const meta = dict.galleries[gallery];
+const photos = photosIn(gallery);
 ---
 
 <Base locale={locale} route={gallery as Route}>
@@ -19,5 +21,14 @@ const meta = dict.galleries[gallery];
     <h1>{meta.title}</h1>
     <p>{meta.description}</p>
   </div>
-  <PhotoGrid gallery={gallery} locale={locale} />
+
+  {
+    photos.length === 0 ? (
+      <p class="wrap empty">{dict.gallery.empty}</p>
+    ) : (
+      <div class="wrap section">
+        <PhotoGrid photos={photos} />
+      </div>
+    )
+  }
 </Base>

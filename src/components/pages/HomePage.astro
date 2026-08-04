@@ -2,8 +2,11 @@
 import { Picture } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
+import PhotoGrid from '../PhotoGrid.astro';
+import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { GALLERIES } from '../../data/site';
+import { FEATURED, FEATURED_PER_GALLERY, GALLERIES } from '../../data/site';
+import { featuredPhotos, photoAt } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -12,12 +15,16 @@ interface Props {
 const { locale } = Astro.props;
 const dict = t(locale);
 
-// Герой-кадр: src/photos/hero.jpg. Пока файла нет — тёмная подложка.
-const heroModules = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/photos/hero.{jpg,jpeg,png,JPG,JPEG,PNG}',
-  { eager: true },
-);
-const hero = Object.values(heroModules)[0]?.default;
+// Герой-кадр: src/photos/hero.jpg. Пока файла нет — заглушка, а если нет и её,
+// то просто тёмная подложка.
+const hero =
+  photoAt('hero.jpg') ??
+  photoAt('hero.jpeg') ??
+  photoAt('hero.png') ??
+  photoAt('hero_demo.jpg');
+
+// Витрина: первые кадры каждой галереи вперемешку (ТЗ §3, правка 1.2).
+const featured = featuredPhotos(FEATURED, FEATURED_PER_GALLERY);
 ---
 
 <Base locale={locale} route={''}>
@@ -28,24 +35,40 @@ const hero = Object.values(heroModules)[0]?.default;
           src={hero}
           alt=""
           formats={['avif', 'webp']}
-          widths={[640, 1024, 1600, 2000]}
+          widths={[640, 1024, 1600]}
           sizes="100vw"
           loading="eager"
           fetchpriority="high"
           pictureAttributes={{ class: 'hero__placeholder' }}
-          style="width:100%;height:100%;object-fit:cover"
+          class="hero__image"
         />
       ) : (
         <div class="hero__placeholder" />
       )
     }
+    {hero && <div class="hero__scrim" />}
     <div class="wrap hero__inner">
       <h1 class="hero__title">{dict.name}</h1>
+      <p class="hero__slogan">{dict.slogan}</p>
       <p class="hero__tagline">{dict.tagline}</p>
     </div>
   </section>
 
-  <section class="wrap section">
+  <div class="wrap contact-bar">
+    <ContactButtons locale={locale} />
+  </div>
+
+  {
+    featured.length > 0 && (
+      <section class="wrap section">
+        <h2 class="section__title">{dict.home.selectedTitle}</h2>
+        {/* Витрина уходит за первый экран: грузить её вперёд героя незачем. */}
+        <PhotoGrid photos={featured} eagerCount={hero ? 0 : 2} leading={!hero} />
+      </section>
+    )
+  }
+
+  <section class="wrap section section--top-line">
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>
     <div class="cards">
       {

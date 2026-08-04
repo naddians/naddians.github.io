@@ -1,35 +1,40 @@
 {
   "name": "Nadia Stelmashuk",
+  "slogan": "Hvatam emocije",
   "tagline": "Motosport fotografkinja · Beograd i ceo svet",
   "nav": {
-    "track": "Staza",
-    "portraits": "Portreti",
+    "track": "Na stazi",
+    "people": "Ljudi",
     "atmosphere": "Atmosfera",
     "about": "O meni",
     "contact": "Kontakt"
   },
   "galleries": {
     "track": {
-      "title": "Staza",
+      "title": "Akcija na stazi",
       "description": "Bolidi u pokretu: panning, apeksi, zone kočenja"
     },
-    "portraits": {
-      "title": "Portreti",
-      "description": "Vozači, timovi, podijum, emocije"
+    "people": {
+      "title": "Ljudi i trenuci",
+      "description": "Vozači, timovi i navijači izbliza — portreti i emocije"
     },
     "atmosphere": {
-      "title": "Atmosfera",
-      "description": "Tribine, navijači, detalji uz stazu, noć"
+      "title": "Staza i atmosfera",
+      "description": "Široki kadrovi staze: tribine, detalji uz stazu, noć"
     }
   },
   "home": {
+    "selectedTitle": "Izabrani radovi",
     "galleriesTitle": "Galerije",
     "aboutLink": "O meni"
   },
   "about": {
     "title": "O meni",
     "base": "Bazirana u Beogradu, snimam širom sveta",
-    "bio": [],
+    "bio": [
+      "Motosport nije bio moj početak. Došla sam do njega iz drugog rada sa kamerom — a onda sam stala na svoj prvi trkački vikend i shvatila da ću se vraćati. F1, F2, Porsche Mobil 1 Supercup: idem gde mogu i idem pod svojim uslovima. Snimanje za sebe naučilo me je onome čega se držim: na vikend donosim ugao gledanja, a ne spisak zadataka.",
+      "Ono za čim tragam jeste emocija — napetost kruga koji ide naopako, buka koja se oseti u grudima, način na koji se cela tribina istovremeno nagne na istu stranu. To je slika koju želim. Sve ostalo je sredstvo: dim, varnice, kiša, nisko sunce po asfaltu, panning kadar koji je uglavnom mutan. Koristim sve što nosi osećaj tog konkretnog trenutka, i spremna sam da izgubim kadrove pokušavajući."
+    ],
     "eventsTitle": "Odrađeni događaji",
     "gearTitle": "Oprema",
     "collabsTitle": "Saradnje"
@@ -38,8 +43,18 @@
     "title": "Kontakt",
     "intro": "Za angažmane, printove i licenciranje — pišite mi direktno."
   },
+  "cta": {
+    "title": "Hajde da sarađujemo",
+    "text": "Dostupna sam za trkačke vikende, angažmane i licenciranje fotografija."
+  },
   "gallery": {
     "empty": "Fotografije uskoro."
+  },
+  "notfound": {
+    "code": "404",
+    "title": "Promašen apeks",
+    "text": "Ova stranica je izletela sa staze. Sve vredno je nazad na trkačkoj liniji.",
+    "back": "Nazad na trkačku liniju"
   },
   "footer": {
     "rights": "Sva prava zadržana."
@@ -50,16 +65,16 @@
       "description": "Formula 1 i motosport fotografija. Bazirana u Beogradu, snimam širom sveta."
     },
     "track": {
-      "title": "Staza — Nadia Stelmashuk",
+      "title": "Akcija na stazi — Nadia Stelmashuk",
       "description": "Bolidi Formule 1 u pokretu: panning, apeksi i zone kočenja."
     },
-    "portraits": {
-      "title": "Portreti — Nadia Stelmashuk",
-      "description": "Vozači, timovi i emocije sa podijuma iz paddocka Formule 1."
+    "people": {
+      "title": "Ljudi i trenuci — Nadia Stelmashuk",
+      "description": "Vozači, timovi i navijači izbliza: portreti i emocije sa trkačkog vikenda Formule 1."
     },
     "atmosphere": {
-      "title": "Atmosfera — Nadia Stelmashuk",
-      "description": "Tribine, navijači i detalji trkačkog vikenda uz stazu."
+      "title": "Staza i atmosfera — Nadia Stelmashuk",
+      "description": "Široki kadrovi staze Formule 1: tribine, detalji uz stazu i noć."
     },
     "about": {
       "title": "O meni — Nadia Stelmashuk",

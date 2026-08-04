@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Cta from '../components/Cta.astro';
 import Seo from '../components/Seo.astro';
 import { HTML_LANG, type Locale, type Route } from '../i18n';
 import '../styles/global.css';
@@ -8,10 +9,9 @@ import '../styles/global.css';
 interface Props {
   locale: Locale;
   route: Route;
-  ogImage?: string;
 }
 
-const { locale, route, ogImage } = Astro.props;
+const { locale, route } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,13 +23,16 @@ const { locale, route, ogImage } = Astro.props;
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />
-    <Seo locale={locale} route={route} ogImage={ogImage} />
+    <Seo locale={locale} route={route} />
   </head>
   <body>
     <a class="skip" href="#main">{locale === 'sr' ? 'Na sadržaj' : 'Skip to content'}</a>
     <Header locale={locale} route={route} />
     <main class="main" id="main">
       <slot />
+      {/* На главной и в «Обо мне» контакты уже стоят кнопками, на самой
+          странице контактов блок был бы повтором — остаются галереи. */}
+      {!['', 'about', 'contact'].includes(route) && <Cta locale={locale} />}
     </main>
     <Footer locale={locale} />
   </body>

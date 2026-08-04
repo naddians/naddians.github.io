@@ -1,0 +1,27 @@
+---
+import { t, type Locale } from '../i18n';
+import { CONTACTS } from '../data/site';
+import { mailtoLink } from '../utils/obfuscate';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+---
+
+<section class="cta">
+  <div class="wrap cta__inner">
+    <h2 class="cta__title">{dict.cta.title}</h2>
+    <p class="cta__text">{dict.cta.text}</p>
+
+    <p class="cta__email" set:html={mailtoLink(CONTACTS.email, 'cta__link')} />
+
+    <p class="cta__social">
+      <a href={`https://t.me/${CONTACTS.telegram}`} rel="me noopener">Telegram</a>
+      <span aria-hidden="true">·</span>
+      <a href={`https://instagram.com/${CONTACTS.instagram}`} rel="me noopener">Instagram</a>
+    </p>
+  </div>
+</section>
