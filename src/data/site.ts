@@ -45,8 +45,8 @@ export type GallerySlug = (typeof GALLERIES)[number];
  * Убрать или добавить строку = поменять витрину.
  */
 export const FEATURED: string[] = [
-  'atmosphere/010-circuit.jpg', // общий план трассы с трибунами
   'track/130-on-track.jpg', // нос болида крупно, пилот в кокпите
+  'atmosphere/010-circuit.jpg', // общий план трассы с трибунами
   'people/080-people.jpg', // портрет пилота
   'track/070-on-track.jpg', // пэннинг, размытый фон
   'people/100-people.jpg', // шампанское на подиуме
