@@ -6,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 //   site: 'https://example.com', base: '/'
 export default defineConfig({
   site: 'https://naddians.github.io',
-  base: '/portfolio',
+  base: '/',
   trailingSlash: 'always',
   build: { format: 'directory' },
 

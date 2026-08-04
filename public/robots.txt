@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://naddians.github.io/portfolio/sitemap-index.xml
+Sitemap: https://naddians.github.io/sitemap-index.xml

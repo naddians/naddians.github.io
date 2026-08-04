@@ -3,7 +3,7 @@
 Статический сайт на [Astro](https://astro.build). Сборка и публикация автоматические:
 любой push в ветку `main` пересобирает сайт и выкладывает его на GitHub Pages.
 
-- Адрес: https://naddians.github.io/portfolio/
+- Адрес: https://naddians.github.io/
 - Языки: английский (`/`) и сербский-латиница (`/sr/`)
 - Техническое задание: [SPEC.md](SPEC.md) · анкета с контентом: [CONTENT.md](CONTENT.md)
 
@@ -36,7 +36,7 @@ npm run photos
 впишет копирайт в метаданные, пронумерует и разложит по `src/photos/`.
 В консоли будет видно, что с чем стало.
 
-**Шаг 4.** Посмотреть, что получилось: `npm run dev` → http://localhost:4321/portfolio/
+**Шаг 4.** Посмотреть, что получилось: `npm run dev` → http://localhost:4321/
 
 **Шаг 5.** Опубликовать:
 
@@ -88,7 +88,7 @@ npm install
 npm run dev
 ```
 
-Сайт откроется на http://localhost:4321/portfolio/
+Сайт откроется на http://localhost:4321/
 
 ```bash
 npm run build     # собрать в dist/
