@@ -46,14 +46,14 @@ export type GallerySlug = (typeof GALLERIES)[number];
  */
 export const FEATURED: string[] = [
   'track/130-on-track.jpg', // нос болида крупно, пилот в кокпите
-  'atmosphere/010-circuit.jpg', // общий план трассы с трибунами
+  'atmosphere/070-circuit.jpg', // общий план трассы с трибунами
   'people/040-people.jpg', // портрет пилота
   'track/070-on-track.jpg', // пэннинг, размытый фон
   'people/140-people.jpg', // шампанское на подиуме
   'atmosphere/030-circuit.jpg', // трасса в лесу, панорама
   'track/020-on-track.jpg', // пэннинг у отбойника
   'people/070-people.jpg', // пилот под зонтом, дождь
-  'atmosphere/050-circuit.jpg', // пелотон на Eau Rouge, телефоны на трибуне
+  'atmosphere/040-circuit.jpg', // пелотон на Eau Rouge, телефоны на трибуне
   'people/100-people.jpg', // пилоты и фотографы, репортаж
   'track/050-on-track.jpg', // пэннинг на прямой
   'people/120-people.jpg', // подиум, трое пилотов
@@ -74,7 +74,7 @@ export const COVERS: Record<string, string> = {
   '': 'hero.jpg',
   track: 'track/040-on-track.jpg',
   people: 'people/120-people.jpg',
-  atmosphere: 'atmosphere/010-circuit.jpg',
+  atmosphere: 'atmosphere/070-circuit.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
 };
