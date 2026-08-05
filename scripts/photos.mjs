@@ -49,6 +49,7 @@ const GALLERIES = [
 const SINGLES = [
   { inbox: 'hero', out: path.join(PHOTOS, 'hero.jpg') },
   { inbox: 'portrait', out: path.join(PHOTOS, 'about', 'portrait.jpg') },
+  { inbox: '404', out: path.join(PHOTOS, '404.jpg') },
 ];
 
 const SUPPORTED = new Set(['.jpg', '.jpeg', '.png', '.tif', '.tiff', '.webp']);
@@ -267,7 +268,7 @@ async function main() {
   if (!existsSync(INBOX)) {
     console.error(
       'Папки inbox/ нет.\n' +
-        'Создай её и положи внутрь папки track, people, atmosphere, hero, portrait.',
+        'Создай её и положи внутрь папки track, people, atmosphere, hero, portrait, 404.',
     );
     process.exit(1);
   }

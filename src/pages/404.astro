@@ -11,7 +11,9 @@ import '../styles/global.css';
 // hreflang и микроразметка — её не индексируют.
 const locale = 'en';
 const dict = t(locale);
-const hero = photoAt('hero.jpg') ?? photoAt('hero_demo.jpg');
+// Свой кадр, не герой главной: страница «не найдено» не должна выглядеть как
+// повтор главной. Файл кладётся в inbox/404/ и обрабатывается тем же скриптом.
+const hero = photoAt('404.jpg') ?? photoAt('hero.jpg') ?? photoAt('hero_demo.jpg');
 ---
 
 <!doctype html>

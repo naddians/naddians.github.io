@@ -254,12 +254,15 @@ h3 {
   min-height: min(70svh, 640px);
 }
 
+/* «404» набрано как заголовок: тот же кегль, вес и цвет, что у строки под ним.
+   Две строки читаются как одна фраза, а не как подпись над заголовком. */
 .notfound__code {
-  margin: 0 0 6px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  color: var(--accent);
+  margin: 0;
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
 }
 
 .notfound__text {
@@ -285,6 +288,37 @@ h3 {
 .notfound__back:hover {
   border-color: var(--accent);
   background: #17171b;
+}
+
+/* На узком экране текст не ложится поверх кадра: болид сверху, текст под ним.
+   В одну колонку абзац и кнопка приходились ровно на смазанный Mercedes, и он
+   читался грязным пятном под буквами. На планшете и шире места хватает, там
+   остаётся обычный герой с наложением. */
+@media (max-width: 639px) {
+  .notfound {
+    display: block;
+    min-height: 0;
+  }
+
+  .notfound .hero__placeholder {
+    position: relative;
+    inset: auto;
+    display: block;
+    background: none;
+  }
+
+  .notfound .hero__image {
+    height: auto;
+    aspect-ratio: 3 / 2;
+  }
+
+  .notfound .hero__scrim {
+    display: none;
+  }
+
+  .notfound .hero__inner {
+    padding-block: 28px 40px;
+  }
 }
 
 .section {
