@@ -8,13 +8,24 @@
  * Папка inbox/ в репозиторий не попадает, там лежат твои оригиналы.
  */
 import sharp from 'sharp';
-import { readdir, mkdir, unlink, stat } from 'node:fs/promises';
+import { readdir, mkdir, unlink, stat, readFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 const ROOT = process.cwd();
 const INBOX = path.join(ROOT, 'inbox');
 const PHOTOS = path.join(ROOT, 'src', 'photos');
+
+/**
+ * Ручной порядок кадров (scripts/order.json). Нужен там, где галерея должна идти
+ * не по времени съёмки, а по силе кадров: сильные сверху.
+ * Файл лежит в репозитории, а не в inbox/, — иначе порядок терялся бы вместе с
+ * папкой оригиналов, которая живёт только на компьютере автора.
+ */
+const ORDER_FILE = path.join(ROOT, 'scripts', 'order.json');
+const MANUAL_ORDER = existsSync(ORDER_FILE)
+  ? JSON.parse(await readFile(ORDER_FILE, 'utf8'))
+  : {};
 
 /**
  * ТЗ §7: качество 85, меньше исходника не увеличиваем.
@@ -134,6 +145,36 @@ function parseExifDate(buffer) {
   return new Date(`${y}-${m}-${d}T${hh}:${mm}:${ss}`).getTime();
 }
 
+/**
+ * Переставляет кадры по списку из order.json. Что в списке — идёт первым и в
+ * заданном порядке, остальное падает в конец, сохраняя порядок по времени съёмки.
+ * Так добавленный кадр не ломает уже выстроенную галерею: он просто окажется
+ * последним, пока его не впишут в список.
+ */
+function applyManualOrder(files, gallery) {
+  const wanted = MANUAL_ORDER[gallery.inbox];
+  if (!Array.isArray(wanted) || wanted.length === 0) return files;
+
+  const rank = new Map(wanted.map((name, index) => [name.toLowerCase(), index]));
+  const listed = [];
+  const rest = [];
+  for (const file of files) {
+    (rank.has(file.name.toLowerCase()) ? listed : rest).push(file);
+  }
+  listed.sort((a, b) => rank.get(a.name.toLowerCase()) - rank.get(b.name.toLowerCase()));
+
+  const present = new Set(files.map((file) => file.name.toLowerCase()));
+  const missing = wanted.filter((name) => !present.has(name.toLowerCase()));
+  if (missing.length > 0) {
+    console.warn(`  ⚠ в order.json перечислены файлы, которых нет в inbox/${gallery.inbox}/: ${missing.join(', ')}`);
+  }
+  if (rest.length > 0) {
+    console.log(`  ℹ ${rest.length} кадр(ов) нет в order.json — ставлю в конец по времени съёмки`);
+  }
+
+  return [...listed, ...rest];
+}
+
 async function convert(source, target) {
   const image = sharp(source, { failOn: 'none' }).rotate();
   const meta = await image.metadata();
@@ -169,14 +210,15 @@ async function clearGenerated(dir) {
 
 async function processGallery(gallery) {
   const inboxDir = path.join(INBOX, gallery.inbox);
-  const files = await sortByCaptureTime(await collect(inboxDir));
+  const found = await sortByCaptureTime(await collect(inboxDir));
 
-  if (files.length === 0) {
+  if (found.length === 0) {
     console.log(`inbox/${gallery.inbox}/ — пусто, пропускаю`);
     return 0;
   }
 
-  console.log(`\ninbox/${gallery.inbox}/ — ${files.length} шт.`);
+  console.log(`\ninbox/${gallery.inbox}/ — ${found.length} шт.`);
+  const files = applyManualOrder(found, gallery);
   await mkdir(gallery.out, { recursive: true });
   await clearGenerated(gallery.out);
 
