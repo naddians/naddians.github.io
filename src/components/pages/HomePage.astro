@@ -2,11 +2,10 @@
 import { Picture } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
-import PhotoGrid from '../PhotoGrid.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { COVERS, FEATURED, FEATURED_PER_GALLERY, GALLERIES } from '../../data/site';
-import { featuredPhotos, photoAt } from '../../utils/photos';
+import { COVERS, GALLERIES } from '../../data/site';
+import { photoAt } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -22,9 +21,6 @@ const hero =
   photoAt('hero.jpeg') ??
   photoAt('hero.png') ??
   photoAt('hero_demo.jpg');
-
-// Витрина: первые кадры каждой галереи вперемешку (ТЗ §3, правка 1.2).
-const featured = featuredPhotos(FEATURED, FEATURED_PER_GALLERY);
 ---
 
 <Base locale={locale} route={''}>
@@ -57,16 +53,6 @@ const featured = featuredPhotos(FEATURED, FEATURED_PER_GALLERY);
   <div class="wrap contact-bar">
     <ContactButtons locale={locale} />
   </div>
-
-  {
-    featured.length > 0 && (
-      <section class="wrap section">
-        <h2 class="section__title">{dict.home.selectedTitle}</h2>
-        {/* Витрина уходит за первый экран: грузить её вперёд героя незачем. */}
-        <PhotoGrid photos={featured} eagerCount={hero ? 0 : 2} leading={!hero} />
-      </section>
-    )
-  }
 
   <section class="wrap section section--top-line">
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>

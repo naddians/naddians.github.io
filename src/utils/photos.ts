@@ -1,4 +1,4 @@
-import { GALLERIES, type GallerySlug } from '../data/site';
+import { type GallerySlug } from '../data/site';
 
 export interface Photo {
   alt: string;
@@ -29,34 +29,6 @@ export function photosIn(gallery: GallerySlug): Photo[] {
     .filter(([path]) => path.startsWith(`/src/photos/${gallery}/`))
     .sort(([a], [b]) => a.localeCompare(b, 'en'))
     .map(([path, mod]) => ({ alt: altFromPath(path), image: mod.default }));
-}
-
-/**
- * Витрина для главной. Основной путь — ручной список FEATURED в src/data/site.ts:
- * там отобраны самые резкие и разные по ракурсу кадры. Если список пуст, берутся
- * первые `perGallery` кадров каждой галереи вперемешку, чтобы витрина не опустела.
- */
-export function featuredPhotos(list: string[], perGallery: number): Photo[] {
-  if (list.length > 0) {
-    return list
-      .map((path) => {
-        const image = photoAt(path);
-        return image ? { alt: altFromPath(path), image } : null;
-      })
-      .filter((photo): photo is Photo => photo !== null);
-  }
-
-  const columns = GALLERIES.map((slug) => photosIn(slug).slice(0, perGallery));
-  const result: Photo[] = [];
-
-  for (let i = 0; i < perGallery; i++) {
-    for (const column of columns) {
-      const photo = column[i];
-      if (photo) result.push(photo);
-    }
-  }
-
-  return result;
 }
 
 /** Один кадр по точному пути, например 'hero.jpg' или 'about/portrait.jpg'. */
