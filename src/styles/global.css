@@ -75,6 +75,12 @@ h3 {
   padding-inline: var(--pad);
 }
 
+/* Блок обложек живёт во всю ширину окна, без общего ограничителя в 1600px:
+   на широком мониторе кадры растут вместе с экраном, а не упираются в колонку. */
+.wrap--wide {
+  max-width: none;
+}
+
 .skip {
   position: absolute;
   left: -9999px;
@@ -356,28 +362,28 @@ h3 {
 
 @media (min-width: 700px) {
   .cards {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
+/* Горизонтальный кадр 4×5: ширину задаёт колонка, высота — от пропорции. */
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  min-height: 220px;
-  padding: 20px;
+  aspect-ratio: 5 / 4;
+  padding: 24px;
   background: #121215;
-  border: 1px solid var(--line);
   overflow: hidden;
-  transition: border-color 0.15s;
+  transition: opacity 0.15s;
 }
 
 .card:hover {
-  border-color: #34343a;
+  opacity: 0.85;
 }
 
-/* Обложка раздела лежит фоном карточки, текст — поверх затемнения. */
+/* Обложка раздела лежит фоном карточки, название — поверх неё. */
 .card__media {
   position: absolute;
   inset: 0;
@@ -389,30 +395,39 @@ h3 {
   object-fit: cover;
 }
 
+/* Затемнение только у нижнего края и только под строкой названия: сам кадр
+   остаётся чистым, а белый текст не теряется на светлой фотографии. */
 .card__scrim {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 10, 11, 0.15) 0%,
-    rgba(10, 10, 11, 0.65) 55%,
-    rgba(10, 10, 11, 0.95) 100%
-  );
+  inset: auto 0 0;
+  height: 45%;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0) 0%, rgba(10, 10, 11, 0.8) 100%);
 }
 
 .card__title {
-  font-size: 1.375rem;
   position: relative;
+  margin: 0;
+  font-size: 1.5rem;
 }
 
+/* Пояснение к разделу — только на большом экране: на телефоне кадр уже, и
+   вторая строка съедает фотографию ради текста, который там не нужен. */
 .card__desc {
-  margin: 6px 0 0;
-  /* Не var(--muted): приглушённый серый рассчитан на ровную тёмную плашку, а
-     здесь под текстом фотография — на светлых её местах контраст падал до 2,7
-     при норме 4,5. Этот оттенок держит 4,5+ даже над самым светлым кадром. */
-  color: #dcdce0;
-  font-size: 0.875rem;
-  position: relative;
+  display: none;
+}
+
+@media (min-width: 700px) {
+  .card__desc {
+    display: block;
+    position: relative;
+    margin: 6px 0 0;
+    /* Не var(--muted): приглушённый серый рассчитан на ровную тёмную плашку, а
+       здесь под текстом фотография — на светлых её местах контраст падал до
+       2,7 при норме 4,5. Этот оттенок держит 4,5+ даже над самым светлым
+       кадром. */
+    color: #dcdce0;
+    font-size: 0.9375rem;
+  }
 }
 
 /* ---------- Страница-галерея ---------- */

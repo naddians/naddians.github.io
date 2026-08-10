@@ -54,7 +54,7 @@ const hero =
     <ContactButtons locale={locale} />
   </div>
 
-  <section class="wrap section section--top-line">
+  <section class="wrap wrap--wide section section--top-line">
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>
     <div class="cards">
       {
@@ -71,8 +71,8 @@ const hero =
                   src={cover}
                   alt=""
                   formats={['avif', 'webp']}
-                  widths={[400, 800]}
-                  sizes="(min-width: 700px) 33vw, 100vw"
+                  widths={[800, 1600]}
+                  sizes="(min-width: 700px) 50vw, 100vw"
                   loading="lazy"
                   decoding="async"
                   pictureAttributes={{ class: 'card__media' }}
