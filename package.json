@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "photos": "node scripts/photos.mjs",
+    "sharpness": "node scripts/sharpness.mjs",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

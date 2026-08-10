@@ -201,7 +201,10 @@ function applyManualOrder(files, gallery) {
     console.warn(`  ⚠ в order.json перечислены файлы, которых нет в inbox/${gallery.inbox}/: ${missing.join(', ')}`);
   }
   if (rest.length > 0) {
-    console.log(`  ℹ ${rest.length} кадр(ов) нет в order.json — ставлю в конец по времени съёмки`);
+    console.log(
+      `  ⚠ ${rest.length} кадр(ов) нет в order.json — временно ставлю в конец.\n` +
+        `    Место по резкости им даст:  npm run sharpness -- ${gallery.inbox}`,
+    );
   }
 
   return [...listed, ...rest];
