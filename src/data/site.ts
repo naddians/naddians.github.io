@@ -45,7 +45,7 @@ export type GallerySlug = (typeof GALLERIES)[number];
 export const COVERS: Record<string, string> = {
   '': 'hero.jpg',
   track: 'track/020-on-track.jpg',
-  people: 'people/120-people.jpg',
+  people: 'people/070-people.jpg',
   atmosphere: 'atmosphere/020-circuit.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
@@ -61,5 +61,6 @@ export const COVERS: Record<string, string> = {
  */
 export const COVER_FOCUS: Record<string, string> = {
   track: '50% 74%',
+  people: '50% 40%',
   atmosphere: '50% 58%',
 };
