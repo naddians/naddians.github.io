@@ -44,9 +44,22 @@ export type GallerySlug = (typeof GALLERIES)[number];
  */
 export const COVERS: Record<string, string> = {
   '': 'hero.jpg',
-  track: 'track/140-on-track.jpg',
+  track: 'track/020-on-track.jpg',
   people: 'people/120-people.jpg',
-  atmosphere: 'atmosphere/080-circuit.jpg',
+  atmosphere: 'atmosphere/020-circuit.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
+};
+
+/**
+ * Какая часть обложки видна в шапке раздела. Шапка — узкая полоса во всю ширину,
+ * поэтому от вертикального кадра в неё попадает только середина по высоте.
+ * Первое число — сдвиг по горизонтали, второе по вертикали: 50% — центр,
+ * 0% — верх кадра, 100% — низ. Раздела нет в списке = берётся центр.
+ * У On-Track и Circuit сюжет ниже середины кадра: без сдвига в полосу попадали
+ * реклама на отбойнике и пустая трибуна вместо болида и людей.
+ */
+export const COVER_FOCUS: Record<string, string> = {
+  track: '50% 74%',
+  atmosphere: '50% 58%',
 };

@@ -31,11 +31,42 @@ const MANUAL_ORDER = existsSync(ORDER_FILE)
  * ТЗ §7: качество 85, меньше исходника не увеличиваем.
  * Длинная сторона 1600px (решение заказчицы 2026-08-04, было 2560): репозиторий
  * публичный, поэтому в нём лежит ровно то, что нужно сайту, и ни пикселя сверх.
- * Наружу сайт отдаёт максимум 1200px в галереях и 1600px в герое — на вид разницы нет.
+ * Наружу сайт отдаёт максимум 1200px в галереях — на вид разницы нет.
+ * Исключение — кадры-обложки, им нужен запас: см. COVER_WIDTH ниже.
  */
 const MAX_SIDE = 1600;
 const QUALITY = 85;
 const STEP = 10;
+
+/**
+ * Кадры-обложки (COVERS в src/data/site.ts) живут по другим правилам: они стоят
+ * шапкой во всю ширину экрана, поэтому им важна ШИРИНА файла, а не длинная
+ * сторона. Широкий монитор — это 2000–3000 точек по ширине, а на ретине вдвое
+ * больше; кадр в 1600px там растягивается втрое и превращается в мыло.
+ * 3400px закрывает и 27-дюймовый 5K. В галерее эти же файлы отдаются мелкими,
+ * как все остальные, — лишние пиксели никто не качает.
+ */
+const COVER_WIDTH = 3400;
+const SITE_FILE = path.join(ROOT, 'src', 'data', 'site.ts');
+
+/** Читает список обложек прямо из site.ts, чтобы он не разъезжался с сайтом. */
+async function readCovers() {
+  const block = (await readFile(SITE_FILE, 'utf8')).match(/COVERS[^=]*=\s*{([^}]*)}/);
+  const covers = new Set(
+    [...(block?.[1] ?? '').matchAll(/['"]([^'"]+\.(?:jpe?g|png))['"]/gi)].map((m) =>
+      m[1].toLowerCase(),
+    ),
+  );
+  if (covers.size === 0) {
+    console.warn('⚠ не нашёл COVERS в src/data/site.ts — сохраню обложки обычного размера');
+  }
+  return covers;
+}
+
+/** Путь файла так, как он записан в COVERS: относительно src/photos/. */
+function coverKey(target) {
+  return path.relative(PHOTOS, target).split(path.sep).join('/').toLowerCase();
+}
 
 const COPYRIGHT = '© Nadia Stelmashuk';
 const ARTIST = 'Nadia Stelmashuk';
@@ -176,27 +207,27 @@ function applyManualOrder(files, gallery) {
   return [...listed, ...rest];
 }
 
-async function convert(source, target) {
+async function convert(source, target, { cover = false } = {}) {
   const image = sharp(source, { failOn: 'none' }).rotate();
   const meta = await image.metadata();
   const longest = Math.max(meta.width ?? 0, meta.height ?? 0);
 
-  // fit: 'inside' ограничивает длинную сторону независимо от ориентации.
-  // Задавать ширину или высоту по отдельности нельзя: metadata() отдаёт размеры
-  // до поворота по EXIF, и у повёрнутых кадров ограничивалась короткая сторона —
-  // длинная тогда уезжала до 3840px вместо 2560.
-  const pipeline = image
-    .resize({
-      width: MAX_SIDE,
-      height: MAX_SIDE,
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
+  // Обычный кадр: fit: 'inside' ограничивает длинную сторону независимо от
+  // ориентации. Задавать ширину или высоту по отдельности нельзя: metadata()
+  // отдаёт размеры до поворота по EXIF, и у повёрнутых кадров ограничивалась
+  // короткая сторона — длинная тогда уезжала до 3840px вместо 2560.
+  // Обложка: ограничиваем только ширину — высота у шапки всё равно обрезается.
+  const limit = cover
+    ? { width: COVER_WIDTH, withoutEnlargement: true }
+    : { width: MAX_SIDE, height: MAX_SIDE, fit: 'inside', withoutEnlargement: true };
+
+  const { width, height } = await image
+    .resize(limit)
     .jpeg({ quality: QUALITY, mozjpeg: true, chromaSubsampling: '4:4:4' })
     .withMetadata({ exif: { IFD0: { Copyright: COPYRIGHT, Artist: ARTIST } } })
     .toFile(target);
 
-  return { resized: longest > MAX_SIDE, from: longest };
+  return { resized: longest > Math.max(width, height), from: longest, to: `${width}×${height}` };
 }
 
 /** Удаляет только то, что скрипт сгенерировал раньше. Заглушки _demo не трогает. */
@@ -209,7 +240,7 @@ async function clearGenerated(dir) {
   }
 }
 
-async function processGallery(gallery) {
+async function processGallery(gallery, covers) {
   const inboxDir = path.join(INBOX, gallery.inbox);
   const found = await sortByCaptureTime(await collect(inboxDir));
 
@@ -232,17 +263,19 @@ async function processGallery(gallery) {
     const described = file.group || (isGenericName(bare) ? gallery.label : bare);
     const target = path.join(gallery.out, `${number}-${slugify(described)}.jpg`);
 
-    const result = await convert(file.full, target);
+    const isCover = covers.has(coverKey(target));
+    const result = await convert(file.full, target, { cover: isCover });
     console.log(
       `  ${file.name} → ${path.basename(target)}` +
-        (result.resized ? `  (${result.from}px → ${MAX_SIDE}px)` : '  (размер оставлен)'),
+        (result.resized ? `  (${result.from}px → ${result.to})` : '  (размер оставлен)') +
+        (isCover ? '  ← обложка раздела, храним крупнее' : ''),
     );
   }
 
   return files.length;
 }
 
-async function processSingle(single) {
+async function processSingle(single, covers) {
   const inboxDir = path.join(INBOX, single.inbox);
   const files = await sortByCaptureTime(await collect(inboxDir));
 
@@ -256,10 +289,11 @@ async function processSingle(single) {
   }
 
   await mkdir(path.dirname(single.out), { recursive: true });
-  const result = await convert(files[0].full, single.out);
+  const isCover = covers.has(coverKey(single.out));
+  const result = await convert(files[0].full, single.out, { cover: isCover });
   console.log(
     `\ninbox/${single.inbox}/ — ${files[0].name} → ${path.relative(ROOT, single.out)}` +
-      (result.resized ? `  (${result.from}px → ${MAX_SIDE}px)` : ''),
+      (result.resized ? `  (${result.from}px → ${result.to})` : ''),
   );
   return 1;
 }
@@ -273,9 +307,11 @@ async function main() {
     process.exit(1);
   }
 
+  const covers = await readCovers();
+
   let total = 0;
-  for (const gallery of GALLERIES) total += await processGallery(gallery);
-  for (const single of SINGLES) total += await processSingle(single);
+  for (const gallery of GALLERIES) total += await processGallery(gallery, covers);
+  for (const single of SINGLES) total += await processSingle(single, covers);
 
   console.log(`\nГотово: обработано ${total} фотографий.`);
   if (total > 0) {

@@ -21,6 +21,12 @@ const hero =
   photoAt('hero.jpeg') ??
   photoAt('hero.png') ??
   photoAt('hero_demo.jpg');
+
+// Кадр на всю ширину окна: на широком мониторе нужны варианты крупнее 1600px,
+// иначе браузер растягивает маленький файл и кадр мылит. Верхняя ступенька —
+// ширина самого файла (COVER_WIDTH в scripts/photos.mjs).
+const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
+const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.width] : [];
 ---
 
 <Base locale={locale} route={''}>
@@ -31,7 +37,7 @@ const hero =
           src={hero}
           alt=""
           formats={['avif', 'webp']}
-          widths={[640, 1024, 1600]}
+          widths={heroWidths}
           sizes="100vw"
           loading="eager"
           fetchpriority="high"
@@ -71,7 +77,7 @@ const hero =
                   src={cover}
                   alt=""
                   formats={['avif', 'webp']}
-                  widths={[800, 1600]}
+                  widths={[800, 1600, 2400].filter((w) => w <= cover.width)}
                   sizes="(min-width: 700px) 50vw, 100vw"
                   loading="lazy"
                   decoding="async"

@@ -3,7 +3,7 @@ import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { COVERS, type GallerySlug } from '../../data/site';
+import { COVERS, COVER_FOCUS, type GallerySlug } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
@@ -20,6 +20,18 @@ const photos = photosIn(gallery);
 // уходит в превью ссылки (COVERS). Меняется по-прежнему в одном месте:
 // src/data/site.ts.
 const cover = photoAt(COVERS[gallery] ?? '');
+
+// Шапка тянется во всю ширину окна, поэтому вариантов нужно больше, чем в
+// галерее: на широком мониторе и на ретине браузер берёт самый крупный.
+// Верхняя ступенька — ширина самого файла (COVER_WIDTH в scripts/photos.mjs).
+const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
+const heroWidths = cover
+  ? [...HERO_LADDER.filter((w) => w < cover.width), cover.width]
+  : [];
+
+// Видимая часть кадра — по умолчанию середина, отдельные разделы сдвигаются
+// (COVER_FOCUS в src/data/site.ts).
+const focus = COVER_FOCUS[gallery];
 ---
 
 <Base locale={locale} route={gallery as Route}>
@@ -30,12 +42,13 @@ const cover = photoAt(COVERS[gallery] ?? '');
           src={cover}
           alt=""
           formats={['avif', 'webp']}
-          widths={[640, 1024, 1600]}
+          widths={heroWidths}
           sizes="100vw"
           loading="eager"
           fetchpriority="high"
           pictureAttributes={{ class: 'hero__placeholder' }}
           class="hero__image hero__image--section"
+          style={focus ? `object-position: ${focus}` : undefined}
         />
         <div class="hero__scrim" />
         <div class="wrap hero__inner">
