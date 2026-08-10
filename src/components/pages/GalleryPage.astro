@@ -1,9 +1,10 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import type { GallerySlug } from '../../data/site';
-import { photosIn } from '../../utils/photos';
+import { COVERS, type GallerySlug } from '../../data/site';
+import { photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -14,13 +15,41 @@ const { locale, gallery } = Astro.props;
 const dict = t(locale);
 const meta = dict.galleries[gallery];
 const photos = photosIn(gallery);
+
+// Шапка раздела — тот же кадр, что стоит на карточке раздела на главной и
+// уходит в превью ссылки (COVERS). Меняется по-прежнему в одном месте:
+// src/data/site.ts.
+const cover = photoAt(COVERS[gallery] ?? '');
 ---
 
 <Base locale={locale} route={gallery as Route}>
-  <div class="wrap page-head">
-    <h1>{meta.title}</h1>
-    <p>{meta.description}</p>
-  </div>
+  {
+    cover ? (
+      <section class="hero hero--section">
+        <Picture
+          src={cover}
+          alt=""
+          formats={['avif', 'webp']}
+          widths={[640, 1024, 1600]}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          pictureAttributes={{ class: 'hero__placeholder' }}
+          class="hero__image hero__image--section"
+        />
+        <div class="hero__scrim" />
+        <div class="wrap hero__inner">
+          <h1 class="hero__title hero__title--section">{meta.title}</h1>
+          <p class="hero__slogan">{meta.description}</p>
+        </div>
+      </section>
+    ) : (
+      <div class="wrap page-head">
+        <h1>{meta.title}</h1>
+        <p>{meta.description}</p>
+      </div>
+    )
+  }
 
   {
     photos.length === 0 ? (

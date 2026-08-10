@@ -263,6 +263,35 @@ h3 {
   font-size: clamp(0.9375rem, 2.2vw, 1.125rem);
 }
 
+/* Шапка раздела: тот же кадр во всю ширину, что и на главной, но ниже —
+   под ним сразу должны начинаться сами фотографии, а не пустой экран. */
+.hero--section {
+  min-height: min(110vw, 460px);
+}
+
+/* Кадр-обложка кадрируется по центру: смещение героя главной подогнано под
+   один конкретный снимок, у обложек разделов сюжет в середине. */
+.hero__image--section {
+  object-position: 50% 50%;
+}
+
+/* Название раздела — тем же кеглем, что и заголовок обычной страницы:
+   имя автора на главной остаётся крупнее всего на сайте. */
+.hero__title--section {
+  font-size: clamp(1.75rem, 5vw, 3rem);
+}
+
+.hero--section .hero__inner {
+  padding-block: clamp(32px, 4vw, 48px);
+}
+
+.hero--section .hero__slogan {
+  margin-top: 10px;
+  max-width: var(--text-max);
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  color: #dcdce0;
+}
+
 /* ---------- Страница 404 ---------- */
 
 .notfound {
