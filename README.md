@@ -6,6 +6,7 @@
 - Адрес: https://naddians.github.io/
 - Языки: английский (`/`) и сербский-латиница (`/sr/`)
 - Техническое задание: [SPEC.md](SPEC.md) · анкета с контентом: [CONTENT.md](CONTENT.md)
+- Что ещё хочется сделать: [BACKLOG.md](BACKLOG.md)
 
 ---
 

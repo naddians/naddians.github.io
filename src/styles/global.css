@@ -186,9 +186,18 @@ h3 {
   flex: 1;
 }
 
+/* Высота задана пропорцией к ширине, а не долей высоты экрана. Во встроенном
+   браузере Instagram панель сверху прячется при скролле вниз, окно становится
+   ниже, и всё, что считалось от высоты окна (svh/vh), пересчитывалось прямо на
+   глазах: страница подпрыгивала на 44 px. Ширина при скролле не меняется —
+   пропорция держит блок неподвижным. По той же причине vh не осталось нигде,
+   где от него зависит раскладка. */
 .hero {
   position: relative;
-  min-height: min(78svh, 720px);
+  /* Было min(78svh, 720px) — доля высоты окна. Теперь доля ширины: 160vw даёт
+     на телефоне тот же кадр в рост, а потолок 620px держит десктоп там же, где
+     он был. На ноутбуке 1280×800 под кадром по-прежнему видны кнопки контактов. */
+  min-height: min(160vw, 620px);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -228,7 +237,7 @@ h3 {
 
 .hero__inner {
   position: relative;
-  padding-block: clamp(32px, 8vh, 72px);
+  padding-block: clamp(48px, 5vw, 72px);
 }
 
 .hero__title {
@@ -251,7 +260,7 @@ h3 {
 /* ---------- Страница 404 ---------- */
 
 .notfound {
-  min-height: min(70svh, 640px);
+  min-height: clamp(420px, 56vw, 560px);
 }
 
 /* «404» набрано как заголовок: тот же кегль, вес и цвет, что у строки под ним.
@@ -262,7 +271,7 @@ h3 {
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.1;
-  color: var(--text);
+  color: var(--fg);
 }
 
 .notfound__text {
@@ -322,7 +331,7 @@ h3 {
 }
 
 .section {
-  padding-block: clamp(40px, 8vh, 80px);
+  padding-block: clamp(48px, 5vw, 80px);
 }
 
 /* Отделяет блок ссылок на галереи от витрины кадров над ним. */
@@ -409,7 +418,7 @@ h3 {
 /* ---------- Страница-галерея ---------- */
 
 .page-head {
-  padding-block: clamp(32px, 7vh, 64px) 0;
+  padding-block: clamp(40px, 4.5vw, 64px) 0;
 }
 
 .page-head h1 {
@@ -447,7 +456,7 @@ h3 {
 
 .empty {
   color: var(--muted);
-  padding-block: clamp(28px, 6vh, 56px);
+  padding-block: clamp(32px, 4vw, 56px);
 }
 
 /* ---------- Обо мне / контакты ---------- */
@@ -455,7 +464,7 @@ h3 {
 .about {
   display: grid;
   gap: clamp(24px, 5vw, 56px);
-  padding-block: clamp(32px, 7vh, 64px);
+  padding-block: clamp(40px, 4.5vw, 64px);
   align-items: start;
 }
 
@@ -494,7 +503,7 @@ h3 {
 }
 
 .block {
-  margin-top: clamp(28px, 5vh, 44px);
+  margin-top: clamp(32px, 3vw, 44px);
 }
 
 .block__title {
@@ -539,7 +548,7 @@ h3 {
   display: grid;
   gap: 10px;
   margin: 0;
-  padding-block: clamp(24px, 5vh, 40px);
+  padding-block: clamp(28px, 3vw, 40px);
 }
 
 .contacts div {
@@ -564,7 +573,7 @@ h3 {
 /* ---------- Кнопки контактов ---------- */
 
 .contact-bar {
-  padding-block: clamp(20px, 4vh, 32px);
+  padding-block: clamp(24px, 2.5vw, 32px);
   border-bottom: 1px solid var(--line);
 }
 
@@ -633,7 +642,7 @@ h3 {
 }
 
 .cta__inner {
-  padding-block: clamp(44px, 9vh, 88px);
+  padding-block: clamp(56px, 6vw, 88px);
   max-width: 100%;
 }
 
@@ -650,7 +659,7 @@ h3 {
 }
 
 .cta__email {
-  margin: clamp(20px, 4vh, 32px) 0 0;
+  margin: clamp(24px, 2.5vw, 32px) 0 0;
   font-size: clamp(1.125rem, 4vw, 1.75rem);
   overflow-wrap: anywhere;
 }
