@@ -23,6 +23,9 @@ const { locale, route } = Astro.props;
     <meta name="color-scheme" content="dark" />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />
+    {/* Подтверждение прав на сайт для Google Search Console (F1_P14). Тег
+        должен оставаться на месте: если убрать, Google снимет подтверждение. */}
+    <meta name="google-site-verification" content="4UkhWcRwjTpDbHSPVPBaj9G7QVc9ZHygyOjd-bxcv68" />
     <Seo locale={locale} route={route} />
   </head>
   <body>
