@@ -96,8 +96,17 @@ h3 {
 
 /* ---------- Шапка ---------- */
 
+/* Каждая ссылка шапки сама несёт свою зону нажатия в 44px по высоте (норма
+   Apple; у Google 48). Раньше высота ссылки равнялась высоте строки — 22–27px,
+   и пальцем в меню приходилось целиться. Отступ невидимый: буквы стоят там же,
+   растёт только область касания, поэтому собственные поля шапки уменьшены —
+   иначе она стала бы вдвое выше. */
+:root {
+  --tap: 44px;
+}
+
 .header {
-  padding-block: 20px 16px;
+  padding-block: 8px 6px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -106,8 +115,16 @@ h3 {
 .header__inner {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: baseline;
-  gap: 10px 24px;
+  align-items: center;
+  gap: 0 24px;
+}
+
+.header__name,
+.nav a,
+.lang a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
 }
 
 .header__name {
@@ -118,11 +135,16 @@ h3 {
   white-space: nowrap;
 }
 
+/* Зазор между пунктами перенесён внутрь самих ссылок (padding вместо gap):
+   на вид расстояние то же, но короткие слова вроде About перестают быть
+   мишенью в 39px шириной. Отрицательные поля возвращают крайние пункты на
+   край колонки, иначе меню съезжало бы от имени и от кадров под ним. */
 .nav {
   grid-area: 2 / 1 / 3 / 3;
   display: flex;
-  gap: 20px;
+  gap: 4px;
   flex-wrap: wrap;
+  margin-inline: -8px;
 }
 
 @media (min-width: 760px) {
@@ -133,11 +155,12 @@ h3 {
   .nav {
     grid-area: 1 / 2;
     justify-self: end;
-    margin-right: 12px;
+    margin-right: -4px;
   }
 }
 
 .nav a {
+  padding-inline: 8px;
   font-size: 0.875rem;
   color: var(--muted);
   transition: color 0.15s;
@@ -148,9 +171,13 @@ h3 {
   color: var(--fg);
 }
 
+/* Подчёркивание активного пункта рисуется по тексту, а не по нижнему краю
+   ссылки: у ссылки теперь высота зоны нажатия, и рамка ушла бы от букв вниз. */
 .nav a[aria-current='page'] {
-  border-bottom: 1px solid var(--accent);
-  padding-bottom: 2px;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
 /* Единственный цветной элемент интерфейса — целевое действие. */
@@ -167,9 +194,15 @@ h3 {
   grid-area: 1 / 2;
   justify-self: end;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 0;
   font-size: 0.8125rem;
   color: var(--muted);
+  margin-right: -9px;
+}
+
+.lang a {
+  padding-inline: 9px;
 }
 
 @media (min-width: 760px) {
