@@ -64,10 +64,10 @@ export const COVERS: Record<string, string> = {
   track: 'track/020-on-track.jpg',
   people: 'people/070-people.jpg',
   atmosphere: 'atmosphere/020-circuit.jpg',
-  // Не первый кадр раздела, а второй: у первого оригинал всего 1445 px по
-  // ширине, и в шапке во всю ширину экрана он мылит (та же беда, что была
-  // у People). У второго запас есть.
-  beyond: 'beyond/020-porsche.jpg',
+  // Третий кадр, а не первый: у второго оригинал всего 1445 px по ширине и в
+  // шапке во всю ширину мылит (та же беда, что была у People), а первый стоит
+  // сразу под шапкой — кадр шёл бы дважды подряд. У третьего 3500 px и запас.
+  beyond: 'beyond/030-porsche.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
 };
