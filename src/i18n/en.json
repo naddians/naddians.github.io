@@ -6,6 +6,7 @@
     "track": "On-Track",
     "people": "People",
     "atmosphere": "Circuit",
+    "beyond": "Beyond F1",
     "about": "About",
     "contact": "Contact"
   },
@@ -21,6 +22,10 @@
     "atmosphere": {
       "title": "Circuit & Atmosphere",
       "description": "Wide views of the circuit: grandstands, trackside details, night"
+    },
+    "beyond": {
+      "title": "Beyond Formula 1",
+      "description": "Other series from the same weekends: Porsche Supercup and Formula 2"
     }
   },
   "home": {
@@ -74,6 +79,10 @@
     "atmosphere": {
       "title": "Circuit & Atmosphere — Nadia Stelmashuk",
       "description": "Wide views of a Formula 1 circuit: grandstands, trackside details and night."
+    },
+    "beyond": {
+      "title": "Beyond Formula 1 — Nadia Stelmashuk",
+      "description": "Motorsport beyond Formula 1: Porsche Mobil 1 Supercup and Formula 2 at Spa-Francorchamps and Silverstone."
     },
     "about": {
       "title": "About — Nadia Stelmashuk",

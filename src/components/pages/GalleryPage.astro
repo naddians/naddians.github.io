@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { COVERS, COVER_FOCUS, type GallerySlug } from '../../data/site';
-import { photoAt, photosIn } from '../../utils/photos';
+import { groupsIn, photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -15,6 +15,10 @@ const { locale, gallery } = Astro.props;
 const dict = t(locale);
 const meta = dict.galleries[gallery];
 const photos = photosIn(gallery);
+
+// Beyond F1 показывается группами по сериям, остальные разделы — одной лентой:
+// там серия одна и та же, называть её нечем и незачем (см. groupsIn).
+const groups = groupsIn(gallery);
 
 // Шапка раздела — тот же кадр, что стоит на карточке раздела на главной и
 // уходит в превью ссылки (COVERS). Меняется по-прежнему в одном месте:
@@ -67,6 +71,15 @@ const focus = COVER_FOCUS[gallery];
   {
     photos.length === 0 ? (
       <p class="wrap empty">{dict.gallery.empty}</p>
+    ) : groups.length > 0 ? (
+      <div class="wrap section">
+        {groups.map((group, index) => (
+          <section class:list={['series', index > 0 && 'series--next']}>
+            {group.title && <h2 class="series__title">{group.title}</h2>}
+            <PhotoGrid photos={group.photos} />
+          </section>
+        ))}
+      </div>
     ) : (
       <div class="wrap section">
         <PhotoGrid photos={photos} />

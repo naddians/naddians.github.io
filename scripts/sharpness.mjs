@@ -37,8 +37,29 @@ const INBOX = path.join(ROOT, 'inbox');
 const ORDER_FILE = path.join(ROOT, 'scripts', 'order.json');
 const SHEET_DIR = path.join(ROOT, 'sharpness');
 
-const GALLERIES = ['track', 'people', 'atmosphere'];
 const SUPPORTED = new Set(['.jpg', '.jpeg', '.png', '.tif', '.tiff', '.webp']);
+
+/** Одиночные кадры — не галереи, порядок им не нужен. */
+const SINGLES = new Set(['hero', 'portrait', '404']);
+
+/**
+ * Что можно считать: папки галерей в inbox/. Список не записан руками, а
+ * читается с диска — новая серия в Beyond F1 появляется просто созданием папки.
+ * Раздел с подпапками (inbox/beyond/) считается по частям: каждая серия отдельно,
+ * `beyond/porsche`, — порядок нужен внутри серии, а не поперёк них.
+ */
+async function listGalleries() {
+  const targets = [];
+  for (const entry of await readdir(INBOX, { withFileTypes: true })) {
+    if (!entry.isDirectory() || entry.name.startsWith('.') || SINGLES.has(entry.name)) continue;
+    const nested = (await readdir(path.join(INBOX, entry.name), { withFileTypes: true })).filter(
+      (sub) => sub.isDirectory() && !sub.name.startsWith('.'),
+    );
+    if (nested.length > 0) targets.push(...nested.map((sub) => `${entry.name}/${sub.name}`));
+    else targets.push(entry.name);
+  }
+  return targets;
+}
 
 /** Ширина рабочей копии, на которой ищем объект. Больше — медленнее, точнее не становится. */
 const WORK_WIDTH = 1400;
@@ -381,7 +402,8 @@ async function buildSheet(gallery, order, dir) {
   }
 
   await mkdir(SHEET_DIR, { recursive: true });
-  const out = path.join(SHEET_DIR, `${gallery}.jpg`);
+  // «beyond/porsche» → «beyond-porsche.jpg»: лист лежит одним файлом, без папок.
+  const out = path.join(SHEET_DIR, `${gallery.replace(/\//g, '-')}.jpg`);
   await sharp({ create: { width, height, channels: 3, background: { r: 10, g: 10, b: 10 } } })
     .composite(layers)
     .jpeg({ quality: 88 })
@@ -442,15 +464,17 @@ async function main() {
   // Раздел называется всегда, «пересчитать всё» тут нет намеренно: пересчёт
   // тасует галерею целиком, и делать это разделу, который сейчас не трогаем,
   // незачем — только терять уже выстроенный порядок.
+  const known = await listGalleries();
+
   if (galleries.length === 0) {
     console.error('Скажи, какой раздел считаем:  npm run sharpness -- <раздел>');
-    console.error(`Разделы: ${GALLERIES.join(', ')}`);
+    console.error(`Разделы: ${known.join(', ')}`);
     process.exit(1);
   }
 
   for (const gallery of galleries) {
-    if (!GALLERIES.includes(gallery)) {
-      console.error(`Не знаю галерею «${gallery}». Есть: ${GALLERIES.join(', ')}`);
+    if (!known.includes(gallery)) {
+      console.error(`Не знаю галерею «${gallery}». Есть: ${known.join(', ')}`);
       process.exit(1);
     }
   }

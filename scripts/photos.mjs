@@ -63,6 +63,15 @@ async function readCovers() {
   return covers;
 }
 
+/**
+ * Серии раздела Beyond F1 — читаются из того же site.ts, что и обложки, чтобы
+ * список не разъезжался с сайтом. Порядок здесь = порядок групп на странице.
+ */
+async function readSeries() {
+  const block = (await readFile(SITE_FILE, 'utf8')).match(/BEYOND_SERIES[^=]*=\s*\[([\s\S]*?)\]/);
+  return [...(block?.[1] ?? '').matchAll(/slug:\s*['"]([^'"]+)['"]/g)].map((m) => m[1]);
+}
+
 /** Путь файла так, как он записан в COVERS: относительно src/photos/. */
 function coverKey(target) {
   return path.relative(PHOTOS, target).split(path.sep).join('/').toLowerCase();
@@ -75,6 +84,10 @@ const GALLERIES = [
   { inbox: 'track', out: path.join(PHOTOS, 'track'), label: 'on track' },
   { inbox: 'people', out: path.join(PHOTOS, 'people'), label: 'people' },
   { inbox: 'atmosphere', out: path.join(PHOTOS, 'atmosphere'), label: 'circuit' },
+  // Единственный раздел с группами: кадры лежат по подпапкам-сериям
+  // (inbox/beyond/porsche/, inbox/beyond/f2/), и имя подпапки уезжает в имя
+  // файла — по нему сайт и раскладывает кадры по заголовкам.
+  { inbox: 'beyond', out: path.join(PHOTOS, 'beyond'), label: 'beyond f1', grouped: true },
 ];
 
 const SINGLES = [
@@ -183,8 +196,8 @@ function parseExifDate(buffer) {
  * Так добавленный кадр не ломает уже выстроенную галерею: он просто окажется
  * последним, пока его не впишут в список.
  */
-function applyManualOrder(files, gallery) {
-  const wanted = MANUAL_ORDER[gallery.inbox];
+function applyManualOrder(files, key) {
+  const wanted = MANUAL_ORDER[key];
   if (!Array.isArray(wanted) || wanted.length === 0) return files;
 
   const rank = new Map(wanted.map((name, index) => [name.toLowerCase(), index]));
@@ -198,16 +211,49 @@ function applyManualOrder(files, gallery) {
   const present = new Set(files.map((file) => file.name.toLowerCase()));
   const missing = wanted.filter((name) => !present.has(name.toLowerCase()));
   if (missing.length > 0) {
-    console.warn(`  ⚠ в order.json перечислены файлы, которых нет в inbox/${gallery.inbox}/: ${missing.join(', ')}`);
+    console.warn(`  ⚠ в order.json перечислены файлы, которых нет в inbox/${key}/: ${missing.join(', ')}`);
   }
   if (rest.length > 0) {
     console.log(
       `  ⚠ ${rest.length} кадр(ов) нет в order.json — временно ставлю в конец.\n` +
-        `    Место по резкости им даст:  npm run sharpness -- ${gallery.inbox}`,
+        `    Место по резкости им даст:  npm run sharpness -- ${key}`,
     );
   }
 
   return [...listed, ...rest];
+}
+
+/**
+ * Порядок в разделе с группами (Beyond F1): сначала серии в порядке
+ * BEYOND_SERIES, внутри каждой — свой порядок из order.json по ключу
+ * «beyond/porsche». Серии не перемешиваются между собой, а резкость считается
+ * внутри серии: npm run sharpness -- beyond/porsche
+ */
+function applyGroupOrder(files, gallery, series) {
+  const ordered = [];
+  for (const slug of series) {
+    const inGroup = files.filter((file) => slugify(file.group) === slug);
+    if (inGroup.length === 0) {
+      console.log(`  · серия ${slug} — папки inbox/${gallery.inbox}/${slug}/ нет или она пуста`);
+      continue;
+    }
+    console.log(`  · серия ${slug} — ${inGroup.length} шт.`);
+    ordered.push(...applyManualOrder(inGroup, `${gallery.inbox}/${slug}`));
+  }
+
+  // Кадр, положенный в inbox/beyond/ мимо подпапок: серии у него нет, на сайте
+  // он встанет в конец без заголовка. Молчать об этом нельзя — скорее всего
+  // просто забыли папку.
+  const loose = files.filter((file) => !series.includes(slugify(file.group)));
+  if (loose.length > 0) {
+    console.warn(
+      `  ⚠ ${loose.length} кадр(ов) лежат в inbox/${gallery.inbox}/ без подпапки-серии:\n` +
+        `    ${loose.map((file) => file.name).join(', ')}\n` +
+        `    Серии сейчас: ${series.join(', ')} — положи кадр в нужную папку.`,
+    );
+  }
+
+  return [...ordered, ...loose];
 }
 
 async function convert(source, target, { cover = false } = {}) {
@@ -243,7 +289,7 @@ async function clearGenerated(dir) {
   }
 }
 
-async function processGallery(gallery, covers) {
+async function processGallery(gallery, covers, series) {
   const inboxDir = path.join(INBOX, gallery.inbox);
   const found = await sortByCaptureTime(await collect(inboxDir));
 
@@ -253,7 +299,9 @@ async function processGallery(gallery, covers) {
   }
 
   console.log(`\ninbox/${gallery.inbox}/ — ${found.length} шт.`);
-  const files = applyManualOrder(found, gallery);
+  const files = gallery.grouped
+    ? applyGroupOrder(found, gallery, series)
+    : applyManualOrder(found, gallery.inbox);
   await mkdir(gallery.out, { recursive: true });
   await clearGenerated(gallery.out);
 
@@ -305,15 +353,17 @@ async function main() {
   if (!existsSync(INBOX)) {
     console.error(
       'Папки inbox/ нет.\n' +
-        'Создай её и положи внутрь папки track, people, atmosphere, hero, portrait, 404.',
+        'Создай её и положи внутрь папки track, people, atmosphere, beyond, hero, portrait, 404.\n' +
+        'В beyond/ кадры лежат ещё на этаж глубже, по сериям: beyond/porsche/, beyond/f2/.',
     );
     process.exit(1);
   }
 
   const covers = await readCovers();
+  const series = await readSeries();
 
   let total = 0;
-  for (const gallery of GALLERIES) total += await processGallery(gallery, covers);
+  for (const gallery of GALLERIES) total += await processGallery(gallery, covers, series);
   for (const single of SINGLES) total += await processSingle(single, covers);
 
   console.log(`\nГотово: обработано ${total} фотографий.`);

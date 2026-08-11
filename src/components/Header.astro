@@ -2,6 +2,7 @@
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { LOCALES, LOCALE_NAMES, t, type Locale, type Route } from '../i18n';
 import { GALLERIES } from '../data/site';
+import { photosIn } from '../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -11,8 +12,15 @@ interface Props {
 const { locale, route } = Astro.props;
 const dict = t(locale);
 
+// Раздел без единого кадра в меню не показывается: страница у него есть и
+// открывается по прямой ссылке, но вести туда посетителя не за чем. Так новый
+// раздел не выходит наружу раньше своих фотографий — он появляется сам, когда
+// кадры лягут в src/photos/.
 const links: { route: Route; label: string }[] = [
-  ...GALLERIES.map((slug) => ({ route: slug as Route, label: dict.nav[slug] })),
+  ...GALLERIES.filter((slug) => photosIn(slug).length > 0).map((slug) => ({
+    route: slug as Route,
+    label: dict.nav[slug],
+  })),
   { route: 'about', label: dict.nav.about },
 ];
 ---

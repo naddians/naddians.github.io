@@ -6,6 +6,7 @@
     "track": "Na stazi",
     "people": "Ljudi",
     "atmosphere": "Atmosfera",
+    "beyond": "Van F1",
     "about": "O meni",
     "contact": "Kontakt"
   },
@@ -21,6 +22,10 @@
     "atmosphere": {
       "title": "Staza i atmosfera",
       "description": "Široki kadrovi staze: tribine, detalji uz stazu, noć"
+    },
+    "beyond": {
+      "title": "Van Formule 1",
+      "description": "Druge serije sa istih vikenda: Porsche Supercup i Formula 2"
     }
   },
   "home": {
@@ -74,6 +79,10 @@
     "atmosphere": {
       "title": "Staza i atmosfera — Nadia Stelmashuk",
       "description": "Široki kadrovi staze Formule 1: tribine, detalji uz stazu i noć."
+    },
+    "beyond": {
+      "title": "Van Formule 1 — Nadia Stelmashuk",
+      "description": "Motosport van Formule 1: Porsche Mobil 1 Supercup i Formula 2 na Spa-Francorchamps i Silverstoneu."
     },
     "about": {
       "title": "O meni — Nadia Stelmashuk",

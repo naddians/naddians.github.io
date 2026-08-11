@@ -33,9 +33,26 @@ export const GEAR = 'Canon R7 · RF 100-400mm f/5.6-8 · Sigma 17-40mm f/1.8 DC 
  * ВРЕМЕННЫЕ названия — заказчица пришлёт свои (CONTENT.md §3).
  * Меняется здесь + в src/i18n/*.json, папка переименовывается следом.
  */
-export const GALLERIES = ['track', 'people', 'atmosphere'] as const;
+export const GALLERIES = ['track', 'people', 'atmosphere', 'beyond'] as const;
 
 export type GallerySlug = (typeof GALLERIES)[number];
+
+/**
+ * Серии внутри раздела Beyond F1. Раздел устроен не так, как три остальных:
+ * те отвечают на вопрос «что в кадре», а этот — «какая это серия», поэтому
+ * кадры в нём идут группами с заголовками, а не одной лентой.
+ *
+ * `slug` = имя подпапки в inbox/beyond/ и хвост в имени файла
+ * (`inbox/beyond/porsche/что-угодно.jpg` → `src/photos/beyond/010-porsche.jpg`).
+ * Порядок групп на странице = порядок в этом списке.
+ *
+ * Новая серия = новая строка здесь + папка в inbox/beyond/. Когда какая-то из
+ * них перерастёт общий раздел, она без переделок переезжает на свою страницу.
+ */
+export const BEYOND_SERIES = [
+  { slug: 'porsche', title: 'Porsche Mobil 1 Supercup' },
+  { slug: 'f2', title: 'Formula 2' },
+] as const;
 
 /**
  * Обложки: из них при сборке режется картинка 1200×630 для превью ссылки
@@ -47,6 +64,7 @@ export const COVERS: Record<string, string> = {
   track: 'track/020-on-track.jpg',
   people: 'people/070-people.jpg',
   atmosphere: 'atmosphere/020-circuit.jpg',
+  beyond: 'beyond/010-porsche.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
 };

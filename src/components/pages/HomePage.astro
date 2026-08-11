@@ -5,7 +5,7 @@ import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { COVERS, GALLERIES } from '../../data/site';
-import { photoAt } from '../../utils/photos';
+import { photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -64,7 +64,9 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>
     <div class="cards">
       {
-        GALLERIES.map((slug) => {
+        // Пустой раздел карточки не получает — по той же причине, что и строки
+        // в меню (см. Header.astro): наружу он выходит вместе с кадрами.
+        GALLERIES.filter((slug) => photosIn(slug).length > 0).map((slug) => {
           // Обложка та же, что уходит в превью ссылки (COVERS): раздел выглядит
           // одинаково и на главной, и в мессенджере, а менять её по-прежнему
           // в одном месте — src/data/site.ts.
