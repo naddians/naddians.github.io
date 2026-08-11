@@ -503,6 +503,26 @@ h3 {
   margin-bottom: var(--gap);
 }
 
+/* Границы колонок расставлены при сборке (PhotoGrid.astro): браузеры делят
+   галерею на колонки по-своему, и Safari на короткой галерее складывал два
+   кадра в первую колонку, оставляя третью пустой. Здесь мы говорим прямо,
+   с какого кадра начинается колонка, — раскладка одинаковая везде.
+   Классов два, потому что колонок то две, то три: правило работает только
+   в своей ширине окна, иначе перенос уехал бы не туда. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .grid > .grid__break-2 {
+    -webkit-column-break-before: always; /* Safari понимает только старое имя */
+    break-before: column;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid > .grid__break-3 {
+    -webkit-column-break-before: always;
+    break-before: column;
+  }
+}
+
 .empty {
   color: var(--muted);
   padding-block: clamp(32px, 4vw, 56px);

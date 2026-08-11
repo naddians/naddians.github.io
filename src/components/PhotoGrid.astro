@@ -25,6 +25,75 @@ function widthsFor(width: number): number[] {
 }
 
 const SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
+
+/**
+ * Где начинается новая колонка. Раскладку колонок браузеры считают сами и
+ * считают по-разному: Safari на короткой галерее складывает два кадра в первую
+ * колонку и оставляет последнюю пустой — на разделе из трёх кадров это дыра
+ * в треть экрана. Поэтому границы колонок считаются здесь, при сборке, и
+ * проставляются кадрам жёстко (`break-before: column` в global.css).
+ *
+ * Делить можно только подряд идущие кадры: колонки заполняются по порядку, и
+ * четвёртый кадр не может уехать в первую колонку, минуя третий.
+ *
+ * Высота кадра берётся как отношение сторон: ширина колонок одинаковая, значит
+ * пропорции достаточно, чтобы сравнить, какая колонка длиннее.
+ */
+function columnStarts(photos: Photo[], cols: number): Set<number> {
+  const starts = new Set<number>();
+  if (cols <= 1 || photos.length <= 1) return starts;
+
+  // Кадров меньше, чем колонок: каждому своя, иначе последние останутся пустыми.
+  if (photos.length <= cols) {
+    for (let i = 1; i < photos.length; i++) starts.add(i);
+    return starts;
+  }
+
+  const ratios = photos.map((p) => p.image.height / p.image.width);
+  const n = ratios.length;
+
+  // Сумма высот первых i кадров — чтобы высоту любого куска брать вычитанием.
+  const prefix = [0];
+  for (const r of ratios) prefix.push(prefix[prefix.length - 1] + r);
+  const heightOf = (from: number, to: number) => prefix[to] - prefix[from];
+
+  // Перебираем все способы разрезать ленту на `cols` кусков и берём тот, где
+  // самая длинная колонка получается короче всего: кадров десятки, вариантов
+  // считанные сотни — считать полным перебором дешевле, чем угадывать.
+  // best[k][i] — какой выходит самая длинная колонка, если первые i кадров
+  // разложить в k колонок; cut[k][i] — где для этого начинается k-я колонка.
+  const best: number[][] = [];
+  const cut: number[][] = [];
+  for (let k = 0; k <= cols; k++) {
+    best.push(new Array(n + 1).fill(Infinity));
+    cut.push(new Array(n + 1).fill(0));
+  }
+  best[0][0] = 0;
+
+  for (let k = 1; k <= cols; k++) {
+    for (let i = k; i <= n; i++) {
+      for (let j = k - 1; j < i; j++) {
+        const tallest = Math.max(best[k - 1][j], heightOf(j, i));
+        if (tallest < best[k][i]) {
+          best[k][i] = tallest;
+          cut[k][i] = j;
+        }
+      }
+    }
+  }
+
+  let end = n;
+  for (let k = cols; k >= 1; k--) {
+    const from = cut[k][end];
+    if (from > 0) starts.add(from);
+    end = from;
+  }
+
+  return starts;
+}
+
+const breaksAt2 = columnStarts(photos, 2);
+const breaksAt3 = columnStarts(photos, 3);
 ---
 
 <div class="grid">
@@ -39,6 +108,13 @@ const SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
         loading={i < eagerCount ? 'eager' : 'lazy'}
         fetchpriority={leading && i === 0 ? 'high' : undefined}
         decoding="async"
+        pictureAttributes={{
+          // Класс нужен именно на <picture>: колонку занимает он, а не <img>.
+          class:
+            [breaksAt2.has(i) && 'grid__break-2', breaksAt3.has(i) && 'grid__break-3']
+              .filter(Boolean)
+              .join(' ') || undefined,
+        }}
       />
     ))
   }
