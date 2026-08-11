@@ -64,7 +64,10 @@ export const COVERS: Record<string, string> = {
   track: 'track/020-on-track.jpg',
   people: 'people/070-people.jpg',
   atmosphere: 'atmosphere/020-circuit.jpg',
-  beyond: 'beyond/010-porsche.jpg',
+  // Не первый кадр раздела, а второй: у первого оригинал всего 1445 px по
+  // ширине, и в шапке во всю ширину экрана он мылит (та же беда, что была
+  // у People). У второго запас есть.
+  beyond: 'beyond/020-porsche.jpg',
   about: 'about/portrait.jpg',
   contact: 'hero.jpg',
 };
@@ -81,4 +84,7 @@ export const COVER_FOCUS: Record<string, string> = {
   track: '50% 74%',
   people: '50% 40%',
   atmosphere: '50% 58%',
+  // Кадр вертикальный, машина в нижней половине: по центру полоса резала её
+  // пополам. 62% — весь болид с антикрылом, ничего не обрезано.
+  beyond: '50% 62%',
 };
