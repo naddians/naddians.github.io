@@ -26,96 +26,108 @@ function widthsFor(width: number): number[] {
 
 const SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
 
+/** Кадр вместе с его номером в ленте: номер решает, какие кадры грузятся сразу. */
+type Numbered = { photo: Photo; index: number };
+
 /**
- * Где начинается новая колонка. Раскладку колонок браузеры считают сами и
- * считают по-разному: Safari на короткой галерее складывает два кадра в первую
- * колонку и оставляет последнюю пустой — на разделе из трёх кадров это дыра
- * в треть экрана. Поэтому границы колонок считаются здесь, при сборке, и
- * проставляются кадрам жёстко (`break-before: column` в global.css).
+ * Как разложить ленту по колонкам. Раскладку колонок браузеры считают сами и
+ * считают по-разному: и какой кадр в какую колонку попадёт, и какой высоты
+ * выйдет вся галерея. Safari на этом ошибался дважды — сначала складывал два
+ * кадра в первую колонку и оставлял третью пустой (F1_P23), потом растягивал
+ * галерею на всю длину ленты, и следующая группа уезжала вниз (F1_P26).
+ * Поэтому колонки нарезаются здесь, при сборке, и лежат в разметке готовыми
+ * блоками — браузеру остаётся поставить их в ряд.
  *
- * Делить можно только подряд идущие кадры: колонки заполняются по порядку, и
- * четвёртый кадр не может уехать в первую колонку, минуя третий.
+ * Колонок в окне то одна, то две, то три, а кадр в разметке должен лежать один
+ * раз, иначе браузер скачает его дважды. Отсюда вложенность: лента режется
+ * пополам, и одна из половин делится ещё раз — это и есть третья колонка.
+ * В окне поуже лишний уровень распускается (`display: contents` в global.css),
+ * и колонками становятся сами половины.
  *
- * Высота кадра берётся как отношение сторон: ширина колонок одинаковая, значит
- * пропорции достаточно, чтобы сравнить, какая колонка длиннее.
+ * Отсюда же и цена: разрез пополам обязан совпасть с одной из границ тройки,
+ * а лучший разрез на две колонки редко попадает в границы лучшего разреза на
+ * три. Приоритет у трёх — широкий экран главнее: три колонки берутся такими же,
+ * какими их дал бы свободный разрез (самая длинная колонка — самая короткая из
+ * возможных), с запасом в 5%. Запас нужен, чтобы было из чего выбирать: из
+ * подходящих вариантов берётся тот, что ровнее ложится на две колонки, и на
+ * длинных лентах это спрямляет их заметно — на On-Track разница 29% против 14%.
+ * Кадров десятки, вариантов считанные сотни — перебор дешевле, чем угадывание.
+ *
+ * Высота кадра здесь — отношение сторон: ширина у колонок одинаковая, значит
+ * пропорций достаточно, чтобы сравнить, какая колонка длиннее.
  */
-function columnStarts(photos: Photo[], cols: number): Set<number> {
-  const starts = new Set<number>();
-  if (cols <= 1 || photos.length <= 1) return starts;
-
+function layoutColumns(items: Numbered[]): Numbered[][][] {
   // Кадров меньше, чем колонок: каждому своя, иначе последние останутся пустыми.
-  if (photos.length <= cols) {
-    for (let i = 1; i < photos.length; i++) starts.add(i);
-    return starts;
-  }
+  if (items.length <= 2) return items.map((item) => [[item]]);
 
-  const ratios = photos.map((p) => p.image.height / p.image.width);
+  const ratios = items.map(({ photo }) => photo.image.height / photo.image.width);
   const n = ratios.length;
 
   // Сумма высот первых i кадров — чтобы высоту любого куска брать вычитанием.
   const prefix = [0];
   for (const r of ratios) prefix.push(prefix[prefix.length - 1] + r);
-  const heightOf = (from: number, to: number) => prefix[to] - prefix[from];
+  const height = (from: number, to: number) => prefix[to] - prefix[from];
 
-  // Перебираем все способы разрезать ленту на `cols` кусков и берём тот, где
-  // самая длинная колонка получается короче всего: кадров десятки, вариантов
-  // считанные сотни — считать полным перебором дешевле, чем угадывать.
-  // best[k][i] — какой выходит самая длинная колонка, если первые i кадров
-  // разложить в k колонок; cut[k][i] — где для этого начинается k-я колонка.
-  const best: number[][] = [];
-  const cut: number[][] = [];
-  for (let k = 0; k <= cols; k++) {
-    best.push(new Array(n + 1).fill(Infinity));
-    cut.push(new Array(n + 1).fill(0));
+  // Сначала — насколько короткой вообще может быть самая длинная из трёх колонок.
+  let free3 = Infinity;
+  for (let a = 1; a < n - 1; a++) {
+    for (let b = a + 1; b < n; b++) {
+      free3 = Math.min(free3, Math.max(height(0, a), height(a, b), height(b, n)));
+    }
   }
-  best[0][0] = 0;
 
-  for (let k = 1; k <= cols; k++) {
-    for (let i = k; i <= n; i++) {
-      for (let j = k - 1; j < i; j++) {
-        const tallest = Math.max(best[k - 1][j], heightOf(j, i));
-        if (tallest < best[k][i]) {
-          best[k][i] = tallest;
-          cut[k][i] = j;
+  // Затем из вариантов, укладывающихся в эти 5%, берём самый ровный на двух
+  // колонках. c — где лента режется пополам, d — где делится половина: если d
+  // меньше c, делится первая половина, если больше — вторая.
+  const limit = free3 * 1.05;
+  let bestTwo = Infinity;
+  let bestCut: [number, number] = [1, 2];
+
+  for (let a = 1; a < n - 1; a++) {
+    for (let b = a + 1; b < n; b++) {
+      if (Math.max(height(0, a), height(a, b), height(b, n)) > limit) continue;
+
+      // Тройка (a, b) годится; пополам её можно сложить по a или по b.
+      for (const c of [a, b]) {
+        const two = Math.max(height(0, c), height(c, n));
+        if (two < bestTwo) {
+          bestTwo = two;
+          bestCut = [c, c === a ? b : a];
         }
       }
     }
   }
 
-  let end = n;
-  for (let k = cols; k >= 1; k--) {
-    const from = cut[k][end];
-    if (from > 0) starts.add(from);
-    end = from;
-  }
-
-  return starts;
+  const [c, d] = bestCut;
+  return d < c
+    ? [[items.slice(0, d), items.slice(d, c)], [items.slice(c)]]
+    : [[items.slice(0, c)], [items.slice(c, d), items.slice(d)]];
 }
 
-const breaksAt2 = columnStarts(photos, 2);
-const breaksAt3 = columnStarts(photos, 3);
+const layout = layoutColumns(photos.map((photo, index) => ({ photo, index })));
 ---
 
 <div class="grid">
   {
-    photos.map((photo, i) => (
-      <Picture
-        src={photo.image}
-        alt={photo.alt}
-        formats={['avif', 'webp']}
-        widths={widthsFor(photo.image.width)}
-        sizes={SIZES}
-        loading={i < eagerCount ? 'eager' : 'lazy'}
-        fetchpriority={leading && i === 0 ? 'high' : undefined}
-        decoding="async"
-        pictureAttributes={{
-          // Класс нужен именно на <picture>: колонку занимает он, а не <img>.
-          class:
-            [breaksAt2.has(i) && 'grid__break-2', breaksAt3.has(i) && 'grid__break-3']
-              .filter(Boolean)
-              .join(' ') || undefined,
-        }}
-      />
+    layout.map((half) => (
+      <div class="grid__half">
+        {half.map((third) => (
+          <div class="grid__third">
+            {third.map(({ photo, index }) => (
+              <Picture
+                src={photo.image}
+                alt={photo.alt}
+                formats={['avif', 'webp']}
+                widths={widthsFor(photo.image.width)}
+                sizes={SIZES}
+                loading={index < eagerCount ? 'eager' : 'lazy'}
+                fetchpriority={leading && index === 0 ? 'high' : undefined}
+                decoding="async"
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     ))
   }
 </div>
