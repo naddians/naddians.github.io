@@ -4,7 +4,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { COVERS, GALLERIES } from '../../data/site';
+import { CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
@@ -71,6 +71,11 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
           // одинаково и на главной, и в мессенджере, а менять её по-прежнему
           // в одном месте — src/data/site.ts.
           const cover = photoAt(COVERS[slug] ?? '');
+          // Видимая часть кадра в карточке — по умолчанию середина. Разделам,
+          // у которых сюжет упирается в подпись, кадр сдвигается (CARD_FOCUS
+          // в src/data/site.ts). Сдвиг свой, не тот, что у шапки раздела:
+          // там полоса во всю ширину, здесь прямоугольник 5×4.
+          const focus = CARD_FOCUS[slug];
 
           return (
             <a class="card" href={getRelativeLocaleUrl(locale, slug as Route)}>
@@ -85,6 +90,7 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
                   decoding="async"
                   pictureAttributes={{ class: 'card__media' }}
                   class="card__image"
+                  style={focus ? `object-position: ${focus}` : undefined}
                 />
               )}
               <div class="card__scrim" />
