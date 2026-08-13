@@ -49,12 +49,23 @@ const STEP = 10;
 const COVER_WIDTH = 3400;
 const SITE_FILE = path.join(ROOT, 'src', 'data', 'site.ts');
 
-/** Читает список обложек прямо из site.ts, чтобы он не разъезжался с сайтом. */
+/**
+ * Читает список обложек прямо из site.ts, чтобы он не разъезжался с сайтом.
+ * Списка два: COVERS (карточка на главной, шапка, превью ссылки) и HEADERS —
+ * кадры, которые стоят только в шапке раздела. Запас по ширине нужен обоим:
+ * во всю ширину экрана растягиваются и те, и другие.
+ */
 async function readCovers() {
-  const block = (await readFile(SITE_FILE, 'utf8')).match(/COVERS[^=]*=\s*{([^}]*)}/);
+  const site = await readFile(SITE_FILE, 'utf8');
+  const blocks = [
+    site.match(/COVERS[^=]*=\s*{([^}]*)}/),
+    site.match(/HEADERS[^=]*=\s*{([\s\S]*?)\n};/),
+  ];
   const covers = new Set(
-    [...(block?.[1] ?? '').matchAll(/['"]([^'"]+\.(?:jpe?g|png))['"]/gi)].map((m) =>
-      m[1].toLowerCase(),
+    blocks.flatMap((block) =>
+      [...(block?.[1] ?? '').matchAll(/['"]([^'"]+\.(?:jpe?g|png))['"]/gi)].map((m) =>
+        m[1].toLowerCase(),
+      ),
     ),
   );
   if (covers.size === 0) {

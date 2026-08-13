@@ -3,7 +3,8 @@ import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { COVERS, COVER_FOCUS, type GallerySlug } from '../../data/site';
+import { CARD_FOCUS, COVERS, HEADERS, type GallerySlug } from '../../data/site';
+import { HERO_ASPECT, focusFor } from '../../utils/focus';
 import { groupsIn, photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
@@ -22,8 +23,10 @@ const groups = groupsIn(gallery);
 
 // Шапка раздела — тот же кадр, что стоит на карточке раздела на главной и
 // уходит в превью ссылки (COVERS). Меняется по-прежнему в одном месте:
-// src/data/site.ts.
-const cover = photoAt(COVERS[gallery] ?? '');
+// src/data/site.ts. Исключение — разделы из HEADERS: там кадр карточки не
+// выдержал показа во всю ширину, и у шапки свой (см. комментарий у HEADERS).
+const header = HEADERS[gallery];
+const cover = photoAt(header?.photo ?? '') ?? photoAt(COVERS[gallery] ?? '');
 
 // Шапка тянется во всю ширину окна, поэтому вариантов нужно больше, чем в
 // галерее: на широком мониторе и на ретине браузер берёт самый крупный.
@@ -33,9 +36,16 @@ const heroWidths = cover
   ? [...HERO_LADDER.filter((w) => w < cover.width), cover.width]
   : [];
 
-// Видимая часть кадра — по умолчанию середина, отдельные разделы сдвигаются
-// (COVER_FOCUS в src/data/site.ts).
-const focus = COVER_FOCUS[gallery];
+// Видимая часть кадра — та же, что на карточке раздела на главной: сдвиг задан
+// один раз (CARD_FOCUS в src/data/site.ts) и пересчитывается с прямоугольника
+// карточки на полосу шапки (src/utils/focus.ts). Сюжет стоит в обоих местах
+// одинаково, и шапка читается как продолжение карточки, с которой сюда пришли.
+// У своего кадра шапки пересчитывать не от чего — сдвиг задан прямо в HEADERS.
+const focus = header
+  ? header.focus
+  : cover
+    ? focusFor(cover, HERO_ASPECT, CARD_FOCUS[gallery])
+    : undefined;
 ---
 
 <Base locale={locale} route={gallery as Route}>
