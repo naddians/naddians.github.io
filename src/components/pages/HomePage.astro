@@ -89,7 +89,13 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
               )}
               <div class="card__scrim" />
               <h3 class="card__title">{dict.galleries[slug].title}</h3>
-              <p class="card__desc">{dict.galleries[slug].description}</p>
+              {/* Два варианта пояснения: на узкой карточке полное разворачивалось
+                  в две-три строки и загораживало кадр. Какое показать, решает
+                  ширина самой карточки, а не окна (global.css, @container). */}
+              <p class="card__desc">
+                <span class="card__desc-short">{dict.galleries[slug].short}</span>
+                <span class="card__desc-full">{dict.galleries[slug].description}</span>
+              </p>
             </a>
           );
         })

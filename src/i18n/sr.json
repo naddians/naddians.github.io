@@ -13,19 +13,23 @@
   "galleries": {
     "track": {
       "title": "Akcija na stazi",
-      "description": "Bolidi u pokretu: panning, apeksi, zone kočenja"
+      "description": "Bolidi u pokretu: panning, apeksi, zone kočenja",
+      "short": "Bolidi u pokretu"
     },
     "people": {
       "title": "Ljudi i trenuci",
-      "description": "Vozači, timovi i navijači izbliza — portreti i emocije"
+      "description": "Vozači, timovi i navijači izbliza — portreti i emocije",
+      "short": "Vozači, timovi i navijači"
     },
     "atmosphere": {
       "title": "Staza i atmosfera",
-      "description": "Široki kadrovi staze: tribine, detalji uz stazu, noć"
+      "description": "Široki kadrovi staze: tribine, detalji uz stazu, noć",
+      "short": "Široki kadrovi staze"
     },
     "beyond": {
       "title": "Van Formule 1",
-      "description": "Druge serije sa istih vikenda: Porsche Supercup i Formula 2"
+      "description": "Druge serije sa istih vikenda: Porsche Supercup i Formula 2",
+      "short": "Druge serije, isti vikendi"
     }
   },
   "home": {

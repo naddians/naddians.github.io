@@ -13,19 +13,23 @@
   "galleries": {
     "track": {
       "title": "On-Track Action",
-      "description": "Cars in motion: panning, apexes, braking zones"
+      "description": "Cars in motion: panning, apexes, braking zones",
+      "short": "Cars in motion"
     },
     "people": {
       "title": "People & Moments",
-      "description": "Drivers, teams and fans up close — portraits and emotion"
+      "description": "Drivers, teams and fans up close — portraits and emotion",
+      "short": "Drivers, teams and fans up close"
     },
     "atmosphere": {
       "title": "Circuit & Atmosphere",
-      "description": "Wide views of the circuit: grandstands, trackside details, night"
+      "description": "Wide views of the circuit: grandstands, trackside details, night",
+      "short": "Wide views of the circuit"
     },
     "beyond": {
       "title": "Beyond Formula 1",
-      "description": "Other series from the same weekends: Porsche Supercup and Formula 2"
+      "description": "Other series from the same weekends: Porsche Supercup and Formula 2",
+      "short": "Other series, same weekends"
     }
   },
   "home": {
