@@ -28,6 +28,15 @@
 html {
   background: var(--bg);
   -webkit-text-size-adjust: 100%;
+  /* Прыжок по ссылке-якорю (у нас это «Na sadržaj» / «Skip to content») должен
+     останавливаться под шапкой, а не за ней: шапка теперь стоит поверх. */
+  scroll-padding-top: 110px;
+}
+
+@media (min-width: 760px) {
+  html {
+    scroll-padding-top: 70px;
+  }
 }
 
 body {
@@ -88,7 +97,8 @@ h3 {
 .skip:focus {
   left: var(--pad);
   top: 12px;
-  z-index: 10;
+  /* Выше шапки: та стала липкой и со своим слоем (z-index: 20). */
+  z-index: 30;
   background: var(--fg);
   color: var(--bg);
   padding: 8px 14px;
@@ -105,9 +115,29 @@ h3 {
   --tap: 44px;
 }
 
+/* Шапка не уезжает при прокрутке: в галереях по полтора десятка кадров, и,
+   досмотрев ленту до середины, посетитель раньше не мог уйти в другой раздел —
+   только пролистать всё обратно наверх. Теперь переход всегда на экране.
+   Цена решения — верхние ~100px кадра идут под полупрозрачной полосой. */
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   padding-block: 8px 6px;
+  /* Непрозрачная подложка — запасной вариант для браузеров без blur: без него
+     фотография просвечивала бы сквозь буквы меню. */
+  background: var(--bg);
   border-bottom: 1px solid var(--line);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .header {
+    /* Тот же #0a0a0b, но с прозрачностью: кадр под шапкой виден и размыт, так
+       что видно, что лента продолжается, а буквы всё равно читаются. */
+    background: rgba(10, 10, 11, 0.78);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
 }
 
 /* Мобильный: имя и языки в одну строку, навигация под ними.
