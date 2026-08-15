@@ -49,11 +49,11 @@
   },
   "contact": {
     "title": "Kontakt",
-    "intro": "Za angažmane, printove i licenciranje — pišite mi direktno."
+    "intro": "Za angažmane i trkačke vikende — pišite mi direktno."
   },
   "cta": {
     "title": "Hajde da sarađujemo",
-    "text": "Dostupna sam za trkačke vikende, angažmane i licenciranje fotografija."
+    "text": "Dostupna sam za trkačke vikende i angažmane."
   },
   "gallery": {
     "empty": "Fotografije uskoro."
@@ -94,7 +94,7 @@
     },
     "contact": {
       "title": "Kontakt — Nadia Stelmashuk",
-      "description": "Kontaktirajte me za motosport angažmane, printove i licenciranje fotografija."
+      "description": "Kontaktirajte me za motosport angažmane i praćenje trkačkih vikenda."
     }
   }
 }

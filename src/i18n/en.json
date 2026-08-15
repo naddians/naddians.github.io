@@ -49,11 +49,11 @@
   },
   "contact": {
     "title": "Contact",
-    "intro": "For assignments, prints and licensing — write to me directly."
+    "intro": "For assignments and race weekends — write to me directly."
   },
   "cta": {
     "title": "Let's work together",
-    "text": "Available for race weekends, assignments and image licensing."
+    "text": "Available for race weekends and assignments."
   },
   "gallery": {
     "empty": "Photographs are coming soon."
@@ -94,7 +94,7 @@
     },
     "contact": {
       "title": "Contact — Nadia Stelmashuk",
-      "description": "Get in touch for motorsport assignments, prints and image licensing."
+      "description": "Get in touch for motorsport assignments and race weekend coverage."
     }
   }
 }
