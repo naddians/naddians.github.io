@@ -11,6 +11,11 @@ sharpness/
 src/photos/**/*_demo*
 src/photos/*_demo*
 
+# Отчёты Playwright: скриншоты и следы упавших прогонов (F1_P46). Пересоздаются
+# при каждом `npm test`, в репозиторий не идут.
+test-results/
+playwright-report/
+
 node_modules/
 dist/
 .astro/
