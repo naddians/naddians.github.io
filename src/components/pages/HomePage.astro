@@ -56,8 +56,15 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
     </div>
   </section>
 
+  {/* Полоса контактов под именем: три кнопки в одну строку (F1_P38). До первой
+      фотографии сайт не должен просить написать в полный голос — строка одна
+      и тихая, а сами кнопки остаются на месте. */}
   <div class="wrap contact-bar">
-    <ContactButtons locale={locale} />
+    {/* Заголовок тот же, что у разделов ниже, вместе с отступом до содержимого:
+        от «Contacts» до кнопок столько же, сколько от «Galleries» до первого
+        кадра — иначе на одной странице два разных шага. */}
+    <h2 class="section__title">{dict.home.contactsTitle}</h2>
+    <ContactButtons locale={locale} row />
   </div>
 
   <section class="wrap wrap--wide section section--top-line">

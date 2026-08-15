@@ -6,16 +6,24 @@ interface Props {
   locale: 'en' | 'sr';
   /** Компактный вариант — для страницы «Обо мне». */
   compact?: boolean;
+  /** Одна строка без переносов — полоса под именем на главной (F1_P38). */
+  row?: boolean;
 }
 
-const { compact = false } = Astro.props;
+const { compact = false, row = false } = Astro.props;
 
 // Иконки нарисованы прямо здесь: ни одного запроса к чужому домену (ТЗ §9).
 const telegram = `https://t.me/${CONTACTS.telegram}`;
 const instagram = `https://instagram.com/${CONTACTS.instagram}`;
 ---
 
-<div class:list={['contact-buttons', compact && 'contact-buttons--compact']}>
+<div
+  class:list={[
+    'contact-buttons',
+    compact && 'contact-buttons--compact',
+    row && 'contact-buttons--row',
+  ]}
+>
   <span
     set:html={`<a class="contact-button" href="mailto:${entities(CONTACTS.email)}" aria-label="Email">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
