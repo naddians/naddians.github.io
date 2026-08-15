@@ -1,8 +1,6 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { t, type Locale } from '../i18n';
-import { CONTACTS } from '../data/site';
-import { mailtoLink } from '../utils/obfuscate';
 
 interface Props {
   locale: Locale;
@@ -17,19 +15,14 @@ const year = new Date().getFullYear();
   <div class="wrap footer__inner">
     <p style="margin:0">© {year} {dict.name}. {dict.footer.rights}</p>
 
+    {/* Одна ссылка вместо трёх адресов (F1_P39, решение заказчицы 2026-08-15).
+        Раньше подвал повторял почту, Telegram и Instagram на каждой странице —
+        те же три адреса, что стоят кнопками на главной и в «Обо мне», плюс
+        ссылка «Contact» рядом с ними. Теперь подвал ведёт на страницу
+        контактов, а адреса и условия работы человек видит там, в одном месте
+        и вместе. */}
     <nav class="footer__links" aria-label={dict.contact.title}>
-      <span set:html={mailtoLink(CONTACTS.email)} />
-      <a class="contact-link" href={`https://t.me/${CONTACTS.telegram}`} rel="me noopener">
-        Telegram
-      </a>
-      <a
-        class="contact-link"
-        href={`https://instagram.com/${CONTACTS.instagram}`}
-        rel="me noopener"
-      >
-        Instagram
-      </a>
-      <a href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
+      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
     </nav>
   </div>
 </footer>

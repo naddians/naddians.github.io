@@ -1,8 +1,10 @@
 ---
+import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { t, type Locale } from '../../i18n';
-import { CONTACTS } from '../../data/site';
+import { CONTACTS, HEADERS } from '../../data/site';
 import { mailtoLink } from '../../utils/obfuscate';
+import { photoAt } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -10,13 +12,48 @@ interface Props {
 
 const { locale } = Astro.props;
 const dict = t(locale);
+
+// Шапка страницы устроена как у галерей: полоса во всю ширину, название поверх
+// кадра (F1_P39). До этого контакты были единственной страницей сайта без единой
+// фотографии и выглядели чужими. Кадр — HEADERS.contact в src/data/site.ts.
+const header = HEADERS.contact;
+const cover = photoAt(header?.photo ?? '');
+
+// Та же лесенка размеров, что у шапок разделов: полоса тянется во всю ширину,
+// и на большом мониторе браузеру нужен вариант крупнее 1600px.
+const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
+const heroWidths = cover ? [...HERO_LADDER.filter((w) => w < cover.width), cover.width] : [];
 ---
 
 <Base locale={locale} route={'contact'}>
-  <div class="wrap page-head">
-    <h1>{dict.contact.title}</h1>
-    <p>{dict.contact.intro}</p>
-  </div>
+  {
+    cover ? (
+      <section class="hero hero--section">
+        <Picture
+          src={cover}
+          alt=""
+          formats={['avif', 'webp']}
+          widths={heroWidths}
+          sizes="100vw"
+          loading="eager"
+          fetchpriority="high"
+          pictureAttributes={{ class: 'hero__placeholder' }}
+          class="hero__image hero__image--section"
+          style={header?.focus ? `object-position: ${header.focus}` : undefined}
+        />
+        <div class="hero__scrim" />
+        <div class="wrap hero__inner">
+          <h1 class="hero__title hero__title--section">{dict.contact.title}</h1>
+          <p class="hero__slogan">{dict.contact.intro}</p>
+        </div>
+      </section>
+    ) : (
+      <div class="wrap page-head">
+        <h1>{dict.contact.title}</h1>
+        <p>{dict.contact.intro}</p>
+      </div>
+    )
+  }
 
   <dl class="wrap contacts">
     <div>
@@ -44,4 +81,55 @@ const dict = t(locale);
       </dd>
     </div>
   </dl>
+
+  {/* Условия работы (F1_P39). Отдельной страницы «услуги» нет — решение
+      заказчицы, поэтому текст живёт здесь, под адресами: кто пришёл за адресом,
+      получает его сразу, а кто собирается писать про съёмку — читает дальше.
+      Точек входа сюда с других страниц пока нет: решение заказчицы (2026-08-15)
+      — сначала доводим саму страницу, ссылки на неё ставим после. id оставлен
+      заранее, чтобы будущая ссылка вела прямо в раздел. */}
+  <section class="wrap terms" id="working-together">
+    <h2 class="section__title">{dict.contact.terms.title}</h2>
+    <p class="terms__lead">{dict.contact.terms.lead}</p>
+
+    {/* Расхлопы, решение заказчицы 2026-08-15: шесть абзацев подряд читались
+        стеной текста, особенно на телефоне. Свёрнутые пункты дают список
+        названий на один экран — человек открывает то, что ему нужно.
+        Нативный <details>, без JS: работает везде, открывается по нажатию
+        и по клавише, а текст внутри остаётся в разметке — Google его видит
+        и поиск по странице находит. */}
+    <div class="terms__list">
+      {
+        /* Пункт внутри — либо перечень (`list`), либо абзац (`text`): почти всё,
+           что мы записали, на самом деле список — что снимаю, что придёт
+           в файлах, что прислать в письме. Прозой остаётся только то, что
+           списком не разбивается. `note` — короткий хвост под перечнем
+           («Stills only, no video»), он про весь пункт целиком, а не про
+           последнюю строку, поэтому стоит отдельно. */
+        (
+          dict.contact.terms.items as ReadonlyArray<{
+            label: string;
+            text?: string;
+            list?: readonly string[];
+            note?: string;
+          }>
+        ).map((item) => (
+          <details class="terms__item">
+            <summary>{item.label}</summary>
+            {item.text && <p>{item.text}</p>}
+            {item.list && (
+              <ul class="terms__points">
+                {item.list.map((point) => (
+                  <li>{point}</li>
+                ))}
+              </ul>
+            )}
+            {item.note && <p class="terms__small">{item.note}</p>}
+          </details>
+        ))
+      }
+    </div>
+
+    <p class="terms__note">{dict.contact.terms.note}</p>
+  </section>
 </Base>

@@ -50,7 +50,59 @@
   },
   "contact": {
     "title": "Kontakt",
-    "intro": "Za angažmane i trkačke vikende — pišite mi direktno."
+    "intro": "Za angažmane i trkačke vikende\u00a0— pišite mi direktno. Odgovaram u roku od jednog dana.",
+    "terms": {
+      "title": "Kako sarađujemo",
+      "lead": "Recite mi koji je događaj i šta treba da bude pokriveno\u00a0— vraćam se sa spiskom kadrova i cenom.",
+      "items": [
+        {
+          "label": "Pokrivenost",
+          "list": [
+            "Akcija uz stazu",
+            "Startna pozicija i portreti",
+            "Pit lejn i padok, tamo gde akreditacija dozvoljava"
+          ],
+          "note": "Samo fotografija, bez videa."
+        },
+        {
+          "label": "Isporuka",
+          "list": [
+            "Prvi izbor već nekoliko sati po kockastoj zastavi",
+            "Ceo obrađen set, sve dogovorene sesije, u roku od 48 sati"
+          ]
+        },
+        {
+          "label": "Korišćenje",
+          "list": [
+            "Vaši kanali\u00a0— mreže, sajt, prezentacije: uz navođenje autora, bez vremenskog ograničenja",
+            "Reklame i prosleđivanje fajlova trećim licima: dogovaramo posebno"
+          ]
+        },
+        {
+          "label": "Fajlovi",
+          "list": [
+            "JPEG u visokoj rezoluciji plus formati za mreže",
+            "Kolorno korigovani, sa potpisima i ključnim rečima",
+            "Isporuka kroz privatnu galeriju"
+          ],
+          "note": "Bez RAW fajlova."
+        },
+        {
+          "label": "Put i smeštaj",
+          "text": "Bazirana u Beogradu, snimam širom sveta. Honorar pokriva rad; put i smeštaj po stvarnom trošku, povrh toga."
+        },
+        {
+          "label": "Prvi mejl",
+          "list": [
+            "Datum i staza",
+            "Koja serija",
+            "Koliko dana",
+            "Ko ili šta vam je najvažnije"
+          ]
+        }
+      ],
+      "note": "Brif je dobrodošao\u00a0— logotipi sponzora, određeni vozači, trenuci koji moraju da se ulove. Pošaljite spisak i snimam po njemu."
+    }
   },
   "cta": {
     "title": "Hajde da sarađujemo",
@@ -95,7 +147,7 @@
     },
     "contact": {
       "title": "Kontakt — Nadia Stelmashuk",
-      "description": "Kontaktirajte me za motosport angažmane i praćenje trkačkih vikenda."
+      "description": "Kontaktirajte me za motosport angažmane i praćenje trkačkih vikenda: šta vikend obuhvata, rokovi isporuke i fajlovi."
     }
   }
 }

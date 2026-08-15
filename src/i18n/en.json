@@ -50,7 +50,54 @@
   },
   "contact": {
     "title": "Contact",
-    "intro": "For assignments and race weekends — write to me directly."
+    "intro": "For assignments and race weekends\u00a0— write to me directly. I answer within a day.",
+    "terms": {
+      "title": "Working together",
+      "lead": "Tell me the event and what you need covered\u00a0— I'll come back with a shot list and a price.",
+      "items": [
+        {
+          "label": "Coverage",
+          "list": [
+            "Trackside action",
+            "Grid and portraits",
+            "Pit lane and paddock, where accreditation allows"
+          ],
+          "note": "Stills only, no video."
+        },
+        {
+          "label": "Delivery",
+          "list": [
+            "A first selection within hours of the chequered flag",
+            "The full edited set, every session booked, within 48 hours"
+          ]
+        },
+        {
+          "label": "Usage",
+          "list": [
+            "Your own channels\u00a0— social, website, presentations: credited, no time limit",
+            "Advertising and passing files to third parties: agreed separately"
+          ]
+        },
+        {
+          "label": "Files",
+          "list": [
+            "High-res JPEGs plus social crops",
+            "Colour-corrected, captioned and keyworded",
+            "Delivered through a private gallery"
+          ],
+          "note": "No RAW files."
+        },
+        {
+          "label": "Travel",
+          "text": "Belgrade-based, shooting worldwide. The fee covers the work; travel and accommodation at cost on top."
+        },
+        {
+          "label": "Your first email",
+          "list": ["Date and circuit", "Which series", "How many days", "Who or what matters most"]
+        }
+      ],
+      "note": "Briefs welcome\u00a0— sponsor logos, specific drivers, must-have moments. Send the list and I'll shoot to it."
+    }
   },
   "cta": {
     "title": "Let's work together",
@@ -95,7 +142,7 @@
     },
     "contact": {
       "title": "Contact — Nadia Stelmashuk",
-      "description": "Get in touch for motorsport assignments and race weekend coverage."
+      "description": "Get in touch for motorsport assignments and race weekend coverage: what a weekend covers, delivery times and files."
     }
   }
 }
