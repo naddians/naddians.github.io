@@ -1,10 +1,10 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
+import SectionHero from '../SectionHero.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { CARD_FOCUS, COVERS, HEADERS, type GallerySlug } from '../../data/site';
-import { HERO_ASPECT, focusFor } from '../../utils/focus';
+import { CARD_ASPECT, HERO_ASPECT } from '../../utils/focus';
 import { groupsIn, photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
@@ -28,48 +28,26 @@ const groups = groupsIn(gallery);
 const header = HEADERS[gallery];
 const cover = photoAt(header?.photo ?? '') ?? photoAt(COVERS[gallery] ?? '');
 
-// Шапка тянется во всю ширину окна, поэтому вариантов нужно больше, чем в
-// галерее: на широком мониторе и на ретине браузер берёт самый крупный.
-// Верхняя ступенька — ширина самого файла (COVER_WIDTH в scripts/photos.mjs).
-const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
-const heroWidths = cover
-  ? [...HERO_LADDER.filter((w) => w < cover.width), cover.width]
-  : [];
-
 // Видимая часть кадра — та же, что на карточке раздела на главной: сдвиг задан
 // один раз (CARD_FOCUS в src/data/site.ts) и пересчитывается с прямоугольника
 // карточки на полосу шапки (src/utils/focus.ts). Сюжет стоит в обоих местах
 // одинаково, и шапка читается как продолжение карточки, с которой сюда пришли.
-// У своего кадра шапки пересчитывать не от чего — сдвиг задан прямо в HEADERS.
-const focus = header
-  ? header.focus
-  : cover
-    ? focusFor(cover, HERO_ASPECT, CARD_FOCUS[gallery])
-    : undefined;
+// У своего кадра шапки пересчитывать не от чего — сдвиг там задан для самой
+// полосы, поэтому и рамка-источник у него другая.
+const focus = header ? header.focus : CARD_FOCUS[gallery];
+const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
 ---
 
 <Base locale={locale} route={gallery as Route}>
   {
     cover ? (
-      <section class="hero hero--section">
-        <Picture
-          src={cover}
-          alt=""
-          formats={['avif', 'webp']}
-          widths={heroWidths}
-          sizes="100vw"
-          loading="eager"
-          fetchpriority="high"
-          pictureAttributes={{ class: 'hero__placeholder' }}
-          class="hero__image hero__image--section"
-          style={focus ? `object-position: ${focus}` : undefined}
-        />
-        <div class="hero__scrim" />
-        <div class="wrap hero__inner">
-          <h1 class="hero__title hero__title--section">{meta.title}</h1>
-          <p class="hero__slogan">{meta.description}</p>
-        </div>
-      </section>
+      <SectionHero
+        image={cover}
+        focus={focus}
+        focusIn={focusIn}
+        title={meta.title}
+        description={meta.description}
+      />
     ) : (
       <div class="wrap page-head">
         <h1>{meta.title}</h1>

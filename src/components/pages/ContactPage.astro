@@ -1,8 +1,9 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import SectionHero from '../SectionHero.astro';
 import { t, type Locale } from '../../i18n';
 import { CONTACTS, HEADERS } from '../../data/site';
+import { HERO_ASPECT } from '../../utils/focus';
 import { mailtoLink } from '../../utils/obfuscate';
 import { photoAt } from '../../utils/photos';
 
@@ -18,35 +19,18 @@ const dict = t(locale);
 // фотографии и выглядели чужими. Кадр — HEADERS.contact в src/data/site.ts.
 const header = HEADERS.contact;
 const cover = photoAt(header?.photo ?? '');
-
-// Та же лесенка размеров, что у шапок разделов: полоса тянется во всю ширину,
-// и на большом мониторе браузеру нужен вариант крупнее 1600px.
-const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
-const heroWidths = cover ? [...HERO_LADDER.filter((w) => w < cover.width), cover.width] : [];
 ---
 
 <Base locale={locale} route={'contact'}>
   {
     cover ? (
-      <section class="hero hero--section">
-        <Picture
-          src={cover}
-          alt=""
-          formats={['avif', 'webp']}
-          widths={heroWidths}
-          sizes="100vw"
-          loading="eager"
-          fetchpriority="high"
-          pictureAttributes={{ class: 'hero__placeholder' }}
-          class="hero__image hero__image--section"
-          style={header?.focus ? `object-position: ${header.focus}` : undefined}
-        />
-        <div class="hero__scrim" />
-        <div class="wrap hero__inner">
-          <h1 class="hero__title hero__title--section">{dict.contact.title}</h1>
-          <p class="hero__slogan">{dict.contact.intro}</p>
-        </div>
-      </section>
+      <SectionHero
+        image={cover}
+        focus={header?.focus}
+        focusIn={HERO_ASPECT}
+        title={dict.contact.title}
+        description={dict.contact.intro}
+      />
     ) : (
       <div class="wrap page-head">
         <h1>{dict.contact.title}</h1>

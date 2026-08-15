@@ -38,25 +38,30 @@ function reframe(value: number, from: number, to: number): number {
 
 /**
  * object-position для кадра в рамке `boxAspect`, дающий ту же видимую часть
- * кадра, что и `cardFocus` в карточке 5×4.
+ * кадра, что и `focus` в рамке `focusAspect` — по умолчанию в карточке 5×4.
+ *
+ * Рамка-источник задаётся отдельно, потому что сдвиг приходит из двух мест:
+ * у разделов это карточка на главной (CARD_FOCUS), а у шапок со своим кадром —
+ * сама полоса (HEADERS в src/data/site.ts).
  */
 export function focusFor(
   image: { width: number; height: number },
   boxAspect: number,
-  cardFocus?: string,
+  focus?: string,
+  focusAspect: number = CARD_ASPECT,
 ): string {
   const photo = image.width / image.height;
-  const [x, y] = parse(cardFocus);
+  const [x, y] = parse(focus);
   // Доля кадра, видимая в рамке при object-fit: cover. По одной оси она всегда
   // равна 1 — та сторона кадра, которая упирается в рамку.
   const visible = (box: number): [number, number] => [
     Math.min(1, box / photo),
     Math.min(1, photo / box),
   ];
-  const [cardX, cardY] = visible(CARD_ASPECT);
+  const [fromX, fromY] = visible(focusAspect);
   const [boxX, boxY] = visible(boxAspect);
 
-  const px = reframe(x, cardX, boxX) * 100;
-  const py = reframe(y, cardY, boxY) * 100;
+  const px = reframe(x, fromX, boxX) * 100;
+  const py = reframe(y, fromY, boxY) * 100;
   return `${px.toFixed(0)}% ${py.toFixed(0)}%`;
 }

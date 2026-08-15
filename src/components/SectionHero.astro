@@ -1,0 +1,157 @@
+---
+/**
+ * Шапка страницы: кадр во всю ширину, название и описание поверх него.
+ * Стоит у галерей (GalleryPage.astro) и на контактах (ContactPage.astro) —
+ * до этого одна и та же разметка лежала в обоих файлах.
+ *
+ * Кадр режется до полосы ещё при сборке (F1_P33). Раньше в браузер уходил
+ * весь кадр целиком, вертикальный, а лишнее обрезал он сам: в шапке видна
+ * узкая полоса, а качалась фотография в рост — на макбуке 507 КБ при 40–70 КБ
+ * у обычного кадра ленты, и она же грузится первой, определяя, за сколько
+ * секунд посетитель увидит хоть что-то.
+ *
+ * Одной обрезкой не обойтись: высота полосы — `min(110vw, 460px)`
+ * (`.hero--section` в global.css), поэтому на телефоне она почти квадратная и
+ * показывает кадр почти целиком, а на компьютере это узкая лента в 460 px.
+ * Значит вариантов нужно несколько — по одному на диапазон ширины окна, и
+ * браузер сам берёт свой (обычный `<picture>` с `media`, как у отзывчивых
+ * картинок, только меняется не размер, а кадрирование).
+ */
+import { getImage } from 'astro:assets';
+import { CARD_ASPECT, HERO_ASPECT, focusFor } from '../utils/focus';
+
+interface Props {
+  image: ImageMetadata;
+  /** object-position кадра в рамке `focusIn`; отсюда считается сдвиг для полосы. */
+  focus?: string;
+  /** Пропорции рамки, в которой замерен `focus`. По умолчанию карточка на главной. */
+  focusIn?: number;
+  title: string;
+  description: string;
+}
+
+const { image, focus, focusIn = CARD_ASPECT, title, description } = Astro.props;
+
+/** Высота полосы из `.hero--section`: min(110vw, 460px). */
+const STRIP_HEIGHT = 460;
+
+/** Пропорции полосы при такой ширине окна. */
+function stripAspect(viewport: number): number {
+  return viewport * 1.1 <= STRIP_HEIGHT ? 1 / 1.1 : viewport / STRIP_HEIGHT;
+}
+
+/**
+ * Диапазоны ширины окна и лесенки размеров под каждый. Границы выбраны по тому,
+ * насколько разной формы получается полоса: телефон (почти квадрат), планшет и
+ * узкий ноутбук, компьютер (лента 2.8:1 и шире). Верх лесенки — на ретину,
+ * где точек вдвое больше, чем пикселей окна; крупнее самого файла Astro всё
+ * равно не выдумывает и лишние ступеньки отбрасывает само.
+ */
+const RANGES = [
+  { from: 320, to: 700, widths: [420, 640, 900, 1200, 1400] },
+  { from: 701, to: 1279, widths: [800, 1100, 1500, 1900, 2560] },
+  { from: 1280, to: Infinity, widths: [1280, 1700, 2200, 2800, 3400] },
+];
+
+const photoAspect = image.width / image.height;
+
+/**
+ * Точка кадра, по которой строится полоса, — одна на все варианты, та же самая,
+ * что стояла в `object-position` до этой правки (сдвиг из карточки, пересчитанный
+ * на полосу — src/utils/focus.ts). Ею и режем при сборке, и её же оставляем
+ * в стилях: тогда обрезка при сборке и обрезка в браузере считаются от одного
+ * числа и складываются в ровно ту же видимую часть кадра, что и раньше, при
+ * любой ширине окна. Считать точку заново под каждый диапазон нельзя: у полосы
+ * другой формы она выходит другой, и кадр бы поехал.
+ */
+const position = focusFor(image, HERO_ASPECT, focus, focusIn);
+
+/**
+ * Что режем в каждом диапазоне. Полоса в нём не одна: у самого узкого окна она
+ * показывает кадра больше всего, у самого широкого — меньше всего. Режем по
+ * самой щедрой, а остальное браузер дорежет сам — по той же точке.
+ *
+ * Пропорция реза — своя же пропорция кадра, загнанная в границы диапазона:
+ * полоса шире кадра — уходит верх и низ, уже — уходят бока, а если пропорция
+ * кадра попадает внутрь диапазона, в нём кадр нужен целиком и резать нечего.
+ */
+const crops = RANGES.map((range) => {
+  const widest = stripAspect(range.from);
+  const narrowest = range.to === Infinity ? Infinity : stripAspect(range.to);
+  const aspect = Math.min(Math.max(photoAspect, widest), narrowest);
+  const width = Math.min(image.width, Math.max(...range.widths));
+
+  return {
+    media: range.to === Infinity ? undefined : `(max-width: ${range.to}px)`,
+    aspect,
+    options: {
+      src: image,
+      width,
+      height: Math.round(width / aspect),
+      widths: range.widths,
+      fit: 'cover' as const,
+      position,
+    },
+  };
+});
+
+const sources = await Promise.all(
+  crops.map(async (crop) => ({
+    media: crop.media,
+    avif: await getImage({ ...crop.options, format: 'avif' }),
+    webp: await getImage({ ...crop.options, format: 'webp' }),
+  })),
+);
+
+// Запасной кадр для браузеров без avif и webp: таких почти нет, поэтому размер
+// один и небольшой, а кадрирование — компьютерное, как и там, где `<picture>`
+// молчит вовсе.
+const desktop = crops[crops.length - 1];
+const fallbackWidth = Math.min(1600, image.width);
+const fallback = await getImage({
+  ...desktop.options,
+  widths: undefined,
+  width: fallbackWidth,
+  height: Math.round(fallbackWidth / desktop.aspect),
+  format: 'jpeg',
+});
+---
+
+<section class="hero hero--section">
+  <picture class="hero__placeholder">
+    {
+      sources.map((source) => (
+        <>
+          <source
+            media={source.media}
+            type="image/avif"
+            srcset={source.avif.srcSet.attribute}
+            sizes="100vw"
+          />
+          <source
+            media={source.media}
+            type="image/webp"
+            srcset={source.webp.srcSet.attribute}
+            sizes="100vw"
+          />
+        </>
+      ))
+    }
+    <img
+      src={fallback.src}
+      alt=""
+      width={fallback.options.width}
+      height={fallback.options.height}
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      class="hero__image hero__image--section"
+      style={`object-position: ${position}`}
+    />
+  </picture>
+  <div class="hero__scrim"></div>
+  <div class="wrap hero__inner">
+    <h1 class="hero__title hero__title--section">{title}</h1>
+    <p class="hero__slogan">{description}</p>
+  </div>
+</section>
