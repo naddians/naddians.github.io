@@ -1,67 +1,73 @@
 ---
-import { Picture } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { HTML_LANG, t } from '../i18n';
-import { photoAt } from '../utils/photos';
+import { HTML_LANG, LOCALES, t } from '../i18n';
 import '../styles/global.css';
 
 // Своя разметка вместо общего макета: странице 404 не нужны canonical,
 // hreflang и микроразметка — её не индексируют.
-const locale = 'en';
-const dict = t(locale);
-// Свой кадр, не герой главной: страница «не найдено» не должна выглядеть как
-// повтор главной. Файл кладётся в inbox/404/ и обрабатывается тем же скриптом.
-const hero = photoAt('404.jpg') ?? photoAt('hero.jpg') ?? photoAt('hero_demo.jpg');
+//
+// Язык. Файл на весь сайт один: GitHub Pages отдаёт /404.html по любому
+// несуществующему адресу, включая /sr/…, — а при сборке неизвестно, куда
+// человек пришёл, адрес виден только в браузере. Поэтому в страницу кладутся
+// обе версии сразу, а короткий скрипт в <head> оставляет ту, что совпадает
+// с адресом (F1_P32). Английская стоит по умолчанию: без скрипта страница
+// работает ровно так, как работала раньше.
+const base = import.meta.env.BASE_URL;
+const srPrefix = `${base}sr`;
+const srLang = HTML_LANG.sr;
+const srTitle = `${t('sr').notfound.title} — ${t('sr').name}`;
+
+// Кадра на странице нет: надписи ложились на светлый асфальт, и контраст падал
+// до 1,8 : 1 у «404» при норме 3 : 1 — затемнение рассчитано на нижнюю часть
+// кадра, а текст стоял выше. Приглушённый кадр на фоне пробовали 2026-08-15 —
+// решение заказчицы в тот же день: без кадра лучше. Новый подберём в F1_P11.
 ---
 
 <!doctype html>
-<html lang={HTML_LANG[locale]}>
+<html lang={HTML_LANG.en} data-l10n="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0a0a0b" />
     <meta name="color-scheme" content="dark" />
     <meta name="robots" content="noindex" />
-    <title>{dict.notfound.title} — {dict.name}</title>
-    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <title>{t('en').notfound.title} — {t('en').name}</title>
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <script is:inline define:vars={{ srPrefix, srLang, srTitle }}>
+      if (
+        location.pathname === srPrefix ||
+        location.pathname.startsWith(srPrefix + '/')
+      ) {
+        document.documentElement.dataset.l10n = 'sr';
+        document.documentElement.lang = srLang;
+        document.title = srTitle;
+      }
+    </script>
   </head>
   <body>
-    <Header locale={locale} route={''} />
+    {
+      LOCALES.map((locale) => (
+        <div class="l10n" data-locale={locale}>
+          <Header locale={locale} route={''} />
 
-    <main class="main" id="main">
-      <section class="hero notfound">
-        {
-          hero ? (
-            <Picture
-              class="hero__image"
-              src={hero}
-              alt=""
-              formats={['avif', 'webp']}
-              widths={[640, 1024, 1600]}
-              sizes="100vw"
-              loading="eager"
-              fetchpriority="high"
-              pictureAttributes={{ class: 'hero__placeholder' }}
-            />
-          ) : (
-            <div class="hero__placeholder" />
-          )
-        }
-        <div class="hero__scrim"></div>
+          <main class="main">
+            <section class="notfound">
+              <div class="wrap">
+                <p class="notfound__code">{t(locale).notfound.code}</p>
+                <h1 class="notfound__title">{t(locale).notfound.title}</h1>
+                <p class="notfound__text">{t(locale).notfound.text}</p>
+                <a class="notfound__back" href={getRelativeLocaleUrl(locale, '')}>
+                  {t(locale).notfound.back}
+                </a>
+              </div>
+            </section>
+          </main>
 
-        <div class="wrap hero__inner">
-          <p class="notfound__code">{dict.notfound.code}</p>
-          <h1 class="hero__title">{dict.notfound.title}</h1>
-          <p class="notfound__text">{dict.notfound.text}</p>
-          <a class="notfound__back" href={getRelativeLocaleUrl(locale, '')}>
-            {dict.notfound.back}
-          </a>
+          <Footer locale={locale} />
         </div>
-      </section>
-    </main>
-
-    <Footer locale={locale} />
+      ))
+    }
   </body>
 </html>
