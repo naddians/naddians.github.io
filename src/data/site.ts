@@ -62,7 +62,9 @@ export const BEYOND_SERIES = [
 export const COVERS: Record<string, string> = {
   '': 'hero.jpg',
   track: 'track/020-on-track.jpg',
-  people: 'people/070-people.jpg',
+  // Хэмилтон под зонтом. Номер сменился с 070 на 110 при пересчёте порядка
+  // 2026-08-17: сам кадр тот же, переехало только его место в галерее.
+  people: 'people/110-people.jpg',
   atmosphere: 'atmosphere/020-circuit.jpg',
   // Третий кадр, а не первый: у второго оригинал всего 1445 px по ширине и в
   // шапке во всю ширину мылит (та же беда, что была у People), а первый стоит
