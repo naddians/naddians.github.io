@@ -8,7 +8,7 @@
  * Папка inbox/ в репозиторий не попадает, там лежат твои оригиналы.
  */
 import sharp from 'sharp';
-import { readdir, mkdir, unlink, stat, readFile } from 'node:fs/promises';
+import { readdir, mkdir, unlink, stat, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 
@@ -26,6 +26,46 @@ const ORDER_FILE = path.join(ROOT, 'scripts', 'order.json');
 const MANUAL_ORDER = existsSync(ORDER_FILE)
   ? JSON.parse(await readFile(ORDER_FILE, 'utf8'))
   : {};
+
+/**
+ * Описания кадров для поиска по картинкам (F1_P25, scripts/captions.json).
+ * Ключ — имя оригинала в inbox/, и это важно: имя файла на сайте меняется при
+ * каждой перетасовке раздела, а имя оригинала не меняется никогда. Поэтому
+ * список переживает и пересчёт порядка, и перенумерацию.
+ * Сайт читает не этот файл, а src/data/captions.json — его пишет отсюда
+ * writeCaptions(): в src/ попадает готовое соответствие «файл на сайте → текст».
+ */
+const CAPTIONS_FILE = path.join(ROOT, 'scripts', 'captions.json');
+const CAPTIONS = existsSync(CAPTIONS_FILE)
+  ? JSON.parse(await readFile(CAPTIONS_FILE, 'utf8'))
+  : {};
+const CAPTIONS_OUT = path.join(ROOT, 'src', 'data', 'captions.json');
+/** Собирается по ходу раскладки: «people/010-people.jpg» → текст описания. */
+const captionsForSite = {};
+
+/** Описание кадра по имени оригинала. Регистр не важен, как и в order.json. */
+function captionFor(gallery, name) {
+  const inGallery = CAPTIONS[gallery];
+  if (!inGallery) return undefined;
+  const key = Object.keys(inGallery).find((k) => k.toLowerCase() === name.toLowerCase());
+  return key ? inGallery[key] : undefined;
+}
+
+/**
+ * Кладёт описания в src/, откуда их читает сайт. Файл генерируемый: переписывается
+ * целиком на каждом прогоне, править его руками смысла нет — правится
+ * scripts/captions.json.
+ */
+async function writeCaptions() {
+  const sorted = Object.fromEntries(Object.entries(captionsForSite).sort(([a], [b]) => a.localeCompare(b, 'en')));
+  await mkdir(path.dirname(CAPTIONS_OUT), { recursive: true });
+  await writeFile(CAPTIONS_OUT, `${JSON.stringify(sorted, null, 2)}\n`, 'utf8');
+  const count = Object.keys(sorted).length;
+  console.log(
+    `\nОписания кадров: ${count} шт. → ${path.relative(ROOT, CAPTIONS_OUT)}` +
+      (count === 0 ? '  (scripts/captions.json пуст — подписи остаются общими)' : ''),
+  );
+}
 
 /**
  * ТЗ §7: качество 85, меньше исходника не увеличиваем.
@@ -327,10 +367,17 @@ async function processGallery(gallery, covers, series) {
 
     const isCover = covers.has(coverKey(target));
     const result = await convert(file.full, target, { cover: isCover });
+
+    // Описание привязано к оригиналу, а записываем его на имя файла на сайте:
+    // сайт про inbox/ не знает, у него есть только src/photos/.
+    const caption = captionFor(gallery.inbox, file.name);
+    if (caption) captionsForSite[coverKey(target)] = caption;
+
     console.log(
       `  ${file.name} → ${path.basename(target)}` +
         (result.resized ? `  (${result.from}px → ${result.to})` : '  (размер оставлен)') +
-        (isCover ? '  ← обложка раздела, храним крупнее' : ''),
+        (isCover ? '  ← обложка раздела, храним крупнее' : '') +
+        (caption ? `  · ${caption}` : ''),
     );
   }
 
@@ -376,6 +423,8 @@ async function main() {
   let total = 0;
   for (const gallery of GALLERIES) total += await processGallery(gallery, covers, series);
   for (const single of SINGLES) total += await processSingle(single, covers);
+
+  await writeCaptions();
 
   console.log(`\nГотово: обработано ${total} фотографий.`);
   if (total > 0) {

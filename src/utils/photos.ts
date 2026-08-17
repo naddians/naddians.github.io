@@ -19,6 +19,19 @@ const MODULES = import.meta.glob<{ default: ImageMetadata }>(
   { eager: true },
 );
 
+/**
+ * Описания кадров для поиска по картинкам (F1_P25). Файл генерируемый: его
+ * пишет `npm run photos` из scripts/captions.json, где ключ — имя оригинала
+ * в inbox/. Здесь ключ уже другой — путь файла на сайте: «people/010-people.jpg».
+ * Кадра нет в списке — подпись остаётся общей, по разделу.
+ */
+import CAPTIONS from '../data/captions.json';
+
+/** «/src/photos/people/010-people.jpg» → «people/010-people.jpg». */
+function captionFor(path: string): string | undefined {
+  return (CAPTIONS as Record<string, string>)[path.replace('/src/photos/', '')];
+}
+
 /** «10-spa-2026-eau-rouge.jpg» → «Spa 2026 eau rouge». Подписи не видны, это alt (ТЗ §6). */
 function altFromPath(path: string): string {
   const file = path.split('/').pop() ?? '';
@@ -41,7 +54,7 @@ export function photosIn(gallery: GallerySlug): Photo[] {
   return Object.entries(MODULES)
     .filter(([path]) => path.startsWith(`/src/photos/${gallery}/`))
     .sort(([a], [b]) => a.localeCompare(b, 'en'))
-    .map(([path, mod]) => ({ alt: altFromPath(path), image: mod.default }));
+    .map(([path, mod]) => ({ alt: captionFor(path) ?? altFromPath(path), image: mod.default }));
 }
 
 /**
@@ -73,7 +86,9 @@ export function groupsIn(gallery: GallerySlug): PhotoGroup[] {
     const slug = slugFromPath(path);
     const bucket = buckets.get(slug);
     const title = series.find((item) => item.slug === slug)?.title;
-    (bucket ?? loose).push({ alt: title ?? altFromPath(path), image: mod.default });
+    // Описание кадра важнее названия серии: серия у всех кадров одна и та же,
+    // а Google ищет по тому, что на конкретной фотографии.
+    (bucket ?? loose).push({ alt: captionFor(path) ?? title ?? altFromPath(path), image: mod.default });
   }
 
   const groups = series
