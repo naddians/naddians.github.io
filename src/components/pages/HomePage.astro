@@ -1,10 +1,10 @@
 ---
-import { Picture } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
+import { AUTHOR, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
 
 interface Props {
@@ -27,7 +27,51 @@ const hero =
 // ширина самого файла (COVER_WIDTH в scripts/photos.mjs).
 const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
 const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.width] : [];
+
+/**
+ * Авторство кадров главной (F1_P25) — тем же способом, что в PhotoGrid.astro
+ * и SectionHero.astro: в самих файлах его нет, Astro срезает метаданные при
+ * пересборке размеров, поэтому автор указан разметкой (см. AUTHOR в site.ts).
+ * Кадры здесь — герой и обложки разделов; портрет со страницы «Обо мне» сюда
+ * не попадает намеренно: на нём заказчица, и снимала его не она.
+ */
+const homePhotos = [
+  ...(hero ? [{ image: hero, widths: heroWidths, lead: true }] : []),
+  // Тот же отбор, что у карточек ниже: у раздела без кадров карточки на странице
+  // нет, и заявлять её кадр в разметке нечего.
+  ...GALLERIES.filter((slug) => photosIn(slug).length > 0)
+    .map((slug) => photoAt(COVERS[slug] ?? ''))
+    .filter((cover) => cover !== undefined)
+    .map((cover) => ({
+      image: cover,
+      widths: [800, 1600, 2400].filter((w) => w <= cover.width),
+      lead: false,
+    })),
+];
+
+const imageLd = {
+  '@context': 'https://schema.org',
+  '@graph': await Promise.all(
+    homePhotos.map(async ({ image, widths, lead }) => {
+      const rendered = await getImage({
+        src: image,
+        width: widths[widths.length - 1],
+        format: 'jpg',
+      });
+      return {
+        '@type': 'ImageObject',
+        contentUrl: new URL(rendered.src, Astro.site).href,
+        ...(lead ? { representativeOfPage: true } : {}),
+        creator: { '@type': 'Person', name: AUTHOR.name },
+        creditText: AUTHOR.credit,
+        copyrightNotice: AUTHOR.copyright,
+      };
+    }),
+  ),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(imageLd)} is:inline />
 
 <Base locale={locale} route={''}>
   <section class:list={['hero', !hero && 'hero--empty']}>

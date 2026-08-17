@@ -19,6 +19,7 @@
  */
 import { getImage } from 'astro:assets';
 import { CARD_ASPECT, HERO_ASPECT, focusFor } from '../utils/focus';
+import { AUTHOR } from '../data/site';
 
 interface Props {
   image: ImageMetadata;
@@ -115,7 +116,29 @@ const fallback = await getImage({
   height: Math.round(fallbackWidth / desktop.aspect),
   format: 'jpeg',
 });
+
+/**
+ * Авторство кадра шапки (F1_P25) — тем же способом, что у кадров ленты
+ * в PhotoGrid.astro: в файлах метаданных не остаётся, поэтому автор указан
+ * разметкой. `representativeOfPage` — это главный кадр страницы, а не один
+ * из ленты.
+ *
+ * Описания здесь нет намеренно: `alt` у шапки пустой, потому что кадр
+ * декоративный — название раздела написано поверх него текстом, и робот его
+ * и так читает. Авторство от этого не зависит.
+ */
+const heroLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageObject',
+  contentUrl: new URL(fallback.src, Astro.site).href,
+  representativeOfPage: true,
+  creator: { '@type': 'Person', name: AUTHOR.name },
+  creditText: AUTHOR.credit,
+  copyrightNotice: AUTHOR.copyright,
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(heroLd)} is:inline />
 
 <section class="hero hero--section">
   <picture class="hero__placeholder">

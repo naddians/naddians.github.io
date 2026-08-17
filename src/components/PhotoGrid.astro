@@ -1,6 +1,7 @@
 ---
-import { Picture } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import type { Photo } from '../utils/photos';
+import { AUTHOR } from '../data/site';
 
 interface Props {
   photos: Photo[];
@@ -114,7 +115,45 @@ function layoutColumns(items: Numbered[]): Numbered[][][] {
 }
 
 const layout = layoutColumns(photos.map((photo, index) => ({ photo, index })));
+
+/**
+ * Авторство кадров для робота (F1_P25). У каждой фотографии — своя запись
+ * `ImageObject` с автором, кредитом и копирайтом: в самих файлах этого нет,
+ * Astro срезает метаданные при пересборке размеров (см. AUTHOR в site.ts).
+ *
+ * `contentUrl` считается тем же `getImage`, что и запасной кадр внутри
+ * `<Picture>`, с теми же шириной и форматом, — значит указывает на файл,
+ * который на странице действительно есть, а не на ещё один, сгенерированный
+ * ради разметки. Ширина — как в `widthsFor`: последняя ступенька лестницы.
+ *
+ * `description` — тот же текст, что в `alt`. Пока описания не заполнены
+ * (scripts/captions.json), это общее слово по разделу, и это честно: выдумывать
+ * содержание кадра нельзя, а авторство от описания не зависит и работает уже.
+ */
+const imageLd = {
+  '@context': 'https://schema.org',
+  '@graph': await Promise.all(
+    photos.map(async (photo) => {
+      const widths = widthsFor(photo.image.width);
+      const rendered = await getImage({
+        src: photo.image,
+        width: widths[widths.length - 1],
+        format: 'jpg',
+      });
+      return {
+        '@type': 'ImageObject',
+        contentUrl: new URL(rendered.src, Astro.site).href,
+        description: photo.alt,
+        creator: { '@type': 'Person', name: AUTHOR.name },
+        creditText: AUTHOR.credit,
+        copyrightNotice: AUTHOR.copyright,
+      };
+    }),
+  ),
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(imageLd)} is:inline />
 
 <div class="grid">
   {
