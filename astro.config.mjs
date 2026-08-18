@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 // Адрес сайта. При переезде на свой домен меняется ТОЛЬКО здесь:
 //   site: 'https://example.com', base: '/'
 export default defineConfig({
-  site: 'https://naddians.github.io',
+  site: 'https://naddians.photo',
   base: '/',
   trailingSlash: 'always',
   build: { format: 'directory' },
