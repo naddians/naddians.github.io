@@ -21,6 +21,10 @@ const { locale, route } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0a0a0b" />
     <meta name="color-scheme" content="dark" />
+    {/* Иконка сайта. PNG стоит первым как запасной вариант для поисковых
+        роботов, которые вектор берут неохотно; браузеры выбирают последнюю
+        подходящую ссылку, то есть чёткий SVG (F1_P58). */}
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon-96.png`} type="image/png" sizes="96x96" />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
     <link rel="sitemap" href={`${import.meta.env.BASE_URL}sitemap-index.xml`} />
     {/* Подтверждение прав на сайт для Google Search Console (F1_P14). Тег
