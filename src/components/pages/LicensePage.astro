@@ -1,6 +1,6 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
+import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale } from '../../i18n';
 
 interface Props {
@@ -38,14 +38,15 @@ const items = dict.license.items as ReadonlyArray<{ label: string; text: string 
       }
     </ol>
 
+    {/* Адреса стоят прямо здесь, кнопками, а не ссылкой на контакты (F1_P62):
+        сюда приходят из Картинок Google спросить про один кадр, и это не заказ
+        съёмки — гонять человека на отдельную страницу ради трёх адресов незачем.
+        Вариант `row` — тот же, что в полосе под именем на главной: на телефоне
+        три кнопки укладываются в одну строку и не занимают собой экран. */}
     <div class="license__how">
       <h2 class="block__title">{dict.license.howTitle}</h2>
       <p>{dict.license.how}</p>
-      <p>
-        <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>
-          {dict.license.howLink}
-        </a>
-      </p>
+      <ContactButtons locale={locale} row />
     </div>
   </section>
 </Base>

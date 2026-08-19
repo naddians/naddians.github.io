@@ -1025,14 +1025,16 @@ html[data-l10n='sr'] .l10n[data-locale='en'] {
 }
 
 .license__how p {
-  margin: 0 0 10px;
+  margin: 0 0 14px;
   max-width: var(--text-max);
   color: var(--muted);
 }
 
-.license__how p:last-child {
-  margin: 0;
-  color: inherit;
+/* Кнопки не растягиваются на всю ширину монитора: адреса — короткий хвост
+   страницы, а не второй заголовок. Ширина взята текстовая (--text-max), в неё
+   три кнопки на десктопе становятся по своим подписям, слева. */
+.license__how .contact-buttons {
+  max-width: var(--text-max);
 }
 
 /* ---------- Кнопки контактов ---------- */

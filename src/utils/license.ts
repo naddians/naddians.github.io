@@ -10,8 +10,11 @@ import { localeFromUrl, type Locale } from '../i18n';
  * «чей это снимок», но не отвечала на «можно ли его взять и как», и человек,
  * нашедший кадр в поиске, просто сохранял картинку себе.
  *
- * `acquireLicensePage` — страница, где кадр запрашивают. Отдельной формы нет:
- * ведёт на контакты, там почта, Telegram и Instagram.
+ * `acquireLicensePage` — страница, где кадр запрашивают. Отдельной формы нет,
+ * и с F1_P62 это та же страница условий: адреса — почта, Telegram, Instagram —
+ * стоят кнопками прямо под условиями. Человек из Картинок Google приходит
+ * спросить про один кадр, а не заказать съёмку, — переход на контакты был
+ * лишним шагом между «прочитал условия» и «написал».
  *
  * Ссылки абсолютные (того требует Google) и на языке страницы: кадр с сербской
  * страницы ведёт на сербские условия.
@@ -19,7 +22,7 @@ import { localeFromUrl, type Locale } from '../i18n';
 export function licenseLinks(locale: Locale) {
   return {
     license: getAbsoluteLocaleUrl(locale, 'license'),
-    acquireLicensePage: getAbsoluteLocaleUrl(locale, 'contact'),
+    acquireLicensePage: getAbsoluteLocaleUrl(locale, 'license'),
   };
 }
 
