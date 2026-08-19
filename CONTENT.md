@@ -153,7 +153,7 @@ Formula 2 · Silverstone · 2025
 Пример: `Canon R6 II · RF 100-500mm f/4.5-7.1 · RF 24-70mm f/2.8`
 
 ```
-ОТВЕТ: Canon R7 · RF 100-400mm f/5.6-8 · Sigma 17-40mm f/1.8 DC Art
+ОТВЕТ: Canon R7 · Sigma 17-40mm f/1.8 DC Art · RF 100-400mm f/5.6-8
 ```
 
 **4.4. Публикации и клиенты** — если есть. Списком, без логотипов.

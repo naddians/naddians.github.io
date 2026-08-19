@@ -45,7 +45,7 @@ export const COLLABS = [
   { handle: 'formula1srbija' },
 ] as const;
 
-export const GEAR = 'Canon R7 · RF 100-400mm f/5.6-8 · Sigma 17-40mm f/1.8 DC Art';
+export const GEAR = 'Canon R7 · Sigma 17-40mm f/1.8 DC Art · RF 100-400mm f/5.6-8';
 
 /**
  * Разделы-галереи. `slug` = имя папки в src/photos/ и кусок URL.
