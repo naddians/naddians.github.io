@@ -60,6 +60,14 @@ const personLd = {
 <meta name="description" content={meta.description} />
 <link rel="canonical" href={canonical} />
 
+{/* Портрет на «Обо мне» в Картинки Google не попадает (F1_P60, решение
+    заказчицы 2026-08-19). Кадр не её: на нём она сама, снимал кто-то другой,
+    поэтому условий использования у него нет и быть не может — а раз брать его
+    нельзя, то и показывать в поиске картинок незачем. `noimageindex` относится
+    ко всем кадрам страницы, но на «Обо мне» кадр ровно один. Сама страница
+    индексируется как прежде: запрет только на картинки. */}
+{route === 'about' && <meta name="robots" content="noimageindex" />}
+
 {alternates.map((alt) => <link rel="alternate" hreflang={alt.code} href={alt.href} />)}
 <link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl('en', route)} />
 
