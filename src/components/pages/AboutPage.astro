@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
+import ContactNotes from '../ContactNotes.astro';
 import { t, type Locale } from '../../i18n';
 import { COLLABS, EVENTS, GEAR } from '../../data/site';
 import { photoAt } from '../../utils/photos';
@@ -73,6 +74,7 @@ const portrait =
       <section class="block">
         <h2 class="block__title">{dict.contact.title}</h2>
         <ContactButtons locale={locale} compact />
+        <ContactNotes locale={locale} />
       </section>
 
       {

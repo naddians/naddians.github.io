@@ -52,6 +52,11 @@
   "contact": {
     "title": "Contact",
     "intro": "For assignments and race weekends\u00a0— write to me directly. I answer within a day.",
+    "notes": {
+      "lead": "Read first:",
+      "licenseLink": "image use terms",
+      "workLink": "how we work"
+    },
     "terms": {
       "title": "Working together",
       "lead": "Tell me the event and what you need covered\u00a0— I'll come back with a shot list and a price.",

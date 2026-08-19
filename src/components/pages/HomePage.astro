@@ -3,6 +3,7 @@ import { Picture, getImage } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
+import ContactNotes from '../ContactNotes.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { AUTHOR, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
@@ -116,6 +117,7 @@ const imageLd = {
         кадра — иначе на одной странице два разных шага. */}
     <h2 class="section__title">{dict.home.contactsTitle}</h2>
     <ContactButtons locale={locale} row />
+    <ContactNotes locale={locale} />
   </div>
 
   <section class="wrap wrap--wide section section--top-line">

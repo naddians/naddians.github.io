@@ -52,6 +52,11 @@
   "contact": {
     "title": "Kontakt",
     "intro": "Za angažmane i trkačke vikende\u00a0— pišite mi direktno. Odgovaram u roku od jednog dana.",
+    "notes": {
+      "lead": "Prvo pročitajte:",
+      "licenseLink": "uslove korišćenja",
+      "workLink": "kako sarađujemo"
+    },
     "terms": {
       "title": "Kako sarađujemo",
       "lead": "Recite mi koji je događaj i šta treba da bude pokriveno\u00a0— vraćam se sa spiskom kadrova i cenom.",
