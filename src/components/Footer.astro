@@ -20,9 +20,15 @@ const year = new Date().getFullYear();
         те же три адреса, что стоят кнопками на главной и в «Обо мне», плюс
         ссылка «Contact» рядом с ними. Теперь подвал ведёт на страницу
         контактов, а адреса и условия работы человек видит там, в одном месте
-        и вместе. */}
+        и вместе.
+
+        Рядом — условия использования кадров (F1_P60). В меню наверху их нет
+        намеренно: страница нужна не тому, кто пришёл смотреть галереи, а тому,
+        кто уже выбрал кадр и думает его взять. Подвал — обычное место для
+        такой ссылки, и он есть на каждой странице. */}
     <nav class="footer__links" aria-label={dict.contact.title}>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
+      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.nav.license}</a>
     </nav>
   </div>
 </footer>

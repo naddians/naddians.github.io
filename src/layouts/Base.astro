@@ -38,8 +38,10 @@ const { locale, route } = Astro.props;
     <main class="main" id="main">
       <slot />
       {/* На главной и в «Обо мне» контакты уже стоят кнопками, на самой
-          странице контактов блок был бы повтором — остаются галереи. */}
-      {!['', 'about', 'contact'].includes(route) && <Cta locale={locale} />}
+          странице контактов блок был бы повтором — остаются галереи.
+          На условиях использования (F1_P60) внизу свой блок «как спросить»
+          с той же ссылкой: два «напишите мне» подряд. */}
+      {!['', 'about', 'contact', 'license'].includes(route) && <Cta locale={locale} />}
     </main>
     <Footer locale={locale} />
   </body>

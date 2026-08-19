@@ -24,7 +24,16 @@ export function t(locale: Locale): Dict {
 }
 
 /** Ключи страниц = куски URL. Пустая строка — главная. */
-export const ROUTES = ['', 'track', 'people', 'atmosphere', 'beyond', 'about', 'contact'] as const;
+export const ROUTES = [
+  '',
+  'track',
+  'people',
+  'atmosphere',
+  'beyond',
+  'about',
+  'contact',
+  'license',
+] as const;
 export type Route = (typeof ROUTES)[number];
 
 /** Ключ страницы для meta-текстов. */

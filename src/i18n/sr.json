@@ -8,7 +8,8 @@
     "atmosphere": "Atmosfera",
     "beyond": "Van F1",
     "about": "O meni",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "license": "Korišćenje slika"
   },
   "galleries": {
     "track": {
@@ -104,6 +105,35 @@
       "note": "Brif je dobrodošao\u00a0— logotipi sponzora, određeni vozači, trenuci koji moraju da se ulove. Pošaljite spisak i snimam po njemu."
     }
   },
+  "license": {
+    "title": "Korišćenje mojih fotografija",
+    "lead": "Korišćenje je besplatno, za lične i nekomercijalne svrhe\u00a0— uz moju pismenu saglasnost i uz moje ime pored kadra.",
+    "items": [
+      {
+        "label": "Besplatno",
+        "text": "Korišćenje fotografija sa ovog sajta ne naplaćujem i ne prodajem ih."
+      },
+      {
+        "label": "Samo lično i nekomercijalno",
+        "text": "Fotografije su za lične i privatne, nekomercijalne svrhe. Reklama, preprodaja i svaka druga komercijalna upotreba nisu obuhvaćene saglasnošću koju dajem."
+      },
+      {
+        "label": "Prvo me pitajte",
+        "text": "Pišite mi pre nego što kadar bilo gde objavite i sačekajte odgovor. Saglasnost dajem pismeno, mejlom ili preko Telegrama, i to za tu upotrebu."
+      },
+      {
+        "label": "Navedite autora",
+        "text": "Moje ime\u00a0— Nadia Stelmashuk\u00a0— pored same fotografije."
+      },
+      {
+        "label": "Ako ste na društvenim mrežama",
+        "text": "Označite me i stavite link ka mom nalogu kada objavite\u00a0— pomen zauzvrat za kadar. To je vid navođenja autora, a ne plaćanje: ovi kadrovi nisu na prodaju."
+      }
+    ],
+    "howTitle": "Kako da pitate",
+    "how": "Mejl, Telegram ili Instagram\u00a0— adrese su na stranici sa kontaktima. Odgovaram u roku od jednog dana.",
+    "howLink": "Pišite mi"
+  },
   "cta": {
     "title": "Hajde da sarađujemo",
     "text": "Dostupna sam za trkačke vikende i angažmane.",
@@ -149,6 +179,10 @@
     "contact": {
       "title": "Kontakt — Nadia Stelmashuk",
       "description": "Kontaktirajte me za motosport angažmane i praćenje trkačkih vikenda: šta vikend obuhvata, rokovi isporuke i fajlovi."
+    },
+    "license": {
+      "title": "Korišćenje slika — Nadia Stelmashuk",
+      "description": "Kako se koriste fotografije Nadie Stelmashuk: besplatno, za lične i nekomercijalne svrhe, uz pismenu saglasnost i navođenje autora."
     }
   }
 }

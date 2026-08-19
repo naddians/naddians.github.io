@@ -10,6 +10,7 @@ export const PAGES = [
   '/beyond/',
   '/about/',
   '/contact/',
+  '/license/',
   '/sr/',
   '/sr/track/',
   '/sr/people/',
@@ -17,6 +18,7 @@ export const PAGES = [
   '/sr/beyond/',
   '/sr/about/',
   '/sr/contact/',
+  '/sr/license/',
 ];
 
 /**

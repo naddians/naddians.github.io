@@ -2,6 +2,7 @@
 import { Picture, getImage } from 'astro:assets';
 import type { Photo } from '../utils/photos';
 import { AUTHOR } from '../data/site';
+import { licenseLinksFor } from '../utils/license';
 
 interface Props {
   photos: Photo[];
@@ -126,10 +127,16 @@ const layout = layoutColumns(photos.map((photo, index) => ({ photo, index })));
  * который на странице действительно есть, а не на ещё один, сгенерированный
  * ради разметки. Ширина — как в `widthsFor`: последняя ступенька лестницы.
  *
+ * `license` и `acquireLicensePage` — условия использования и адрес, по которому
+ * кадр запрашивают (F1_P60). Без первого Google не ставит в Картинках подпись
+ * «Licensable»: было сказано, чей кадр, но не сказано, можно ли его взять.
+ *
  * `description` — тот же текст, что в `alt`. Пока описания не заполнены
  * (scripts/captions.json), это общее слово по разделу, и это честно: выдумывать
  * содержание кадра нельзя, а авторство от описания не зависит и работает уже.
  */
+const rights = licenseLinksFor(Astro.url);
+
 const imageLd = {
   '@context': 'https://schema.org',
   '@graph': await Promise.all(
@@ -147,6 +154,7 @@ const imageLd = {
         creator: { '@type': 'Person', name: AUTHOR.name },
         creditText: AUTHOR.credit,
         copyrightNotice: AUTHOR.copyright,
+        ...rights,
       };
     }),
   ),

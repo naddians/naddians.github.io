@@ -971,6 +971,70 @@ html[data-l10n='sr'] .l10n[data-locale='en'] {
   font-size: 0.9375rem;
 }
 
+/* ---------- Условия использования кадров ---------- */
+
+/* Страница из четырёх пунктов (F1_P60): её адрес стоит в разметке каждого
+   кадра, и человек приходит сюда из Картинок Google — от конкретной
+   фотографии, за ответом «можно ли её взять». Поэтому текст, а не кадры,
+   и колонка шириной с обычный текст сайта (--text-max). */
+.license {
+  padding-block: clamp(28px, 3vw, 40px) clamp(40px, 4.5vw, 64px);
+}
+
+/* Нумерация своя: пункты идут по порядку — сколько стоит, что спросить,
+   как подписать, — и номер помогает на них ссылаться в переписке. */
+.license__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: license;
+  max-width: 800px;
+}
+
+.license__item {
+  counter-increment: license;
+  border-top: 1px solid var(--line);
+  padding-block: clamp(16px, 1.8vw, 22px);
+}
+
+.license__item:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.license__item p {
+  margin: 8px 0 0;
+  max-width: var(--text-max);
+}
+
+.license__label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.license__label::before {
+  content: counter(license) ".";
+  color: var(--muted);
+  margin-right: 10px;
+}
+
+/* Куда писать. Отделён от пунктов воздухом, а не линией: линия под последним
+   пунктом уже есть. */
+.license__how {
+  margin-top: clamp(28px, 3vw, 40px);
+}
+
+.license__how p {
+  margin: 0 0 10px;
+  max-width: var(--text-max);
+  color: var(--muted);
+}
+
+.license__how p:last-child {
+  margin: 0;
+  color: inherit;
+}
+
 /* ---------- Кнопки контактов ---------- */
 
 /* Полоса под героем. Своей нижней границы у неё нет — линию рисует верх

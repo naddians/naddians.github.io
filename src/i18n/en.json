@@ -8,7 +8,8 @@
     "atmosphere": "Circuit",
     "beyond": "Beyond F1",
     "about": "About",
-    "contact": "Contact"
+    "contact": "Contact",
+    "license": "Image use"
   },
   "galleries": {
     "track": {
@@ -99,6 +100,35 @@
       "note": "Briefs welcome\u00a0— sponsor logos, specific drivers, must-have moments. Send the list and I'll shoot to it."
     }
   },
+  "license": {
+    "title": "Using my photographs",
+    "lead": "Free to use for personal and non-commercial purposes\u00a0— with my written permission and my name next to the frame.",
+    "items": [
+      {
+        "label": "Free of charge",
+        "text": "I don't charge for the use of the photographs on this site, and I don't sell them."
+      },
+      {
+        "label": "Personal and non-commercial use only",
+        "text": "The photographs are for personal and private, non-commercial purposes. Advertising, resale and any other commercial use are not covered by the permission I give."
+      },
+      {
+        "label": "Ask me first",
+        "text": "Write to me before you publish a frame anywhere, and wait for my answer. Permission is given in writing, by email or Telegram, and for that use."
+      },
+      {
+        "label": "Credit me",
+        "text": "My name\u00a0— Nadia Stelmashuk\u00a0— next to the photograph."
+      },
+      {
+        "label": "If you're on social media",
+        "text": "Tag me and link to my account when you post\u00a0— a mention in return for the frame. That is credit, not payment: these frames aren't for sale."
+      }
+    ],
+    "howTitle": "How to ask",
+    "how": "Email, Telegram or Instagram\u00a0— the addresses are on the contact page. I answer within a day.",
+    "howLink": "Write to me"
+  },
   "cta": {
     "title": "Let's work together",
     "text": "Available for race weekends and assignments.",
@@ -144,6 +174,10 @@
     "contact": {
       "title": "Contact — Nadia Stelmashuk",
       "description": "Get in touch for motorsport assignments and race weekend coverage: what a weekend covers, delivery times and files."
+    },
+    "license": {
+      "title": "Image use — Nadia Stelmashuk",
+      "description": "How to use photographs by Nadia Stelmashuk: free of charge for personal, non-commercial use, with written permission and credit to the photographer."
     }
   }
 }

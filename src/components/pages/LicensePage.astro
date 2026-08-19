@@ -1,0 +1,51 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Base from '../../layouts/Base.astro';
+import { t, type Locale } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+
+// Страница-текст, без кадра в шапке: сюда приходят не смотреть, а прочитать
+// четыре пункта. Кадр отсюда же и не нужен — из Картинок Google человек уже
+// пришёл от конкретной фотографии.
+//
+// Это же адрес, на который в разметке каждого кадра указывает поле `license`
+// (src/utils/license.ts, F1_P60): страница обязана быть у обоих языков,
+// поэтому маршрут заведён в ROUTES и живёт в обеих папках pages/.
+const items = dict.license.items as ReadonlyArray<{ label: string; text: string }>;
+---
+
+<Base locale={locale} route={'license'}>
+  <div class="wrap page-head">
+    <h1>{dict.license.title}</h1>
+    <p>{dict.license.lead}</p>
+  </div>
+
+  <section class="wrap license">
+    <ol class="license__list">
+      {
+        items.map((item) => (
+          <li class="license__item">
+            <h2 class="license__label">{item.label}</h2>
+            <p>{item.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="license__how">
+      <h2 class="block__title">{dict.license.howTitle}</h2>
+      <p>{dict.license.how}</p>
+      <p>
+        <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>
+          {dict.license.howLink}
+        </a>
+      </p>
+    </div>
+  </section>
+</Base>

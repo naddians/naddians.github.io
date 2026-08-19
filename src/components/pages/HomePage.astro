@@ -6,6 +6,7 @@ import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { AUTHOR, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
+import { licenseLinks } from '../../utils/license';
 
 interface Props {
   locale: Locale;
@@ -34,6 +35,9 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
  * пересборке размеров, поэтому автор указан разметкой (см. AUTHOR в site.ts).
  * Кадры здесь — герой и обложки разделов; портрет со страницы «Обо мне» сюда
  * не попадает намеренно: на нём заказчица, и снимала его не она.
+ *
+ * Условия использования (`license`, `acquireLicensePage`) — те же, что у кадров
+ * ленты и шапок разделов (F1_P60, src/utils/license.ts).
  */
 const homePhotos = [
   ...(hero ? [{ image: hero, widths: heroWidths, lead: true }] : []),
@@ -48,6 +52,8 @@ const homePhotos = [
       lead: false,
     })),
 ];
+
+const rights = licenseLinks(locale);
 
 const imageLd = {
   '@context': 'https://schema.org',
@@ -65,6 +71,7 @@ const imageLd = {
         creator: { '@type': 'Person', name: AUTHOR.name },
         creditText: AUTHOR.credit,
         copyrightNotice: AUTHOR.copyright,
+        ...rights,
       };
     }),
   ),

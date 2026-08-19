@@ -20,6 +20,7 @@
 import { getImage } from 'astro:assets';
 import { CARD_ASPECT, HERO_ASPECT, focusFor } from '../utils/focus';
 import { AUTHOR } from '../data/site';
+import { licenseLinksFor } from '../utils/license';
 
 interface Props {
   image: ImageMetadata;
@@ -123,6 +124,9 @@ const fallback = await getImage({
  * разметкой. `representativeOfPage` — это главный кадр страницы, а не один
  * из ленты.
  *
+ * `license` и `acquireLicensePage` — как у кадров ленты (F1_P60): условия
+ * использования и адрес, по которому кадр запрашивают.
+ *
  * Описания здесь нет намеренно: `alt` у шапки пустой, потому что кадр
  * декоративный — название раздела написано поверх него текстом, и робот его
  * и так читает. Авторство от этого не зависит.
@@ -135,6 +139,7 @@ const heroLd = {
   creator: { '@type': 'Person', name: AUTHOR.name },
   creditText: AUTHOR.credit,
   copyrightNotice: AUTHOR.copyright,
+  ...licenseLinksFor(Astro.url),
 };
 ---
 
