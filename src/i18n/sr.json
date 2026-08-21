@@ -112,15 +112,16 @@
   },
   "license": {
     "title": "Korišćenje mojih fotografija",
-    "lead": "Korišćenje je besplatno, za lične i nekomercijalne svrhe\u00a0— uz moju pismenu saglasnost i uz moje ime pored kadra.",
+    "lead": "Korišćenje je besplatno, za lične i nekomercijalne svrhe\u00a0— uz moju pismenu saglasnost i uz moje ime pored kadra. Snimanje po porudžbini je druga stvar: to je plaćen posao.",
+    "itemsTitle": "Fotografije na ovom sajtu",
     "items": [
       {
         "label": "Besplatno",
         "text": "Korišćenje fotografija sa ovog sajta ne naplaćujem i ne prodajem ih."
       },
       {
-        "label": "Samo lično i nekomercijalno",
-        "text": "Fotografije su za lične i privatne, nekomercijalne svrhe. Reklama, preprodaja i svaka druga komercijalna upotreba nisu obuhvaćene saglasnošću koju dajem."
+        "label": "Ne za komercijalnu upotrebu",
+        "text": "Reklama, preprodaja i svaka druga komercijalna upotreba ovih kadrova nisu obuhvaćene saglasnošću koju dajem."
       },
       {
         "label": "Prvo me pitajte",
@@ -133,12 +134,16 @@
       {
         "label": "Ako ste na društvenim mrežama",
         "text": "Označite me i stavite link ka mom nalogu kada objavite\u00a0— pomen zauzvrat za kadar. To je vid navođenja autora, a ne plaćanje: ovi kadrovi nisu na prodaju."
-      },
-      {
-        "label": "Portret na stranici „O meni“",
-        "text": "Ta fotografija nije moja\u00a0— na njoj sam ja, a snimila ju je druga osoba. Ništa od navedenog se na nju ne odnosi: za nju ne dajem saglasnost, ni za jednu upotrebu."
       }
     ],
+    "newWork": {
+      "title": "Nova snimanja",
+      "scope": "Sve navedeno odnosi se na kadrove koji su već objavljeni ovde.",
+      "commission": "Snimanje po vašem zadatku je druga priča: cena i prava korišćenja\u00a0— uključujući i reklamu\u00a0— dogovaraju se za to konkretno snimanje.",
+      "termsLead": "Uslovi su u odeljku",
+      "termsLink": "kako sarađujemo",
+      "archive": "Ako vam treba kadar sa trke koji ovde nije objavljen, pitajte\u00a0— reći ću vam da li mogu da ga dam i pod kojim uslovima."
+    },
     "howTitle": "Kako da pitate",
     "how": "Bilo koji od ovih načina\u00a0— mejl, Telegram ili Instagram. Odgovaram u roku od jednog dana."
   },

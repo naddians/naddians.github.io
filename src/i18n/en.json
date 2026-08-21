@@ -107,15 +107,16 @@
   },
   "license": {
     "title": "Using my photographs",
-    "lead": "Free to use for personal and non-commercial purposes\u00a0— with my written permission and my name next to the frame.",
+    "lead": "Free to use for personal and non-commercial purposes\u00a0— with my written permission and my name next to the frame. Commissioning a shoot is a different thing: that is paid work.",
+    "itemsTitle": "Photographs on this site",
     "items": [
       {
         "label": "Free of charge",
         "text": "I don't charge for the use of the photographs on this site, and I don't sell them."
       },
       {
-        "label": "Personal and non-commercial use only",
-        "text": "The photographs are for personal and private, non-commercial purposes. Advertising, resale and any other commercial use are not covered by the permission I give."
+        "label": "Not for commercial use",
+        "text": "Advertising, resale and any other commercial use of these frames are not covered by the permission I give."
       },
       {
         "label": "Ask me first",
@@ -128,12 +129,16 @@
       {
         "label": "If you're on social media",
         "text": "Tag me and link to my account when you post\u00a0— a mention in return for the frame. That is credit, not payment: these frames aren't for sale."
-      },
-      {
-        "label": "The portrait on the About page",
-        "text": "That photograph is not mine\u00a0— I'm the one in it, and someone else took it. Nothing above applies to it: I give no permission for it, for any use."
       }
     ],
+    "newWork": {
+      "title": "New photographs",
+      "scope": "Everything above is about the frames already published here.",
+      "commission": "A shoot for your brief is a different matter: the fee and the usage rights\u00a0— advertising included\u00a0— are agreed for that particular shoot.",
+      "termsLead": "The terms are under",
+      "termsLink": "how we work",
+      "archive": "If you need a frame from a weekend that isn't published here, ask\u00a0— I'll tell you whether I can give it, and on what terms."
+    },
     "howTitle": "How to ask",
     "how": "Any one of these\u00a0— email, Telegram or Instagram. I answer within a day."
   },

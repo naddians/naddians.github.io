@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
 import { t, type Locale } from '../../i18n';
@@ -18,6 +19,10 @@ const dict = t(locale);
 // (src/utils/license.ts, F1_P60): страница обязана быть у обоих языков,
 // поэтому маршрут заведён в ROUTES и живёт в обеих папках pages/.
 const items = dict.license.items as ReadonlyArray<{ label: string; text: string }>;
+
+// Ссылка на условия работы ведёт сразу в раздел (`#working-together`), а не
+// в начало страницы контактов: адреса человек уже видел здесь, кнопками.
+const workHref = `${getRelativeLocaleUrl(locale, 'contact')}#working-together`;
 ---
 
 <Base locale={locale} route={'license'}>
@@ -27,16 +32,39 @@ const items = dict.license.items as ReadonlyArray<{ label: string; text: string 
   </div>
 
   <section class="wrap license">
+    {/* Три раздела одного веса (F1_P67, решение заказчицы): что можно с кадрами
+        сайта, что со съёмкой, куда писать. Первый заголовок нужен не меньше
+        остальных — без него список читался как «условия вообще», а он про то,
+        что на сайте уже опубликовано. Названия пунктов внутри списка стали
+        уровнем ниже (h3): теперь над ними есть свой заголовок раздела. */}
+    <h2 class="section__title">{dict.license.itemsTitle}</h2>
+
     <ol class="license__list">
       {
         items.map((item) => (
           <li class="license__item">
-            <h2 class="license__label">{item.label}</h2>
+            <h3 class="license__label">{item.label}</h3>
             <p>{item.text}</p>
           </li>
         ))
       }
     </ol>
+
+    {/* Граница «что уже снято / что предстоит снять» (F1_P67, решение
+        заказчицы). Пункты выше говорят «бесплатно», и без этого блока страница
+        отвечала только за кадры, которые на сайте уже есть: человек, пришедший
+        из Картинок Google, уносил «у неё всё бесплатно» — включая съёмку,
+        которой ещё нет. Условия съёмки здесь не пересказываются: они расписаны
+        на «Контактах», и вторая их копия разошлась бы с первой. */}
+    <div class="license__new">
+      <h2 class="section__title">{dict.license.newWork.title}</h2>
+      <p>
+        {dict.license.newWork.scope} {dict.license.newWork.commission}{' '}
+        {dict.license.newWork.termsLead}{' '}
+        <a class="contact-link" href={workHref}>{dict.license.newWork.termsLink}</a>.
+      </p>
+      <p>{dict.license.newWork.archive}</p>
+    </div>
 
     {/* Адреса стоят прямо здесь, кнопками, а не ссылкой на контакты (F1_P62):
         сюда приходят из Картинок Google спросить про один кадр, и это не заказ
@@ -44,7 +72,7 @@ const items = dict.license.items as ReadonlyArray<{ label: string; text: string 
         Вариант `row` — тот же, что в полосе под именем на главной: на телефоне
         три кнопки укладываются в одну строку и не занимают собой экран. */}
     <div class="license__how">
-      <h2 class="block__title">{dict.license.howTitle}</h2>
+      <h2 class="section__title">{dict.license.howTitle}</h2>
       <p>{dict.license.how}</p>
       <ContactButtons locale={locale} row />
     </div>
