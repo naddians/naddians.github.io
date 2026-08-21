@@ -2,8 +2,6 @@
 import { Picture, getImage } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
-import ContactButtons from '../ContactButtons.astro';
-import ContactNotes from '../ContactNotes.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { AUTHOR, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
 import { photoAt, photosIn } from '../../utils/photos';
@@ -101,26 +99,46 @@ const imageLd = {
       )
     }
     {hero && <div class="hero__scrim" />}
-    <div class="wrap hero__inner">
-      <h1 class="hero__title">{dict.name}</h1>
-      <p class="hero__slogan">{dict.slogan}</p>
-      <p class="hero__tagline">{dict.tagline}</p>
+    <div class="wrap hero__inner hero__inner--about">
+      <div class="hero__name">
+        <h1 class="hero__title">{dict.name}</h1>
+        <p class="hero__slogan">{dict.slogan}</p>
+        <p class="hero__tagline">{dict.tagline}</p>
+      </div>
+
+      {/* Тизер «Обо мне» в самом герое (F1_P64, решение заказчицы 2026-08-21).
+          Полоса контактов, стоявшая под героем (F1_P38), с главной убрана: с
+          F1_P40 контакты есть в шапке, и полоса повторяла её пункт. Освободилось
+          место, но заодно просела заметность «Обо мне» — оно ушло в подвал.
+          Из десяти собранных приёмов выбран этот: фраза становится вторым
+          столбцом рядом с именем, поэтому до первой фотографии страница не
+          вырастает ни на пиксель, а на телефоне встаёт под подписью.
+
+          Фраза — из «Обо мне» дословно, не пересказ: это то, что заказчица
+          говорит о себе, а не рекламная строка про неё.
+
+          Строки под кнопками «Read first…» (F1_P63) здесь больше нет — она
+          жила при кнопках и ушла вместе с ними; на «Обо мне» она осталась. */}
+      <p class="hero__about">
+        {dict.home.aboutTeaser}{' '}
+        {/* Ссылка внутри фразы, а не отдельной строкой (решение заказчицы
+            2026-08-21) — тем же приёмом, что «Write to me» в подвале: отдельной
+            строкой она читается как подпись, а не как продолжение мысли. Точка
+            стоит в разметке, чтобы не попасть под подчёркивание, а обёртка
+            держит её на одной строке со ссылкой. */}
+        <span class="hero__about-wrap">
+          <a class="hero__about-link contact-link" href={getRelativeLocaleUrl(locale, 'about')}
+            >{dict.home.aboutLink}</a
+          >.
+        </span>
+      </p>
     </div>
   </section>
 
-  {/* Полоса контактов под именем: три кнопки в одну строку (F1_P38). До первой
-      фотографии сайт не должен просить написать в полный голос — строка одна
-      и тихая, а сами кнопки остаются на месте. */}
-  <div class="wrap contact-bar">
-    {/* Заголовок тот же, что у разделов ниже, вместе с отступом до содержимого:
-        от «Contacts» до кнопок столько же, сколько от «Galleries» до первого
-        кадра — иначе на одной странице два разных шага. */}
-    <h2 class="section__title">{dict.home.contactsTitle}</h2>
-    <ContactButtons locale={locale} row />
-    <ContactNotes locale={locale} />
-  </div>
-
-  <section class="wrap wrap--wide section section--top-line">
+  {/* Линии сверху у блока нет: полосы контактов между ним и героем больше нет,
+      и линию рисует нижняя граница самого героя — иначе на стыке вышли бы две
+      подряд. */}
+  <section class="wrap wrap--wide section">
     <h2 class="section__title">{dict.home.galleriesTitle}</h2>
     <div class="cards">
       {

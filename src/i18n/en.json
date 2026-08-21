@@ -1,6 +1,6 @@
 {
   "name": "Nadia Stelmashuk",
-  "slogan": "Capturing the emotions",
+  "slogan": "Capturing emotion",
   "tagline": "Motorsport photographer · Belgrade & worldwide",
   "nav": {
     "track": "On-Track",
@@ -35,7 +35,7 @@
   },
   "home": {
     "galleriesTitle": "Galleries",
-    "contactsTitle": "Contacts",
+    "aboutTeaser": "I bring a point of view to a weekend, not just a checklist.",
     "aboutLink": "About me"
   },
   "about": {
