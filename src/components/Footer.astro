@@ -22,11 +22,20 @@ const year = new Date().getFullYear();
         контактов, а адреса и условия работы человек видит там, в одном месте
         и вместе.
 
-        Рядом — условия использования кадров (F1_P60). В меню наверху их нет
+        Рядом — «Обо мне»: с F1_P40 (2026-08-21) в шапке на его месте стоят
+        контакты, и страница переехала сюда. Ссылка на контакты в подвале при
+        этом осталась — подвал есть на каждой странице, и человеку, дочитавшему
+        до низа, не нужно возвращаться наверх.
+
+        Рядом же — условия использования кадров (F1_P60). В меню наверху их нет
         намеренно: страница нужна не тому, кто пришёл смотреть галереи, а тому,
         кто уже выбрал кадр и думает его взять. Подвал — обычное место для
         такой ссылки, и он есть на каждой странице. */}
-    <nav class="footer__links" aria-label={dict.contact.title}>
+    <nav
+      class="footer__links"
+      aria-label={locale === 'sr' ? 'Navigacija u podnožju' : 'Footer navigation'}
+    >
+      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'about')}>{dict.nav.about}</a>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.nav.license}</a>
     </nav>
