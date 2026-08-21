@@ -1,11 +1,9 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import ContactButtons from '../ContactButtons.astro';
 import ContactNotes from '../ContactNotes.astro';
 import { t, type Locale } from '../../i18n';
 import { COLLABS, EVENTS, GEAR } from '../../data/site';
-import { photoAt } from '../../utils/photos';
 
 interface Props {
   locale: Locale;
@@ -13,30 +11,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const dict = t(locale);
-
-const portrait =
-  photoAt('about/portrait.jpg') ??
-  photoAt('about/portrait.jpeg') ??
-  photoAt('about/portrait.png') ??
-  photoAt('about/portrait_demo.jpg');
 ---
 
 <Base locale={locale} route={'about'}>
-  <div class:list={['wrap', 'about', !portrait && 'about--no-portrait']}>
-    {
-      portrait && (
-        <Picture
-          class="about__portrait"
-          src={portrait}
-          alt={dict.name}
-          formats={['avif', 'webp']}
-          widths={[320, 640, 900]}
-          sizes="(min-width: 900px) 34vw, 100vw"
-          loading="eager"
-        />
-      )
-    }
-
+  <div class="wrap about">
     <div class="about__body">
       <h1>{dict.about.title}</h1>
       <p class="about__base">{dict.about.base}</p>

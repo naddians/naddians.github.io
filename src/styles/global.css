@@ -746,23 +746,6 @@ html[data-l10n='sr'] .l10n[data-locale='en'] {
   align-items: start;
 }
 
-@media (min-width: 900px) {
-  .about {
-    grid-template-columns: minmax(240px, 34%) 1fr;
-  }
-
-  /* Пока портрета нет — одна колонка, без пустого места слева. */
-  .about--no-portrait {
-    grid-template-columns: 1fr;
-  }
-}
-
-.about__portrait {
-  background: #121215;
-  border: 1px solid var(--line);
-  aspect-ratio: 4 / 5;
-}
-
 .about__body {
   max-width: var(--text-max);
 }
