@@ -14,108 +14,131 @@ interface Props {
 
 const { photos, eagerCount = 2, leading = true } = Astro.props;
 
-/**
- * Кадр в сетке шире 1200px не показывается никогда: три колонки в контейнере
- * 1600px дают 528 CSS-пикселей, то есть 1056 на экране с двойной плотностью.
- * Варианты 1600 и 2000 браузер бы качал зря, а сборка их зря считала.
- */
-const LADDER = [400, 800, 1200];
-
-function widthsFor(width: number): number[] {
-  const max = Math.min(width, LADDER[LADDER.length - 1]);
-  return [...LADDER.filter((w) => w < max), max];
-}
-
-const SIZES = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw';
-
-/** Кадр вместе с его номером в ленте: номер решает, какие кадры грузятся сразу. */
-type Numbered = { photo: Photo; index: number };
+/** Зазор между кадрами. Держать в паре с --gap в global.css: по нему считаются ряды. */
+const GAP = 8;
 
 /**
- * Как разложить ленту по колонкам. Раскладку колонок браузеры считают сами и
- * считают по-разному: и какой кадр в какую колонку попадёт, и какой высоты
- * выйдет вся галерея. Safari на этом ошибался дважды — сначала складывал два
- * кадра в первую колонку и оставлял третью пустой (F1_P23), потом растягивал
- * галерею на всю длину ленты, и следующая группа уезжала вниз (F1_P26).
- * Поэтому колонки нарезаются здесь, при сборке, и лежат в разметке готовыми
- * блоками — браузеру остаётся поставить их в ряд.
+ * Опорные ширины, под которые считаются разрезы, и желаемая высота ряда.
+ * Ширина ленты — это окно минус поля (--pad), но не больше 1600 (--max):
+ * на компьютере это 1504, на планшете около 880. Точная ширина окна значения
+ * не имеет: разрезы от неё почти не зависят, а высоту ряда браузер подгоняет
+ * сам — см. ниже.
  *
- * Колонок в окне то одна, то две, то три, а кадр в разметке должен лежать один
- * раз, иначе браузер скачает его дважды. Отсюда вложенность: лента режется
- * пополам, и одна из половин делится ещё раз — это и есть третья колонка.
- * В окне поуже лишний уровень распускается (`display: contents` в global.css),
- * и колонками становятся сами половины.
- *
- * Отсюда же и цена: разрез пополам обязан совпасть с одной из границ тройки,
- * а лучший разрез на две колонки редко попадает в границы лучшего разреза на
- * три. Приоритет у трёх — широкий экран главнее: три колонки берутся такими же,
- * какими их дал бы свободный разрез (самая длинная колонка — самая короткая из
- * возможных), с запасом в 5%. Запас нужен, чтобы было из чего выбирать.
- *
- * Из подходящих вариантов берётся самый ровный сразу в обеих раскладках: у
- * каждой считается разброс — насколько длинная колонка длиннее короткой, —
- * и берётся вариант, где сумма двух разбросов меньше всего. Разброс, а не
- * длина самой длинной колонки: пока правило следило только за длинной, короткую
- * ничто не держало, и на On-Track левая колонка обрывалась на треть раньше
- * остальных, оставляя под собой дыру в два кадра (F1_P31). Теперь там
- * 2640/2639/3369 вместо 1980/3299/3369, а разрез пополам остался прежним —
- * дыра ушла даром. Кадров десятки, вариантов считанные сотни — перебор дешевле,
- * чем угадывание.
- *
- * Высота кадра здесь — отношение сторон: ширина у колонок одинаковая, значит
- * пропорций достаточно, чтобы сравнить, какая колонка длиннее.
+ * Желаемая высота — это выбранный масштаб кадра: 580 на компьютере значит
+ * 2–3 кадра в ряду. Числа проверены на всех разделах: при них разрезы выходят
+ * ровно те, что на утверждённых листах (2026-08-25). Планшетное 360 — то же
+ * самое, пересчитанное на узкую ленту, чтобы кадр не менял величину при
+ * повороте.
  */
-function layoutColumns(items: Numbered[]): Numbered[][][] {
-  // Кадров меньше, чем колонок: каждому своя, иначе последние останутся пустыми.
-  if (items.length <= 2) return items.map((item) => [[item]]);
+const WIDE = { width: 1504, target: 580 };
+const MID = { width: 880, target: 360 };
 
-  const ratios = items.map(({ photo }) => photo.image.height / photo.image.width);
-  const n = ratios.length;
+/**
+ * Как галерея разложена (F1_P36). Кадры идут слева направо рядами; в ряду у
+ * всех одна высота, и ряд заполняет ширину точно. Низ ряда поэтому ровный
+ * всегда — той дыры под короткой колонкой, что чинилась в F1_P23, F1_P26,
+ * F1_P31, F1_P45 и F1_P49, здесь не бывает по устройству.
+ *
+ * Здесь, при сборке, считается только одно: где лента режется на ряды.
+ * Ширину внутри ряда подбирает браузер флексом — каждому кадру дано расти
+ * пропорционально его пропорции, поэтому в ряду они выходят одной высоты, а
+ * ряд заполняет ленту без остатка на любой ширине окна. Это ровно то, чего не
+ * умели колонки: их высоту приходилось считать заранее, и разрез на две
+ * колонки был обязан совпасть с разрезом на три (F1_P45). Ряды считаются
+ * независимо, и никакой кадр от этого не попадает в разметку дважды: границы
+ * рядов — пустые метки между кадрами, лишние гасятся `display: none`.
+ *
+ * Раскладку целиком браузеру всё же не отдаём. Свободный перенос флексом
+ * набирает ряд жадно, и последний ряд остаётся неполным — под ним пустое
+ * место, та же дыра, только внизу. Поэтому разрезы считаются по всей ленте
+ * разом (planRows): лишние кадры расходятся по соседним рядам, а не копятся
+ * в хвосте.
+ */
+function planRows(aspects: number[], { width, target }: { width: number; target: number }): number[] {
+  const n = aspects.length;
+  if (n === 0) return [0];
 
-  // Сумма высот первых i кадров — чтобы высоту любого куска брать вычитанием.
-  const prefix = [0];
-  for (const r of ratios) prefix.push(prefix[prefix.length - 1] + r);
-  const height = (from: number, to: number) => prefix[to] - prefix[from];
+  // Высота ряда из кадров i..j-1, заполняющего ленту точно: ширины кадров
+  // относятся как их пропорции, значит высота — это ширина, делённая на их сумму.
+  const rowHeight = (i: number, j: number) => {
+    let sum = 0;
+    for (let k = i; k < j; k++) sum += aspects[k];
+    return (width - GAP * (j - i - 1)) / sum;
+  };
 
-  // Сначала — насколько короткой вообще может быть самая длинная из трёх колонок.
-  let free3 = Infinity;
-  for (let a = 1; a < n - 1; a++) {
-    for (let b = a + 1; b < n; b++) {
-      free3 = Math.min(free3, Math.max(height(0, a), height(a, b), height(b, n)));
-    }
-  }
+  // Цена ряда — насколько его высота отличается от желаемой; ищется набор
+  // разрезов с наименьшей общей ценой. Ряд из одного вертикального кадра во всю
+  // ленту был бы вдвое выше соседей и кричал бы громче остальных, поэтому за
+  // высоту сверх полутора целей цена растёт отдельно — но остаётся конечной:
+  // запрет здесь оставил бы короткую ленту вообще без раскладки.
+  const cost = new Array(n + 1).fill(Infinity);
+  const from = new Array(n + 1).fill(0);
+  cost[0] = 0;
 
-  // Затем из вариантов, укладывающихся в эти 5%, берём самый ровный — и на трёх
-  // колонках, и на двух. c — где лента режется пополам, d — где делится
-  // половина: если d меньше c, делится первая половина, если больше — вторая.
-  const limit = free3 * 1.05;
-  let best = Infinity;
-  let bestCut: [number, number] = [1, 2];
-
-  for (let a = 1; a < n - 1; a++) {
-    for (let b = a + 1; b < n; b++) {
-      const three = [height(0, a), height(a, b), height(b, n)];
-      if (Math.max(...three) > limit) continue;
-      const spread3 = Math.max(...three) - Math.min(...three);
-
-      // Тройка (a, b) годится; пополам её можно сложить по a или по b.
-      for (const c of [a, b]) {
-        const spread2 = Math.abs(height(0, c) - height(c, n));
-        if (spread3 + spread2 < best) {
-          best = spread3 + spread2;
-          bestCut = [c, c === a ? b : a];
-        }
+  const MAX_IN_ROW = 5;
+  for (let j = 1; j <= n; j++) {
+    for (let i = Math.max(0, j - MAX_IN_ROW); i < j; i++) {
+      if (cost[i] === Infinity) continue;
+      const h = rowHeight(i, j);
+      const tall = Math.max(0, h - target * 1.5);
+      const price = cost[i] + (h - target) ** 2 + tall ** 2 * 8;
+      if (price < cost[j]) {
+        cost[j] = price;
+        from[j] = i;
       }
     }
   }
 
-  const [c, d] = bestCut;
-  return d < c
-    ? [[items.slice(0, d), items.slice(d, c)], [items.slice(c)]]
-    : [[items.slice(0, c)], [items.slice(c, d), items.slice(d)]];
+  const starts = [n];
+  while (starts[0] > 0) starts.unshift(from[starts[0]]);
+  return starts;
 }
 
-const layout = layoutColumns(photos.map((photo, index) => ({ photo, index })));
+const ASPECTS = photos.map((photo) => photo.image.width / photo.image.height);
+
+/** Доля ленты, которую кадр занимает в своём ряду: по ней считается `sizes`. */
+function sharesFrom(starts: number[]): number[] {
+  const shares = new Array(ASPECTS.length).fill(1);
+  for (let r = 0; r < starts.length - 1; r++) {
+    const [i, j] = [starts[r], starts[r + 1]];
+    let sum = 0;
+    for (let k = i; k < j; k++) sum += ASPECTS[k];
+    for (let k = i; k < j; k++) shares[k] = ASPECTS[k] / sum;
+  }
+  return shares;
+}
+
+const wide = planRows(ASPECTS, WIDE);
+const mid = planRows(ASPECTS, MID);
+const cutWide = new Set(wide.slice(1, -1));
+const cutMid = new Set(mid.slice(1, -1));
+const shareWide = sharesFrom(wide);
+const shareMid = sharesFrom(mid);
+
+/**
+ * Какие размеры файла готовить. Больше, чем кадр показывается на экране с
+ * двойной плотностью, не нужно: эти варианты браузер бы качал зря, а сборка
+ * зря считала. В колонках потолок был общий (треть ленты), в рядах он у каждого
+ * кадра свой — кадр может занять и четверть ряда, и весь ряд целиком.
+ */
+const LADDER = [400, 800, 1200, 1600, 2000];
+
+function widthsFor(width: number, onScreen: number): number[] {
+  const max = Math.min(width, Math.ceil(onScreen * 2));
+  return [...LADDER.filter((w) => w < max), max];
+}
+
+/** Ширина кадра на экране в самом большом случае — на компьютере. */
+const onScreen = (index: number) => shareWide[index] * WIDE.width;
+
+/**
+ * Какой ширины кадр окажется на экране — браузеру это нужно знать до того, как
+ * он выберет файл. Доля ряда известна с точностью до пикселя, ширина ленты — это
+ * окно минус поля, поэтому 95vw с запасом на поля.
+ */
+const sizesFor = (index: number) =>
+  `(min-width: 1024px) ${Math.round(shareWide[index] * 95)}vw, ` +
+  `(min-width: 640px) ${Math.round(shareMid[index] * 95)}vw, 100vw`;
 
 /**
  * Авторство кадров для робота (F1_P25). У каждой фотографии — своя запись
@@ -140,8 +163,8 @@ const rights = licenseLinksFor(Astro.url);
 const imageLd = {
   '@context': 'https://schema.org',
   '@graph': await Promise.all(
-    photos.map(async (photo) => {
-      const widths = widthsFor(photo.image.width);
+    photos.map(async (photo, index) => {
+      const widths = widthsFor(photo.image.width, onScreen(index));
       const rendered = await getImage({
         src: photo.image,
         width: widths[widths.length - 1],
@@ -165,25 +188,30 @@ const imageLd = {
 
 <div class="grid">
   {
-    layout.map((half) => (
-      <div class="grid__half">
-        {half.map((third) => (
-          <div class="grid__third">
-            {third.map(({ photo, index }) => (
-              <Picture
-                src={photo.image}
-                alt={photo.alt}
-                formats={['avif', 'webp']}
-                widths={widthsFor(photo.image.width)}
-                sizes={SIZES}
-                loading={index < eagerCount ? 'eager' : 'lazy'}
-                fetchpriority={leading && index === 0 ? 'high' : undefined}
-                decoding="async"
-              />
-            ))}
-          </div>
-        ))}
-      </div>
+    photos.map((photo, index) => (
+      <>
+        {(cutWide.has(index) || cutMid.has(index)) && (
+          <span
+            class:list={[
+              'grid__break',
+              cutWide.has(index) && 'grid__break--wide',
+              cutMid.has(index) && 'grid__break--mid',
+            ]}
+            aria-hidden="true"
+          />
+        )}
+        <Picture
+          src={photo.image}
+          alt={photo.alt}
+          formats={['avif', 'webp']}
+          widths={widthsFor(photo.image.width, onScreen(index))}
+          sizes={sizesFor(index)}
+          loading={index < eagerCount ? 'eager' : 'lazy'}
+          fetchpriority={leading && index === 0 ? 'high' : undefined}
+          decoding="async"
+          pictureAttributes={{ class: 'shot', style: `--a: ${ASPECTS[index].toFixed(4)}` }}
+        />
+      </>
     ))
   }
 </div>

@@ -23,8 +23,8 @@ export const PAGES = [
 
 /**
  * Ширины окна, на которых меняется раскладка галереи (см. global.css):
- * до 640 — один столбец, 640–1023 — колонками работают .grid__half,
- * от 1024 — .grid__third.
+ * до 640 — один столбец, 640–1023 и от 1024 — ряды равной высоты, но разрезы
+ * у них свои (.grid__break--mid и .grid__break--wide).
  */
 export const PHONE = { width: 375, height: 812 };
 export const NARROW = { width: 320, height: 812 };
