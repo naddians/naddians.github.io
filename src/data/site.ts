@@ -71,6 +71,7 @@ export type GallerySlug = (typeof GALLERIES)[number];
 export const BEYOND_SERIES = [
   { slug: 'porsche', title: 'Porsche Mobil 1 Supercup' },
   { slug: 'f2', title: 'Formula 2' },
+  { slug: 't4', title: 'T4 Series Serbia' },
 ] as const;
 
 /**
