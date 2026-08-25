@@ -25,12 +25,17 @@ export const AUTHOR = {
   copyright: '© Nadia Stelmashuk',
 } as const;
 
-/** Отснятые события. Сгруппированы по уик-эндам — так видно два выезда, а не пять строк. */
+/** Отснятые события. Сгруппированы по уик-эндам — так видно выезды, а не отдельные гонки. */
 export const EVENTS = [
   {
     venue: 'Spa-Francorchamps',
     year: 2026,
     series: ['Formula 1', 'Formula 2', 'Porsche Mobil 1 Supercup'],
+  },
+  {
+    venue: 'Autokomerc Karting Centar',
+    year: 2026,
+    series: ['T4 Series Serbia · Round 5'],
   },
   {
     venue: 'Silverstone',
