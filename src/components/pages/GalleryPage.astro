@@ -64,7 +64,19 @@ const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
         {groups.map((group, index) => (
           <section class:list={['series', index > 0 && 'series--next']}>
             {group.title && <h2 class="series__title">{group.title}</h2>}
-            <PhotoGrid photos={group.photos} />
+            {/*
+              Лента у каждой серии своя, и сама по себе она не знает, что она
+              не первая на странице: без этих двух слов каждая берёт свои два
+              кадра вперёд и вешает своему первому кадру высокий приоритет —
+              в Beyond выходило 7 кадров вперёд вместо 3 и высокий приоритет
+              у четверых сразу, то есть ни у кого (F1_P73). Ведущая на странице
+              одна: шапка раздела и первая серия под ней.
+            */}
+            <PhotoGrid
+              photos={group.photos}
+              leading={index === 0}
+              eagerCount={index === 0 ? 2 : 0}
+            />
           </section>
         ))}
       </div>
