@@ -59,7 +59,7 @@
     },
     "terms": {
       "title": "Working together",
-      "lead": "Tell me the event and what you need covered\u00a0— I'll come back with a shot list and a price.",
+      "lead": "Tell me the event and what you need covered\u00a0— I'll come back with a shot list and\u00a0a\u00a0price.",
       "items": [
         {
           "label": "Coverage",
@@ -102,7 +102,7 @@
           "list": ["Date and circuit", "Which series", "How many days", "Who or what matters most"]
         }
       ],
-      "note": "Briefs welcome\u00a0— sponsor logos, specific drivers, must-have moments. Send the list and I'll shoot to it."
+      "note": "Briefs welcome\u00a0— sponsor logos, specific drivers, must-have moments. Send the list and I'll shoot\u00a0to\u00a0it."
     }
   },
   "license": {

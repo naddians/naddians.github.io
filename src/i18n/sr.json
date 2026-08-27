@@ -59,7 +59,7 @@
     },
     "terms": {
       "title": "Kako sarađujemo",
-      "lead": "Recite mi koji je događaj i šta treba da bude pokriveno\u00a0— vraćam se sa spiskom kadrova i cenom.",
+      "lead": "Recite mi koji je događaj i šta treba da bude pokriveno\u00a0— vraćam se sa spiskom kadrova\u00a0i\u00a0cenom.",
       "items": [
         {
           "label": "Pokrivenost",
@@ -107,7 +107,7 @@
           ]
         }
       ],
-      "note": "Brif je dobrodošao\u00a0— logotipi sponzora, određeni vozači, trenuci koji moraju da se ulove. Pošaljite spisak i snimam po njemu."
+      "note": "Brif je dobrodošao\u00a0— logotipi sponzora, određeni vozači, trenuci koji moraju da se ulove. Pošaljite spisak i snimam\u00a0po\u00a0njemu."
     }
   },
   "license": {
