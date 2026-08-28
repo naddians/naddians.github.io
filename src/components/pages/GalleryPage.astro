@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../PhotoGrid.astro';
+import PhotoViewer from '../PhotoViewer.astro';
 import SectionHero from '../SectionHero.astro';
 import { t, type Locale, type Route } from '../../i18n';
 import { CARD_FOCUS, COVERS, HEADERS, type GallerySlug } from '../../data/site';
@@ -86,4 +87,10 @@ const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
       </div>
     )
   }
+
+  {/*
+    Просмотрщик один на страницу, а не на ленту: в Beyond лент три, по числу
+    серий, и листаться раздел должен подряд, а не по серии (F1_P77).
+  */}
+  {photos.length > 0 && <PhotoViewer locale={locale} />}
 </Base>

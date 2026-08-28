@@ -160,6 +160,37 @@ const sizesFor = (index: number) =>
  */
 const rights = licenseLinksFor(Astro.url);
 
+/**
+ * Кадр для просмотрщика (F1_P77) — тот же файл, но во весь экран, а не долей
+ * ряда. Отдельный размер здесь нужен потому, что лестница ленты обрезана по
+ * месту кадра в ряду (widthsFor): кадру в четверть ряда там дальше 1000px
+ * ступенек нет, а в просмотрщике он занимает окно целиком.
+ *
+ * Дописать этот размер в ту же лестницу было нельзя: `sizes` говорит браузеру
+ * ширину кадра в ленте, и на экране с двойной плотностью он выбрал бы самый
+ * большой файл из списка — лента стала бы тяжелее у всех, включая тех, кто
+ * просмотрщик не открыл.
+ *
+ * Потолок 2000 — тот же, что у ленты (LADDER): длинная сторона у 54 кадров
+ * из 60 и так меньше 1700px, выше потолка поднимаются четыре.
+ *
+ * Форматов два, а не три: avif в просмотрщике не считается. Кадр здесь
+ * качается по одному и только когда его открыли, поэтому лишние 30% веса
+ * стоят дешевле, чем 60 лишних avif при каждой сборке.
+ */
+const VIEWER_MAX = 2000;
+
+const viewer = await Promise.all(
+  photos.map(async (photo) => {
+    const width = Math.min(photo.image.width, VIEWER_MAX);
+    const [webp, jpg] = await Promise.all([
+      getImage({ src: photo.image, width, format: 'webp' }),
+      getImage({ src: photo.image, width, format: 'jpg' }),
+    ]);
+    return { webp: webp.src, jpg: jpg.src, width, height: Math.round(width / (photo.image.width / photo.image.height)) };
+  }),
+);
+
 const imageLd = {
   '@context': 'https://schema.org',
   '@graph': await Promise.all(
@@ -200,17 +231,30 @@ const imageLd = {
             aria-hidden="true"
           />
         )}
-        <Picture
-          src={photo.image}
-          alt={photo.alt}
-          formats={['avif', 'webp']}
-          widths={widthsFor(photo.image.width, onScreen(index))}
-          sizes={sizesFor(index)}
-          loading={index < eagerCount ? 'eager' : 'lazy'}
-          fetchpriority={leading && index === 0 ? 'high' : undefined}
-          decoding="async"
-          pictureAttributes={{ class: 'shot', style: `--a: ${ASPECTS[index].toFixed(4)}` }}
-        />
+        {/*
+          Ссылка, а не кнопка: без JS она открывает сам файл кадра — страница
+          остаётся целой, просто крупный кадр показывает браузер (F1_P77).
+          С JS переход перехватывается и открывается просмотрщик.
+        */}
+        <a
+          class="shot"
+          style={`--a: ${ASPECTS[index].toFixed(4)}`}
+          href={viewer[index].jpg}
+          data-webp={viewer[index].webp}
+          data-w={viewer[index].width}
+          data-h={viewer[index].height}
+        >
+          <Picture
+            src={photo.image}
+            alt={photo.alt}
+            formats={['avif', 'webp']}
+            widths={widthsFor(photo.image.width, onScreen(index))}
+            sizes={sizesFor(index)}
+            loading={index < eagerCount ? 'eager' : 'lazy'}
+            fetchpriority={leading && index === 0 ? 'high' : undefined}
+            decoding="async"
+          />
+        </a>
       </>
     ))
   }

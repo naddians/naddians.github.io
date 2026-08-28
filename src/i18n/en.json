@@ -148,7 +148,14 @@
     "link": "Write to me"
   },
   "gallery": {
-    "empty": "Photographs are coming soon."
+    "empty": "Photographs are coming soon.",
+    "viewer": {
+      "open": "View larger",
+      "close": "Close",
+      "prev": "Previous photo",
+      "next": "Next photo",
+      "label": "Photo viewer"
+    }
   },
   "notfound": {
     "code": "404",

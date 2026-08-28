@@ -1,0 +1,266 @@
+---
+import { t, type Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const words = t(locale).gallery.viewer;
+---
+
+{/*
+  Просмотрщик кадра (F1_P77). Один на страницу: он обходит все ленты, какие на
+  ней есть, поэтому в Beyond листается весь раздел подряд, а не одна серия.
+
+  Это `<dialog>`, а не свой слой на `position: fixed`. Браузер тогда сам держит
+  то, что иначе пришлось бы писать руками и чинить по частям: клавиатура не
+  уходит из просмотрщика, страница под ним недоступна и для чтения с экрана,
+  Esc закрывает. Своей реализации focus trap на сайте нет и заводить её ради
+  одного окна не стоит.
+
+  Кадр — `<picture>` с двумя источниками: webp и jpg. Адреса берутся у ссылки,
+  на которую нажали (data-webp / href), их считает PhotoGrid.astro.
+*/}
+{/*
+  `tabindex="-1"` — чтобы фокус при открытии можно было отдать самому окну.
+  Иначе браузер ставит его на первую кнопку, то есть на крестик, и рисует
+  вокруг неё рамку фокуса: она выскакивала при каждом открытии, в том числе
+  на телефоне, где клавиатуры нет вовсе (замечено заказчицей 2026-08-28).
+*/}
+<dialog class="viewer" aria-label={words.label} tabindex="-1">
+  <button type="button" class="viewer__close" aria-label={words.close}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M5 5l14 14M19 5L5 19" />
+    </svg>
+  </button>
+
+  <button type="button" class="viewer__nav viewer__nav--prev" aria-label={words.prev}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M15 4L7 12l8 8" />
+    </svg>
+  </button>
+  <button type="button" class="viewer__nav viewer__nav--next" aria-label={words.next}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <path d="M9 4l8 8-8 8" />
+    </svg>
+  </button>
+
+  <picture class="viewer__frame">
+    <source class="viewer__webp" type="image/webp" />
+    {/*
+      `loading="lazy"` здесь не про прокрутку: адрес у кадра появляется только
+      когда его открыли, до этого качать нечего. Пометка стоит потому, что
+      решение «качать или не качать» на сайте принимается у каждого кадра
+      явно — это проверяет тест скорости (F1_P72).
+    */}
+    <img class="viewer__img" alt="" loading="lazy" decoding="async" />
+  </picture>
+
+  <p class="viewer__count" aria-live="polite"></p>
+</dialog>
+
+<script>
+  /**
+   * Просмотрщик кадра (F1_P77). Первый скрипт на сайте, который правда что-то
+   * делает, поэтому правило простое: без него страница обязана остаться целой.
+   * Оно соблюдено разметкой — кадр в ленте это ссылка на файл кадра, и без
+   * JS браузер просто откроет файл. Всё, что ниже, перехватывает этот переход.
+   */
+  const dialog = document.querySelector<HTMLDialogElement>('.viewer');
+  const shots = Array.from(document.querySelectorAll<HTMLAnchorElement>('a.shot'));
+
+  if (dialog && shots.length > 0) {
+    const img = dialog.querySelector<HTMLImageElement>('.viewer__img')!;
+    const webp = dialog.querySelector<HTMLSourceElement>('.viewer__webp')!;
+    const count = dialog.querySelector<HTMLParagraphElement>('.viewer__count')!;
+    const prevButton = dialog.querySelector<HTMLButtonElement>('.viewer__nav--prev')!;
+    const nextButton = dialog.querySelector<HTMLButtonElement>('.viewer__nav--next')!;
+    const closeButton = dialog.querySelector<HTMLButtonElement>('.viewer__close')!;
+
+    let current = -1;
+    /** Открыт ли просмотрщик нами, а не восстановлен браузером: см. popstate. */
+    let pushed = false;
+    /** Жест был двумя пальцами — щипок. Такому щелчку закрывать нельзя. */
+    let pinched = false;
+    /** Просмотрщиком правили с клавиатуры: только тогда фокус стоит возвращать. */
+    let byKeyboard = false;
+
+    /** Кадр по номеру, по кругу: с последнего «дальше» ведёт на первый. */
+    const show = (index: number) => {
+      current = (index + shots.length) % shots.length;
+      const shot = shots[current];
+      const picture = shot.querySelector('img');
+
+      webp.srcset = shot.dataset.webp ?? '';
+      img.src = shot.href;
+      // Подпись у кадра та же, что в ленте: другой у него и нет (F1_P25).
+      img.alt = picture?.alt ?? '';
+      // Пропорция кадра известна заранее — она задаётся, чтобы после загрузки
+      // кадр встал сразу в свой размер, а не пересчитывался на глазах.
+      // Места он до загрузки не занимает, и это не мешает: крестик, стрелки
+      // и счётчик стоят по краям окна, а не по краям кадра.
+      img.width = Number(shot.dataset.w ?? 0);
+      img.height = Number(shot.dataset.h ?? 0);
+
+      count.textContent = `${current + 1} / ${shots.length}`;
+      if (pushed) history.replaceState({ viewer: current }, '', `#photo-${current + 1}`);
+    };
+
+    const open = (index: number) => {
+      show(index);
+      if (!dialog.open) {
+        dialog.showModal();
+        // Фокус — на само окно, а не на крестик: рамка фокуса не должна
+        // появляться от щелчка и от касания. Тому, кто ходит по кнопкам
+        // клавишей Tab, она по-прежнему достаётся — с первым же нажатием.
+        dialog.focus({ preventScroll: true });
+      }
+      // Страница под просмотрщиком не должна прокручиваться пальцем: `dialog`
+      // ловит нажатия, но прокрутку фона Safari отдаёт странице.
+      document.documentElement.classList.add('is-viewing');
+      // Одна запись в истории на весь просмотр: «назад» на телефоне закрывает
+      // просмотрщик, а не уводит со страницы. Дальше номер кадра только
+      // подменяется (replaceState в show), новых записей не копится.
+      if (!pushed) {
+        pushed = true;
+        history.pushState({ viewer: index }, '', `#photo-${index + 1}`);
+        history.replaceState({ viewer: index }, '', `#photo-${index + 1}`);
+      }
+    };
+
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    shots.forEach((shot, index) => {
+      shot.addEventListener('click', (event) => {
+        // Средняя кнопка, Ctrl и Cmd оставлены браузеру: человек, который так
+        // нажал, просит открыть файл в новой вкладке, и он его получит.
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+        event.preventDefault();
+        open(index);
+      });
+    });
+
+    prevButton.addEventListener('click', () => show(current - 1));
+    nextButton.addEventListener('click', () => show(current + 1));
+    closeButton.addEventListener('click', close);
+
+    dialog.addEventListener('keydown', (event) => {
+      byKeyboard = true;
+      if (event.key === 'ArrowLeft') show(current - 1);
+      if (event.key === 'ArrowRight') show(current + 1);
+    });
+
+    // Щелчок мимо кнопок закрывает — и по кадру, и по чёрному полю вокруг
+    // него. Проверять «попали ровно в фон» было нельзя: рамка кадра занимает
+    // всю площадь окна, поэтому щелчок по полю рядом с кадром до самого окна
+    // не доходил, и закрывала только полоска в 4vmin у краёв экрана.
+    dialog.addEventListener('click', (event) => {
+      // Щипок оканчивается щелчком, и без этой проверки он закрывал
+      // просмотрщик вместо того, чтобы ничего не сделать.
+      if (pinched) {
+        pinched = false;
+        return;
+      }
+      if (!(event.target as Element).closest('button')) close();
+    });
+
+    // Выделение внутри просмотрщика запрещено и здесь, не только в стилях.
+    // На телефоне одного `user-select: none` не хватило: долгое нажатие
+    // и проводка пальцем по кадру всё равно выделяли его и открывали меню
+    // «Copy / Translate / Search Web» (проверено в симуляторе iPhone).
+    dialog.addEventListener('selectstart', (event) => event.preventDefault());
+
+    // Закрытие любым способом — крестиком, Esc, щелчком мимо — снимает и запись
+    // в истории, чтобы «назад» после этого работала как обычно: уводила со
+    // страницы, а не открывала просмотрщик заново.
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('is-viewing');
+      const shot = shots[current];
+      if (pushed) {
+        pushed = false;
+        history.back();
+      }
+      // Возврат туда же, откуда открыли: в длинной ленте это не очевидно.
+      // Только для тех, кто правил просмотрщиком с клавиатуры: им иначе
+      // некуда вернуться. Пальцу и мыши это не нужно, а рамка фокуса вокруг
+      // кадра после закрытия им бы досталась (замечено заказчицей).
+      if (byKeyboard) shot?.focus({ preventScroll: true });
+      byKeyboard = false;
+    });
+
+    window.addEventListener('popstate', () => {
+      if (dialog.open) {
+        pushed = false;
+        dialog.close();
+      }
+    });
+
+    /* Щипок внутри просмотрщика не увеличивает страницу. Одного `touch-action`
+       в стилях мало: Safari на телефоне для своего масштабирования его не
+       слушает — у него на это собственные события жеста, и остановить их можно
+       только здесь. Проверено в симуляторе iPhone: со стилями, но без этих
+       строк страница увеличивалась щипком.
+       `touchmove` с двумя пальцами — то же самое для остальных браузеров;
+       обработчик неленивый (`passive: false`), иначе запретить нечего. */
+    for (const gesture of ['gesturestart', 'gesturechange', 'gestureend']) {
+      dialog.addEventListener(gesture, (event) => event.preventDefault());
+    }
+    dialog.addEventListener(
+      'touchmove',
+      (event) => {
+        if (event.touches.length > 1) event.preventDefault();
+      },
+      { passive: false },
+    );
+
+    /* Свайп: вбок — соседний кадр, вниз — закрыть. Порог в 40px отделяет жест
+       от дрожания пальца, сравнение осей — от косого движения. */
+    let start: { x: number; y: number } | null = null;
+    dialog.addEventListener(
+      'touchstart',
+      (event) => {
+        // Метка снимается с началом каждого нового жеста, а не только
+        // в обработчике щелчка: после щипка щелчок приходит не всегда, метка
+        // оставалась висеть и съедала следующий свайп.
+        if (event.touches.length === 1) pinched = false;
+        if (event.touches.length > 1) pinched = true;
+        const touch = event.changedTouches[0];
+        start = { x: touch.clientX, y: touch.clientY };
+      },
+      { passive: true },
+    );
+    dialog.addEventListener(
+      'touchend',
+      (event) => {
+        if (!start) return;
+        const touch = event.changedTouches[0];
+        const dx = touch.clientX - start.x;
+        const dy = touch.clientY - start.y;
+        start = null;
+        // Щипок — не свайп: два пальца расходятся, и одному из них это
+        // засчиталось бы движением вбок.
+        if (pinched) return;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
+        else if (dy > 60 && Math.abs(dy) > Math.abs(dx)) close();
+      },
+      { passive: true },
+    );
+
+    // Ссылка вида /people/#photo-4 открывает этот кадр сразу: адрес из
+    // просмотрщика можно переслать, и он приведёт туда же.
+    const fromHash = /^#photo-(\d+)$/.exec(location.hash);
+    if (fromHash) {
+      const index = Number(fromHash[1]) - 1;
+      if (index >= 0 && index < shots.length) {
+        // Пришли по ссылке с кадром: в истории одна запись, и та с кадром.
+        // Возвращаем её к чистому адресу, а поверх кладём запись просмотрщика —
+        // тогда «назад» отсюда ведёт в ленту, а не прочь с сайта.
+        history.replaceState(null, '', location.pathname + location.search);
+        open(index);
+      }
+    }
+  }
+</script>

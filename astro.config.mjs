@@ -10,6 +10,12 @@ export default defineConfig({
   trailingSlash: 'always',
   build: { format: 'directory' },
 
+  // Сборка обязана оставлять в стилях префиксы `-webkit-`, которые Safari
+  // ещё требует. По умолчанию минификатор считал их лишними и выбрасывал:
+  // `-webkit-user-select: none` в просмотрщике исчезал, и на телефоне кадр
+  // выделялся синим, хотя правило в исходнике стояло (F1_P77).
+  vite: { build: { cssTarget: ['safari16', 'chrome108', 'firefox110'] } },
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'sr'],
