@@ -125,7 +125,7 @@
       },
       {
         "label": "Prvo me pitajte",
-        "text": "Pišite mi pre nego što kadar bilo gde objavite i sačekajte odgovor. Saglasnost dajem pismeno, mejlom ili preko Telegrama, i to za tu upotrebu."
+        "text": "Pišite mi pre nego što kadar bilo gde objavite i sačekajte odgovor. Saglasnost dajem pismeno, mejlom, i to za tu upotrebu."
       },
       {
         "label": "Navedite autora",
@@ -145,7 +145,7 @@
       "archive": "Ako vam treba kadar sa trke koji ovde nije objavljen, pitajte\u00a0— reći ću vam da li mogu da ga dam i pod kojim uslovima."
     },
     "howTitle": "Kako da pitate",
-    "how": "Bilo koji od ovih načina\u00a0— mejl, Telegram ili Instagram. Odgovaram u roku od jednog dana."
+    "how": "Bilo koji od ova dva načina\u00a0— mejl ili Instagram. Odgovaram u roku od jednog dana."
   },
   "cta": {
     "title": "Hajde da sarađujemo",

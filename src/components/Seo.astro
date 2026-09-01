@@ -48,10 +48,10 @@ const personLd = {
   address: { '@type': 'PostalAddress', addressLocality: 'Belgrade', addressCountry: 'RS' },
   url: getAbsoluteLocaleUrl(locale, ''),
   email: `mailto:${CONTACTS.email}`,
-  sameAs: [
-    `https://instagram.com/${CONTACTS.instagram}`,
-    `https://t.me/${CONTACTS.telegram}`,
-  ],
+  // Один инстаграм: телеграм убран (F1_P79). Этой строкой мы прямо сообщали
+  // поиску связку «Nadia Stelmashuk → t.me/…» — именно из неё она и строилась,
+  // поэтому убрать кнопки со страниц, а карточку оставить, было бы бессмысленно.
+  sameAs: [`https://instagram.com/${CONTACTS.instagram}`],
   knowsAbout: ['Formula 1', 'Formula 2', 'Motorsport photography'],
 };
 ---

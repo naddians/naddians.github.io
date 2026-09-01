@@ -15,7 +15,6 @@ interface Props {
 const { compact = false, row = false } = Astro.props;
 
 // Иконки нарисованы прямо здесь: ни одного запроса к чужому домену (ТЗ §9).
-const telegram = `https://t.me/${CONTACTS.telegram}`;
 const instagram = `https://instagram.com/${CONTACTS.instagram}`;
 ---
 
@@ -33,25 +32,6 @@ const instagram = `https://instagram.com/${CONTACTS.instagram}`;
         <path d="m4 7.5 8 5.5 8-5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg><span>Email</span></a>`}
   />
-
-  <a class="contact-button" href={telegram} rel="me noopener" aria-label="Telegram">
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
-      <path
-        d="M21.2 4.3 2.9 11.2c-.9.3-.9 1.6.1 1.9l4.6 1.4 1.7 5.1c.3.8 1.3 1 1.9.3l2.4-2.6 4.6 3.4c.7.5 1.7.1 1.9-.7l3-14.5c.2-.9-.7-1.6-1.9-1.2Z"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linejoin="round"></path>
-      <path
-        d="m7.6 14.5 9.8-7.1-6.6 8.4"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"></path>
-    </svg>
-    <span>Telegram</span>
-  </a>
 
   <a class="contact-button" href={instagram} rel="me noopener" aria-label="Instagram">
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
