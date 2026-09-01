@@ -63,8 +63,31 @@ const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
     ) : groups.length > 0 ? (
       <div class="wrap section">
         {groups.map((group, index) => (
-          <section class:list={['series', index > 0 && 'series--next']}>
-            {group.title && <h2 class="series__title">{group.title}</h2>}
+          <section id={group.slug || undefined} class:list={['series', index > 0 && 'series--next']}>
+            {/*
+              Якорь серии — адрес вида /beyond/#f2: по такой ссылке страница
+              открывается сразу на нужной серии, как раздел в Википедии (F1_P78).
+              Имя якоря = slug серии из BEYOND_SERIES, оно же имя подпапки
+              в inbox/ — одно название на всё, менять в одном месте. Группа без
+              серии (slug пустой) якоря не получает: называть её нечем.
+
+              Заголовок — ссылка на этот якорь, и нажатие по нему кладёт адрес
+              серии в буфер обмена: заказчица нажала по заголовку и ждала
+              ровно этого (2026-09-01). Помечать заголовок ссылкой на странице
+              нечем — решётку она отвергла в тот же день, — поэтому вид его
+              не меняется, а о том, что ссылка скопирована, говорит короткая
+              строчка рядом. Ответ отдельным словом (`data-copied`), а не
+              вписанным в разметку текстом: заголовок должен читаться как
+              заголовок, пока по нему не нажали.
+            */}
+            {group.title && (
+              <h2 class="series__title">
+                <a class="series__anchor" href={`#${group.slug}`} aria-label={group.title}>
+                  {group.title}
+                </a>
+                <span class="series__copied" data-copied={dict.gallery.copied} aria-live="polite" />
+              </h2>
+            )}
             {/*
               Лента у каждой серии своя, и сама по себе она не знает, что она
               не первая на странице: без этих двух слов каждая берёт свои два
@@ -94,3 +117,159 @@ const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
   */}
   {photos.length > 0 && <PhotoViewer locale={locale} />}
 </Base>
+
+<script>
+  /**
+   * Адрес серии — и в адресной строке, и в буфере обмена (F1_P78).
+   *
+   * Долистал до Formula 2 — в строке браузера /beyond/#f2; нажал по заголовку
+   * серии — этот адрес скопирован, отправляй. Ссылку не надо ниоткуда доставать:
+   * она и есть то место, где ты стоишь, — так это устроено в Википедии.
+   *
+   * На странице якоря ничем не помечены — решение заказчицы (2026-09-01):
+   * решётку у заголовка показывали рядом с обычным заголовком, и она не нужна.
+   * Без JS страница цела: `id` у серий стоят в разметке, заголовок остаётся
+   * обычной ссылкой на свой якорь — не работает только слежение за прокруткой
+   * и копирование.
+   */
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('section.series[id]'));
+
+  if (sections.length > 0) {
+    const header = document.querySelector<HTMLElement>('.header');
+
+    /** Экран без прилипшей шапки (F1_P29): то, что человек на самом деле видит. */
+    const screen = () => {
+      const top = header?.getBoundingClientRect().bottom ?? 0;
+      return { top, height: innerHeight - top };
+    };
+
+    /** Сколько пикселей этой серии сейчас на экране. */
+    const seen = (section: HTMLElement) => {
+      const view = screen();
+      const box = section.getBoundingClientRect();
+      return Math.max(0, Math.min(box.bottom, innerHeight) - Math.max(box.top, view.top));
+    };
+
+    /**
+     * Серия, которую сейчас смотрят: та, что занимает на экране больше всех.
+     *
+     * Считалось иначе — по линии, на которой останавливается прыжок по ссылке,
+     * — и заказчица тут же нашла, где это врёт: Formula 2 занимала уже больше
+     * половины экрана, а в адресе стояло `porsche` (2026-09-01). Адрес должен
+     * называть то, на что смотришь, а не то, чей заголовок уехал выше.
+     *
+     * `null` — ни одной серии не смотрят: наверху раздела, где больше половины
+     * экрана занимает шапка с кадром. `undefined` — серий на экране нет вовсе
+     * (например, стоим в подвале): адрес тогда не трогаем, последняя серия
+     * остаётся последним ответом.
+     */
+    const current = (): HTMLElement | null | undefined => {
+      // Шапка раздела занимает больше половины экрана — мы ещё не в серии.
+      // Порог тот же, что и у остальных: у кого больше половины, тот и в адресе.
+      if (sections[0].getBoundingClientRect().top > screen().top && seen(sections[0]) < screen().height / 2) {
+        return null;
+      }
+
+      let best: HTMLElement | undefined;
+      let most = 0;
+      for (const section of sections) {
+        const visible = seen(section);
+        if (visible > most) {
+          most = visible;
+          best = section;
+        }
+      }
+      return most > 0 ? best : undefined;
+    };
+
+    const addressOf = (section: HTMLElement | null) =>
+      section
+        ? `${location.pathname}${location.search}#${section.id}`
+        : `${location.pathname}${location.search}`;
+
+    const update = () => {
+      // Пока открыт кадр, адресом распоряжается просмотрщик: там свой
+      // «#photo-4» (F1_P77), и затирать его нельзя.
+      if (document.documentElement.classList.contains('is-viewing')) return;
+
+      const section = current();
+      if (section === undefined) return;
+
+      const wanted = addressOf(section);
+      if (location.href.endsWith(wanted)) return;
+      // Запись в истории та же самая, а не новая: «назад» уводит со страницы,
+      // как обычно, а не отматывает прокрутку по серии за серией. Состояние
+      // записи сохраняется — в нём просмотрщик держит номер кадра.
+      history.replaceState(history.state, '', wanted);
+    };
+
+    // Считается не на каждый пиксель прокрутки, а раз на кадр отрисовки;
+    // адрес переписывается и того реже — только когда серия сменилась.
+    let waiting = false;
+    const onScroll = () => {
+      if (waiting) return;
+      waiting = true;
+      requestAnimationFrame(() => {
+        waiting = false;
+        update();
+      });
+    };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    // Закрыли кадр — адрес возвращается к серии, на которой стоим. Просмотрщик
+    // закрывается через историю («назад» на телефоне закрывает его, F1_P77),
+    // поэтому ловится popstate, а пересчёт откладывается на кадр: к этому мигу
+    // окно уже закрыто и адрес уже свой.
+    addEventListener('popstate', () => requestAnimationFrame(update));
+
+    /**
+     * Копирование по нажатию на заголовок. Сама ссылка при этом работает как
+     * обычно: страница встаёт на серию, и видно, куда эта ссылка ведёт.
+     *
+     * Способа два, потому что первый работает только на защищённом соединении:
+     * на живом сайте (https) он и работает, а на домашней сборке, открытой
+     * с телефона по адресу вида 192.168.0.36, его нет вовсе — там выручает
+     * старый. Не вышло ни так, ни так — молчим: соврать «скопировано», когда
+     * в буфере пусто, хуже, чем не сказать ничего.
+     */
+    const copy = async (text: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        // Старый способ: невидимое поле, выделить, скопировать, убрать.
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.setAttribute('readonly', '');
+        field.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+        document.body.append(field);
+        field.select();
+        const done = document.execCommand?.('copy') ?? false;
+        field.remove();
+        return done;
+      }
+    };
+
+    for (const section of sections) {
+      const anchor = section.querySelector<HTMLAnchorElement>('.series__anchor');
+      const answer = section.querySelector<HTMLElement>('.series__copied');
+      if (!anchor || !answer) continue;
+
+      let hide: ReturnType<typeof setTimeout>;
+      anchor.addEventListener('click', async () => {
+        if (!(await copy(new URL(`#${section.id}`, location.href).href))) return;
+
+        answer.textContent = answer.dataset.copied ?? '';
+        answer.classList.add('is-shown');
+        clearTimeout(hide);
+        // Строчка держится пару секунд и уходит: она ответ на нажатие,
+        // а не часть заголовка.
+        hide = setTimeout(() => {
+          answer.classList.remove('is-shown');
+          answer.textContent = '';
+        }, 2000);
+      });
+    }
+  }
+</script>

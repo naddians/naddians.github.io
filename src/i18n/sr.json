@@ -154,6 +154,7 @@
   },
   "gallery": {
     "empty": "Fotografije uskoro.",
+    "copied": "Link je kopiran",
     "viewer": {
       "open": "Prikaži veće",
       "close": "Zatvori",

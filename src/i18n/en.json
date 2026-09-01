@@ -149,6 +149,7 @@
   },
   "gallery": {
     "empty": "Photographs are coming soon.",
+    "copied": "Link copied",
     "viewer": {
       "open": "View larger",
       "close": "Close",
