@@ -14,11 +14,17 @@
   body { margin: 0; background: var(--bg); color: var(--fg);
          font: 15px/1.35 ui-monospace, Menlo, monospace; }
 
-  /* Шапка — та же, что на сайте: липкая, полупрозрачная, с размытием. */
+  /* СПОСОБ 1 (красный, во всю ширину) — шапка выросла вверх, за край окна,
+     и закрашивает полосу СВОИМ ЖЕ ФОНОМ, без торчащих наружу кусков.
+     Отрицательное поле убирает прибавку из раскладки, отступ возвращает
+     буквы на прежнее место, отрицательный `top` — точка прилипания.
+     Размытие оставлено как на сайте. Фон красный, чтобы было видно, докуда
+     шапка дотянулась. */
   .header {
-    position: sticky; top: 0; z-index: 20;
-    height: 102px; padding: 8px 12px;
-    background: rgba(10, 10, 11, 0.78);
+    position: sticky; top: -400px; margin-top: -400px;
+    z-index: 20;
+    height: 502px; padding: 408px 12px 8px;
+    background: #d21f1f;
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     border-bottom: 1px solid #333;
   }
@@ -26,37 +32,32 @@
   /* Три способа закрасить полосу над шапкой — тремя третями по ширине,
      чтобы одним скриншотом было видно, какой из них работает.
 
-     СПОСОБ 1 (красный, слева) — то, что уже пробовали: подложка продолжена
-     вверх псевдоэлементом ВНУТРИ размытой шапки. */
-  .header::before {
-    content: ''; position: absolute; left: 0; right: 66.67%; bottom: 100%;
-    height: 400px; background: #d21f1f;
-  }
-
-  /* СПОСОБ 2 (фиолетовый, в середине) — то же самое, но снаружи размытия:
+     СПОСОБ 2 (фиолетовый, слева) — то же самое, но снаружи размытия:
      свой липкий слой нулевой высоты, от него полоса вверх. Если работает
      он, а красный нет, значит виновато размытие шапки. */
   .cover2 { position: sticky; top: 0; height: 0; z-index: 25; }
   .cover2::before {
-    content: ''; position: absolute; left: 33.33%; right: 33.33%; bottom: 0;
+    content: ''; position: absolute; left: 0; right: 66.67%; bottom: 0;
     height: 400px; background: #9b2fd6;
   }
 
-  /* СПОСОБ 3 (зелёный, справа) — слой, привязанный к окну, а не к странице,
+  /* СПОСОБ 3 (зелёный, в середине) — слой, привязанный к окну, а не к странице,
      поднятый выше его верхнего края. Показывает заодно, что браузер считает
      верхом окна. */
   .cover3 {
-    position: fixed; top: -400px; left: 66.67%; right: 0;
+    position: fixed; top: -400px; left: 33.33%; right: 66.67%;
     height: 400px; background: #1f9d3a; z-index: 30;
   }
 
-  /* СПОСОБ 4 (синий, во всю ширину, самым нижним слоем) — полосу рисует
+  /* СПОСОБ 4 (синий, справа) — полосу рисует
      не выступающий наружу псевдоэлемент, а САМ элемент своим фоном: липкий
-     блок, целиком поднятый выше верхнего края окна. Если сафари обрезает
-     у липких слоёв то, что вылезает за их границы, три способа выше не
-     сработают, а этот может. Три цветные трети рисуются поверх него. */
+     блок, целиком поднятый выше верхнего края окна. Отличается от способа 1
+     тем, что не пересекает край окна: там шапка наполовину внутри, наполовину
+     снаружи, здесь блок снаружи целиком. Правая треть — чтобы не спорил
+     за место с остальными. */
   .cover4 {
     position: sticky; top: -400px; margin-top: -400px;
+    margin-left: 66.67%;
     height: 400px; background: #1a3a8a; z-index: 1;
   }
 
@@ -71,7 +72,7 @@
 <div class="cover3"></div>
 
 <header class="header">
-  <div class="row"><span>шапка сверху</span><b id="h">—</b></div>
+  <div class="row"><span>шапка: верх / низ</span><b id="h">—</b></div>
   <div class="row"><span>прокрутка</span><b id="s">—</b></div>
   <div class="row"><span>окно / видимое</span><b id="v">—</b></div>
   <div class="row"><span>вырез сверху</span><b id="e">—</b></div>
@@ -87,7 +88,8 @@
   const header = document.querySelector('.header');
   const px = (n) => Math.round(n) + 'px';
   function measure() {
-    document.getElementById('h').textContent = px(header.getBoundingClientRect().top);
+    const r = header.getBoundingClientRect();
+    document.getElementById('h').textContent = px(r.top) + ' / ' + px(r.bottom);
     document.getElementById('s').textContent = px(window.scrollY);
     const vv = window.visualViewport;
     document.getElementById('v').textContent =
