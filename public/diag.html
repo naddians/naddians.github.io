@@ -50,6 +50,16 @@
     height: 400px; background: #1f9d3a; z-index: 30;
   }
 
+  /* СПОСОБ 4 (синий, во всю ширину, самым нижним слоем) — полосу рисует
+     не выступающий наружу псевдоэлемент, а САМ элемент своим фоном: липкий
+     блок, целиком поднятый выше верхнего края окна. Если сафари обрезает
+     у липких слоёв то, что вылезает за их границы, три способа выше не
+     сработают, а этот может. Три цветные трети рисуются поверх него. */
+  .cover4 {
+    position: sticky; top: -400px; margin-top: -400px;
+    height: 400px; background: #1a3a8a; z-index: 1;
+  }
+
   .row { display: flex; justify-content: space-between; }
   .row b { font-weight: 700; }
   .stripe { padding: 22px 12px; font-size: 20px; font-weight: 700; }
@@ -57,6 +67,7 @@
   .stripe:nth-child(even) { background: #2060f0; color: #fff; }
 </style>
 
+<div class="cover4"></div>
 <div class="cover3"></div>
 
 <header class="header">
