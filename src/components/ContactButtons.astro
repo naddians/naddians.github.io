@@ -1,9 +1,10 @@
 ---
 import { CONTACTS } from '../data/site';
 import { entities } from '../utils/obfuscate';
+import type { Locale } from '../i18n';
 
 interface Props {
-  locale: 'en' | 'sr';
+  locale: Locale;
   /** Компактный вариант — для страницы «Обо мне». */
   compact?: boolean;
   /** Одна строка без переносов (F1_P38). Заведён для полосы под именем

@@ -1,21 +1,24 @@
 import en from './en.json';
 import sr from './sr.json';
+import de from './de.json';
 
-export const LOCALES = ['en', 'sr'] as const;
+export const LOCALES = ['en', 'de', 'sr'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 /** Код языка для атрибута lang / hreflang. Сербский — латиница (ТЗ §4). */
 export const HTML_LANG: Record<Locale, string> = {
   en: 'en',
   sr: 'sr-Latn',
+  de: 'de',
 };
 
 export const LOCALE_NAMES: Record<Locale, string> = {
   en: 'EN',
   sr: 'SR',
+  de: 'DE',
 };
 
-const DICTS = { en, sr } as const;
+const DICTS = { en, sr, de } as const;
 
 export type Dict = typeof en;
 
@@ -49,5 +52,6 @@ export function metaKeyFor(route: Route): MetaKey {
  */
 export function localeFromUrl(url: URL, base: string): Locale {
   const path = url.pathname.slice(base.replace(/\/$/, '').length);
-  return path.startsWith('/sr') ? 'sr' : 'en';
+  const prefixed = LOCALES.find((code) => code !== 'en' && path.startsWith(`/${code}`));
+  return prefixed ?? 'en';
 }

@@ -1,0 +1,209 @@
+{
+  "name": "Nadia Stelmashuk",
+  "slogan": "Emotionen einfangen",
+  "tagline": "Motorsportfotografin · Belgrad & weltweit",
+  "nav": {
+    "track": "Strecke",
+    "people": "Menschen",
+    "atmosphere": "Kulisse",
+    "beyond": "Neben F1",
+    "about": "Über mich",
+    "contact": "Kontakt",
+    "license": "Bildnutzung"
+  },
+  "galleries": {
+    "track": {
+      "title": "Action auf der Strecke",
+      "description": "Autos in Bewegung: Mitziehaufnahmen, Scheitelpunkte, Bremszonen",
+      "short": "Autos in Bewegung"
+    },
+    "people": {
+      "title": "Menschen & Momente",
+      "description": "Fahrer, Teams und Fans aus der Nähe — Porträts und Emotionen",
+      "short": "Fahrer, Teams und Fans aus der Nähe"
+    },
+    "atmosphere": {
+      "title": "Strecke & Atmosphäre",
+      "description": "Weite Blicke auf die Strecke: Tribünen, Details am Streckenrand, Nacht",
+      "short": "Weite Blicke auf die Strecke"
+    },
+    "beyond": {
+      "title": "Abseits der Formel 1",
+      "description": "Andere Rennserien und Meisterschaften",
+      "short": "Andere Rennserien"
+    }
+  },
+  "home": {
+    "galleriesTitle": "Galerien",
+    "aboutTeaser": "Ich bringe einen eigenen Blickwinkel in ein Rennwochenende, nicht nur eine Checkliste.",
+    "aboutLink": "Über mich"
+  },
+  "about": {
+    "title": "Über mich",
+    "base": "Ansässig in Belgrad, unterwegs weltweit",
+    "bio": [
+      "Der Motorsport war nicht mein Anfang. Jahrelang habe ich Landschaften und Wildtiere fotografiert — dann stand ich bei meinem ersten Rennwochenende und wusste, ich würde wiederkommen. F1, F2, der Porsche Mobil 1 Supercup: Ich fahre hin, wo ich kann, und zu meinen eigenen Bedingungen. Für mich selbst zu fotografieren hat mir beigebracht, was ich bis heute mitnehme: Ich bringe einen eigenen Blickwinkel in ein Rennwochenende, nicht nur eine Checkliste.",
+      "Wonach ich suche, ist Emotion — die Anspannung einer Runde, die schiefgeht, der Lärm, den man in der Brust spürt, wie sich eine ganze Tribüne im selben Moment in dieselbe Richtung neigt. Das ist das Bild, das ich will. Alles andere ist Mittel zum Zweck: Rauch, Funken, Regen, tiefstehende Sonne auf dem Asphalt, ein Mitzieher, der größtenteils verwischt ist. Ich nutze, was auch immer das Gefühl dieses bestimmten Moments trägt — und nehme dafür in Kauf, Aufnahmen zu verlieren."
+    ],
+    "eventsTitle": "Begleitete Events",
+    "gearTitle": "Ausrüstung",
+    "collabsTitle": "Kooperationen"
+  },
+  "contact": {
+    "title": "Kontakt",
+    "intro": "Für Aufträge und Rennwochenenden — schreiben Sie mir direkt. Ich antworte innerhalb eines Tages.",
+    "notes": {
+      "lead": "Zuerst lesen:",
+      "licenseLink": "Bildnutzung",
+      "workLink": "Zusammenarbeit"
+    },
+    "terms": {
+      "title": "Zusammenarbeit",
+      "lead": "Nennen Sie mir das Event und was abgedeckt werden soll — ich melde mich mit einer Motivliste und einem Preis zurück.",
+      "items": [
+        {
+          "label": "Abdeckung",
+          "list": [
+            "Action an der Strecke",
+            "Startaufstellung und Porträts",
+            "Boxengasse und Fahrerlager, soweit die Akkreditierung es erlaubt"
+          ],
+          "note": "Nur Fotos, kein Video."
+        },
+        {
+          "label": "Lieferung",
+          "list": [
+            "Eine erste Auswahl innerhalb weniger Stunden nach der Zielflagge",
+            "Der komplette bearbeitete Satz, alle gebuchten Sessions, innerhalb von 72 Stunden"
+          ]
+        },
+        {
+          "label": "Nutzung",
+          "list": [
+            "Ihre eigenen Kanäle — Social Media, Website, Präsentationen: mit Namensnennung, ohne zeitliche Begrenzung",
+            "Werbung und Weitergabe an Dritte: gesondert vereinbart"
+          ]
+        },
+        {
+          "label": "Dateien",
+          "list": [
+            "JPEGs in hoher Auflösung plus Zuschnitte für Social Media",
+            "Farbkorrigiert, mit Bildunterschriften und Schlagwörtern",
+            "Lieferung über eine private Galerie"
+          ],
+          "note": "Keine RAW-Dateien."
+        },
+        {
+          "label": "Reise",
+          "text": "Ansässig in Belgrad, unterwegs weltweit. Das Honorar deckt die Arbeit ab; Reise und Unterkunft werden zusätzlich zum Selbstkostenpreis berechnet."
+        },
+        {
+          "label": "Ihre erste E-Mail",
+          "list": [
+            "Datum und Strecke",
+            "Welche Serie",
+            "Wie viele Tage",
+            "Wer oder was am wichtigsten ist"
+          ]
+        }
+      ],
+      "note": "Briefings sind willkommen — Sponsorenlogos, bestimmte Fahrer, unbedingt einzufangende Momente. Schicken Sie mir die Liste, und ich fotografiere danach."
+    }
+  },
+  "license": {
+    "title": "Nutzung meiner Fotografien",
+    "lead": "Kostenlos nutzbar für private, nicht kommerzielle Zwecke — mit meiner schriftlichen Erlaubnis und meinem Namen neben dem Bild. Ein Auftrag für ein Shooting ist etwas anderes: Das ist bezahlte Arbeit.",
+    "itemsTitle": "Fotografien auf dieser Website",
+    "items": [
+      {
+        "label": "Kostenlos",
+        "text": "Ich berechne nichts für die Nutzung der Fotografien auf dieser Website, und ich verkaufe sie nicht."
+      },
+      {
+        "label": "Nicht für kommerzielle Nutzung",
+        "text": "Werbung, Weiterverkauf und jede andere kommerzielle Nutzung dieser Bilder sind von der Erlaubnis, die ich erteile, nicht abgedeckt."
+      },
+      {
+        "label": "Fragen Sie mich zuerst",
+        "text": "Schreiben Sie mir, bevor Sie ein Bild irgendwo veröffentlichen, und warten Sie meine Antwort ab. Die Erlaubnis wird schriftlich per E-Mail erteilt, und zwar für diese eine Nutzung."
+      },
+      {
+        "label": "Nennen Sie mich als Autorin",
+        "text": "Mein Name — Nadia Stelmashuk — neben der Fotografie."
+      },
+      {
+        "label": "Wenn Sie in sozialen Netzwerken sind",
+        "text": "Markieren Sie mich und verlinken Sie mein Konto, wenn Sie posten — eine Erwähnung als Gegenleistung für das Bild. Das ist Namensnennung, keine Bezahlung: Diese Bilder stehen nicht zum Verkauf."
+      }
+    ],
+    "newWork": {
+      "title": "Neue Aufnahmen",
+      "scope": "Alles oben Genannte betrifft die hier bereits veröffentlichten Bilder.",
+      "commission": "Ein Shooting nach Ihrem Briefing ist eine andere Sache: Honorar und Nutzungsrechte — Werbung eingeschlossen — werden für dieses konkrete Shooting vereinbart.",
+      "termsLead": "Die Bedingungen stehen unter",
+      "termsLink": "wie wir zusammenarbeiten",
+      "archive": "Falls Sie ein Bild von einem Wochenende brauchen, das hier nicht veröffentlicht ist, fragen Sie einfach — ich sage Ihnen, ob und zu welchen Bedingungen ich es geben kann."
+    },
+    "howTitle": "Wie Sie fragen können",
+    "how": "Beides geht — E-Mail oder Instagram. Ich antworte innerhalb eines Tages."
+  },
+  "cta": {
+    "title": "Lassen Sie uns zusammenarbeiten",
+    "text": "Verfügbar für Rennwochenenden und Aufträge.",
+    "link": "Schreiben Sie mir"
+  },
+  "gallery": {
+    "empty": "Fotografien folgen in Kürze.",
+    "copied": "Link kopiert",
+    "viewer": {
+      "open": "Größer anzeigen",
+      "close": "Schließen",
+      "prev": "Vorheriges Foto",
+      "next": "Nächstes Foto",
+      "label": "Fotoansicht"
+    }
+  },
+  "notfound": {
+    "code": "404",
+    "title": "Scheitelpunkt verpasst",
+    "text": "Diese Seite ist von der Strecke abgekommen. Alles Sehenswerte liegt zurück auf der Ideallinie.",
+    "back": "Zurück zur Ideallinie"
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten."
+  },
+  "meta": {
+    "home": {
+      "title": "Nadia Stelmashuk — Motorsportfotografin",
+      "description": "Formel-1- und Motorsportfotografie von Nadia Stelmashuk. Ansässig in Belgrad, weltweit unterwegs."
+    },
+    "track": {
+      "title": "Action auf der Strecke — Nadia Stelmashuk",
+      "description": "Formel-1-Autos in Bewegung: Mitziehaufnahmen, Scheitelpunkte und Bremszonen."
+    },
+    "people": {
+      "title": "Menschen & Momente — Nadia Stelmashuk",
+      "description": "Fahrer, Teams und Fans aus der Nähe: Porträts und Emotionen von einem Formel-1-Rennwochenende."
+    },
+    "atmosphere": {
+      "title": "Strecke & Atmosphäre — Nadia Stelmashuk",
+      "description": "Weite Blicke auf eine Formel-1-Strecke: Tribünen, Details am Streckenrand und die Nacht."
+    },
+    "beyond": {
+      "title": "Abseits der Formel 1 — Nadia Stelmashuk",
+      "description": "Motorsport abseits der Formel 1: andere Rennserien und Meisterschaften, an der Strecke fotografiert von Nadia Stelmashuk."
+    },
+    "about": {
+      "title": "Über mich — Nadia Stelmashuk",
+      "description": "Motorsportfotografin mit Sitz in Belgrad. Formel 1, Formel 2 und Porsche Supercup in Spa-Francorchamps und Silverstone."
+    },
+    "contact": {
+      "title": "Kontakt — Nadia Stelmashuk",
+      "description": "Kontaktieren Sie mich für Motorsportaufträge und die Begleitung von Rennwochenenden: Umfang, Lieferzeiten und Dateien."
+    },
+    "license": {
+      "title": "Bildnutzung — Nadia Stelmashuk",
+      "description": "Wie Fotografien von Nadia Stelmashuk genutzt werden dürfen: kostenlos für private, nicht kommerzielle Zwecke, mit schriftlicher Erlaubnis und Namensnennung."
+    }
+  }
+}

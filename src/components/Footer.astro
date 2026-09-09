@@ -9,6 +9,12 @@ interface Props {
 const { locale } = Astro.props;
 const dict = t(locale);
 const year = new Date().getFullYear();
+
+const FOOTER_NAV_LABEL: Record<Locale, string> = {
+  en: 'Footer navigation',
+  sr: 'Navigacija u podnožju',
+  de: 'Navigation im Footer',
+};
 ---
 
 <footer class="footer">
@@ -33,7 +39,7 @@ const year = new Date().getFullYear();
         такой ссылки, и он есть на каждой странице. */}
     <nav
       class="footer__links"
-      aria-label={locale === 'sr' ? 'Navigacija u podnožju' : 'Footer navigation'}
+      aria-label={FOOTER_NAV_LABEL[locale]}
     >
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'about')}>{dict.nav.about}</a>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>

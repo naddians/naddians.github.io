@@ -29,13 +29,19 @@ const links: { route: Route; label: string }[] = [
   })),
   { route: 'contact', label: dict.nav.contact },
 ];
+
+const MAIN_NAV_LABEL: Record<Locale, string> = {
+  en: 'Main navigation',
+  sr: 'Glavna navigacija',
+  de: 'Hauptnavigation',
+};
 ---
 
 <header class="header">
   <div class="wrap header__inner">
     <a class="header__name" href={getRelativeLocaleUrl(locale, '')}>{dict.name}</a>
 
-    <nav class="nav" aria-label={locale === 'sr' ? 'Glavna navigacija' : 'Main navigation'}>
+    <nav class="nav" aria-label={MAIN_NAV_LABEL[locale]}>
       {
         links.map((link) => (
           <a

@@ -40,11 +40,23 @@ const alternates = LOCALES.map((code) => ({
   href: getAbsoluteLocaleUrl(code, route),
 }));
 
+const JOB_TITLE: Record<Locale, string> = {
+  en: 'Motorsport photographer',
+  sr: 'Motosport fotografkinja',
+  de: 'Motorsportfotografin',
+};
+
+const OG_LOCALE: Record<Locale, string> = {
+  en: 'en_GB',
+  sr: 'sr_RS',
+  de: 'de_DE',
+};
+
 const personLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: dict.name,
-  jobTitle: locale === 'sr' ? 'Motosport fotografkinja' : 'Motorsport photographer',
+  jobTitle: JOB_TITLE[locale],
   address: { '@type': 'PostalAddress', addressLocality: 'Belgrade', addressCountry: 'RS' },
   url: getAbsoluteLocaleUrl(locale, ''),
   email: `mailto:${CONTACTS.email}`,
@@ -73,7 +85,7 @@ const personLd = {
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content={dict.name} />
-<meta property="og:locale" content={locale === 'sr' ? 'sr_RS' : 'en_GB'} />
+<meta property="og:locale" content={OG_LOCALE[locale]} />
 <meta property="og:title" content={meta.title} />
 <meta property="og:description" content={meta.description} />
 <meta property="og:url" content={canonical} />

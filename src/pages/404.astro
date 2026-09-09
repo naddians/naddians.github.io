@@ -9,15 +9,16 @@ import '../styles/global.css';
 // hreflang и микроразметка — её не индексируют.
 //
 // Язык. Файл на весь сайт один: GitHub Pages отдаёт /404.html по любому
-// несуществующему адресу, включая /sr/…, — а при сборке неизвестно, куда
-// человек пришёл, адрес виден только в браузере. Поэтому в страницу кладутся
-// обе версии сразу, а короткий скрипт в <head> оставляет ту, что совпадает
-// с адресом (F1_P32). Английская стоит по умолчанию: без скрипта страница
-// работает ровно так, как работала раньше.
+// несуществующему адресу, включая /sr/… и /de/…, — а при сборке неизвестно,
+// куда человек пришёл, адрес виден только в браузере. Поэтому в страницу
+// кладутся все версии сразу, а короткий скрипт в <head> оставляет ту, что
+// совпадает с адресом (F1_P32). Английская стоит по умолчанию: без скрипта
+// страница работает ровно так, как работала раньше.
 const base = import.meta.env.BASE_URL;
-const srPrefix = `${base}sr`;
-const srLang = HTML_LANG.sr;
-const srTitle = `${t('sr').notfound.title} — ${t('sr').name}`;
+const prefixedLocales = LOCALES.filter((locale) => locale !== 'en');
+const prefixes = prefixedLocales.map((locale) => `${base}${locale}`);
+const langs = prefixedLocales.map((locale) => HTML_LANG[locale]);
+const titles = prefixedLocales.map((locale) => `${t(locale).notfound.title} — ${t(locale).name}`);
 
 // Кадра на странице нет: надписи ложились на светлый асфальт, и контраст падал
 // до 1,8 : 1 у «404» при норме 3 : 1 — затемнение рассчитано на нижнюю часть
@@ -36,14 +37,14 @@ const srTitle = `${t('sr').notfound.title} — ${t('sr').name}`;
     <title>{t('en').notfound.title} — {t('en').name}</title>
     <link rel="icon" href={`${base}favicon-96.png`} type="image/png" sizes="96x96" />
     <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <script is:inline define:vars={{ srPrefix, srLang, srTitle }}>
-      if (
-        location.pathname === srPrefix ||
-        location.pathname.startsWith(srPrefix + '/')
-      ) {
-        document.documentElement.dataset.l10n = 'sr';
-        document.documentElement.lang = srLang;
-        document.title = srTitle;
+    <script is:inline define:vars={{ prefixedLocales, prefixes, langs, titles }}>
+      const i = prefixes.findIndex(
+        (prefix) => location.pathname === prefix || location.pathname.startsWith(prefix + '/'),
+      );
+      if (i !== -1) {
+        document.documentElement.dataset.l10n = prefixedLocales[i];
+        document.documentElement.lang = langs[i];
+        document.title = titles[i];
       }
     </script>
   </head>

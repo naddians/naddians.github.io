@@ -12,6 +12,12 @@ interface Props {
 }
 
 const { locale, route } = Astro.props;
+
+const SKIP_LABEL: Record<Locale, string> = {
+  en: 'Skip to content',
+  sr: 'Na sadržaj',
+  de: 'Zum Inhalt springen',
+};
 ---
 
 <!doctype html>
@@ -33,7 +39,7 @@ const { locale, route } = Astro.props;
     <Seo locale={locale} route={route} />
   </head>
   <body>
-    <a class="skip" href="#main">{locale === 'sr' ? 'Na sadržaj' : 'Skip to content'}</a>
+    <a class="skip" href="#main">{SKIP_LABEL[locale]}</a>
     <Header locale={locale} route={route} />
     <main class="main" id="main">
       <slot />
