@@ -40,7 +40,7 @@ export const EVENTS = [
   {
     venue: 'Autokomerc Karting Centar',
     year: 2026,
-    series: ['T4 Series Serbia · Round 5'],
+    series: ['T4 Series Serbia', 'Round 5', 'Round 6'],
   },
   {
     venue: 'Silverstone',
