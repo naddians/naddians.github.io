@@ -38,6 +38,12 @@ const dict = t(locale);
                 {event.venue} · {event.year}
                 <br />
                 <span class="list__meta">{event.series.join(' · ')}</span>
+                {event.accredited && (
+                  <>
+                    <br />
+                    <span class="list__badge">{dict.about.accredited}</span>
+                  </>
+                )}
               </li>
             ))
           }

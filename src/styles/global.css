@@ -1053,6 +1053,23 @@ html.is-viewing {
   color: var(--muted);
 }
 
+/* Плашка «Media accredited» в списке выездов (F1_P89, вариант B1 из макетов):
+   всегда своей строкой под серией, рамкой, а не цветом — красный на сайте
+   почти не используется. */
+.list__badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 7px;
+  border: 1px solid #3a3a3f;
+  border-radius: 3px;
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 /* Список, в котором каждая строка — ссылка (сотрудничество на «Обо мне»).
    Высоту строки задаёт сама ссылка: ей нужна зона нажатия 44px (F1_P24,
    решение заказчицы в F1_P48 — строки были по 19px). Собственные поля пункта

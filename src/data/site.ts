@@ -30,8 +30,23 @@ export const AUTHOR = {
   copyright: '© Nadia Stelmashuk',
 } as const;
 
-/** Отснятые события. Сгруппированы по уик-эндам — так видно выезды, а не отдельные гонки. */
-export const EVENTS = [
+/**
+ * Отснятые события. Сгруппированы по уик-эндам — так видно выезды, а не отдельные гонки.
+ * `accredited` — официальная медиа-аккредитация: на странице плашка «Media accredited»
+ * под строкой серии. Ставится только там, где она реально была (у T4 такого понятия нет).
+ */
+export const EVENTS: readonly {
+  venue: string;
+  year: number;
+  series: readonly string[];
+  accredited?: boolean;
+}[] = [
+  {
+    venue: 'SDC Drift Racetrack, Novi Beograd',
+    year: 2026,
+    series: ['Serbian Drift Championship', 'Round 3'],
+    accredited: true,
+  },
   {
     venue: 'Spa-Francorchamps',
     year: 2026,
@@ -47,7 +62,7 @@ export const EVENTS = [
     year: 2025,
     series: ['Formula 1', 'Formula 2'],
   },
-] as const;
+];
 
 /** Коллаборации. Заголовок блока — «Collaborations», не «Publications» (ТЗ §3.1 п.6). */
 export const COLLABS = [
