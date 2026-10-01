@@ -986,6 +986,70 @@ html.is-viewing {
   }
 }
 
+/* Оглавление серий под шапкой раздела. Подпись набрана как надзаголовки
+   (.section__title), но без отступа снизу. Ссылки — простым текстом с тонким
+   подчёркиванием, по виду ближе к меню сайта, чем к кнопкам: рамки заказчица
+   отвергла в макетах (2026-10-01). От первой серии оглавление отбито той же
+   линией, что отбивает серии друг от друга. */
+.series-nav {
+  margin-bottom: clamp(24px, 2.5vw, 36px);
+  padding-bottom: clamp(16px, 2vw, 28px);
+  border-bottom: 1px solid var(--line);
+  /* Точка-разделитель стоит перед каждым пунктом, а список сдвинут влево на
+     ширину точки: у пункта, с которого начинается строка, точка уходит за край
+     и обрезается. Иначе при переносе строка начиналась бы с точки или ею
+     кончалась — посчитать заранее, где перенесётся, нельзя, это зависит
+     от ширины экрана. */
+  overflow: hidden;
+}
+
+.series-nav__title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.series-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 -22px;
+}
+
+.series-nav__list li::before {
+  content: '·';
+  display: inline-block;
+  width: 22px;
+  text-align: center;
+  color: var(--inactive);
+}
+
+/* Зона нажатия — норма сайта, 44px (F1_P24, tests/touch.spec.ts), но строки
+   от этого не раздвигаются: отступы растят ссылку внутрь, отрицательные поля
+   снимают лишнее, и строки стоят через 36px, как в макете. Зоны соседних строк
+   заходят друг на друга на 8px — промах попадает в соседнюю серию той же
+   страницы, а не уводит с неё. */
+.series-nav__list a {
+  display: inline-block;
+  padding-block: 12px;
+  margin-block: -4px;
+  font-size: 0.875rem;
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: rgba(237, 237, 237, 0.3);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  transition: text-decoration-color 0.15s;
+}
+
+.series-nav__list a:hover {
+  text-decoration-color: var(--accent);
+}
+
 /* Вторая и следующие группы отбиваются линией: без неё кадры разных серий
    сливаются в одну ленту, и заголовок читается как подпись к кадру над ним. */
 .series--next {

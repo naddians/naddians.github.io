@@ -92,9 +92,14 @@ export type GallerySlug = (typeof GALLERIES)[number];
  *
  * Новая серия = новая строка здесь + папка в inbox/beyond/. Когда какая-то из
  * них перерастёт общий раздел, она без переделок переезжает на свою страницу.
+ *
+ * `short` — название в оглавлении под шапкой раздела, если полное там длинно.
+ * Нет `short` — в оглавлении стоит `title` как есть. Сокращать можно не всё:
+ * «Porsche Supercup» заказчица разрешила, а «Serbian» у дрифта — важная часть
+ * названия и выпадать не должна (2026-10-01).
  */
 export const BEYOND_SERIES = [
-  { slug: 'porsche', title: 'Porsche Mobil 1 Supercup' },
+  { slug: 'porsche', title: 'Porsche Mobil 1 Supercup', short: 'Porsche Supercup' },
   { slug: 'f2', title: 'Formula 2' },
   { slug: 't4', title: 'T4 Series Serbia' },
   { slug: 'drift', title: 'Serbian Drift Championship' },

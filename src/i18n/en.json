@@ -151,6 +151,7 @@
   "gallery": {
     "empty": "Photographs are coming soon.",
     "copied": "Link copied",
+    "seriesNav": "Captured series",
     "viewer": {
       "open": "View larger",
       "close": "Close",

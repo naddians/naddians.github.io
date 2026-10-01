@@ -9,6 +9,8 @@ export interface Photo {
 export interface PhotoGroup {
   slug: string;
   title: string;
+  /** Название в оглавлении раздела, если полное там длинно (BEYOND_SERIES). */
+  short?: string;
   photos: Photo[];
 }
 
@@ -61,7 +63,7 @@ export function photosIn(gallery: GallerySlug): Photo[] {
  * Разделы, которые показываются не одной лентой, а группами с заголовками.
  * Пока такой один — Beyond F1, где группа = серия (site.ts, BEYOND_SERIES).
  */
-const GROUPED: Partial<Record<GallerySlug, readonly { slug: string; title: string }[]>> = {
+const GROUPED: Partial<Record<GallerySlug, readonly { slug: string; title: string; short?: string }[]>> = {
   beyond: BEYOND_SERIES,
 };
 

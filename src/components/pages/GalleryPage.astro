@@ -62,6 +62,26 @@ const focusIn = header ? HERO_ASPECT : CARD_ASPECT;
       <p class="wrap empty">{dict.gallery.empty}</p>
     ) : groups.length > 0 ? (
       <div class="wrap section">
+        {/*
+          Оглавление серий под шапкой: без него не видно, сколько серий
+          в разделе и какие, — до дрифта на телефоне два десятка кадров
+          листать вслепую. Вид выбран заказчицей из макетов (2026-10-01):
+          ссылки текстом через точку, без рамок и без числа кадров, подпись
+          «Captured series». Ведут на те же якоря, что и заголовки серий
+          (F1_P78). Серия одна — оглавлять нечего, его нет.
+        */}
+        {groups.filter((group) => group.title).length > 1 && (
+          <nav class="series-nav" aria-labelledby="series-nav-title">
+            <p id="series-nav-title" class="series-nav__title">{dict.gallery.seriesNav}</p>
+            <ul class="series-nav__list">
+              {groups.filter((group) => group.title).map((group) => (
+                <li>
+                  <a href={`#${group.slug}`}>{group.short ?? group.title}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
         {groups.map((group, index) => (
           <section id={group.slug || undefined} class:list={['series', index > 0 && 'series--next']}>
             {/*
