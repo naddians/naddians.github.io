@@ -66,6 +66,17 @@ const personLd = {
   sameAs: [`https://instagram.com/${CONTACTS.instagram}`],
   knowsAbout: ['Formula 1', 'Formula 2', 'Motorsport photography'],
 };
+
+// Имя сайта над адресом в выдаче Google. Без этой карточки поиск подбирал
+// имя сам и писал «GitHub» — по хостингу. Google читает её только с главной.
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: dict.name,
+  alternateName: ['Nadia Stelmashuk Photography', 'naddians.photo'],
+  url: getAbsoluteLocaleUrl(locale, ''),
+  inLanguage: HTML_LANG[locale],
+};
 ---
 
 <title>{meta.title}</title>
@@ -106,3 +117,4 @@ const personLd = {
     <script type="application/ld+json" set:html={JSON.stringify(personLd)} is:inline />
   )
 }
+{route === '' && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} is:inline />}
