@@ -67,6 +67,8 @@ const words = t(locale).gallery.viewer;
    * Оно соблюдено разметкой — кадр в ленте это ссылка на файл кадра, и без
    * JS браузер просто откроет файл. Всё, что ниже, перехватывает этот переход.
    */
+  import { count as track } from '../utils/count';
+
   const dialog = document.querySelector<HTMLDialogElement>('.viewer');
   const shots = Array.from(document.querySelectorAll<HTMLAnchorElement>('a.shot'));
 
@@ -86,10 +88,21 @@ const words = t(locale).gallery.viewer;
     /** Просмотрщиком правили с клавиатуры: только тогда фокус стоит возвращать. */
     let byKeyboard = false;
 
-    /** Кадр по номеру, по кругу: с последнего «дальше» ведёт на первый. */
-    const show = (index: number) => {
+    /** Сколько разных кадров пролистали за один заход в просмотрщик. */
+    const seen = new Set<number>();
+
+    /** Кадр по номеру, по кругу: с последнего «дальше» ведёт на первый.
+     *  `how` — как к нему пришли, для счётчика посещений (F1_P51). */
+    const show = (index: number, how: string) => {
       current = (index + shots.length) % shots.length;
       const shot = shots[current];
+      seen.add(current);
+      // Кадр — по имени файла без хэша сборки (`010-circuit`), а не по номеру:
+      // номер меняется при каждой перестановке ленты.
+      track('Кадр', {
+        кадр: shot.pathname.split('/').pop()!.replace(/\.[^.]+\.[^.]+$/, ''),
+        как: how,
+      });
       const picture = shot.querySelector('img');
 
       webp.srcset = shot.dataset.webp ?? '';
@@ -107,8 +120,8 @@ const words = t(locale).gallery.viewer;
       if (pushed) history.replaceState({ viewer: current }, '', `#photo-${current + 1}`);
     };
 
-    const open = (index: number) => {
-      show(index);
+    const open = (index: number, how: string) => {
+      show(index, how);
       if (!dialog.open) {
         dialog.showModal();
         // Фокус — на само окно, а не на крестик: рамка фокуса не должна
@@ -139,18 +152,18 @@ const words = t(locale).gallery.viewer;
         // нажал, просит открыть файл в новой вкладке, и он его получит.
         if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
         event.preventDefault();
-        open(index);
+        open(index, 'из ленты');
       });
     });
 
-    prevButton.addEventListener('click', () => show(current - 1));
-    nextButton.addEventListener('click', () => show(current + 1));
+    prevButton.addEventListener('click', () => show(current - 1, 'стрелка'));
+    nextButton.addEventListener('click', () => show(current + 1, 'стрелка'));
     closeButton.addEventListener('click', close);
 
     dialog.addEventListener('keydown', (event) => {
       byKeyboard = true;
-      if (event.key === 'ArrowLeft') show(current - 1);
-      if (event.key === 'ArrowRight') show(current + 1);
+      if (event.key === 'ArrowLeft') show(current - 1, 'клавиша');
+      if (event.key === 'ArrowRight') show(current + 1, 'клавиша');
     });
 
     // Щелчок мимо кнопок закрывает — и по кадру, и по чёрному полю вокруг
@@ -179,6 +192,8 @@ const words = t(locale).gallery.viewer;
     dialog.addEventListener('close', () => {
       document.documentElement.classList.remove('is-viewing');
       const shot = shots[current];
+      track('Просмотр закрыт', { кадров: seen.size });
+      seen.clear();
       if (pushed) {
         pushed = false;
         history.back();
@@ -243,7 +258,7 @@ const words = t(locale).gallery.viewer;
         // Щипок — не свайп: два пальца расходятся, и одному из них это
         // засчиталось бы движением вбок.
         if (pinched) return;
-        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1), 'свайп');
         else if (dy > 60 && Math.abs(dy) > Math.abs(dx)) close();
       },
       { passive: true },
@@ -259,7 +274,7 @@ const words = t(locale).gallery.viewer;
         // Возвращаем её к чистому адресу, а поверх кладём запись просмотрщика —
         // тогда «назад» отсюда ведёт в ленту, а не прочь с сайта.
         history.replaceState(null, '', location.pathname + location.search);
-        open(index);
+        open(index, 'по ссылке');
       }
     }
   }

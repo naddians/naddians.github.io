@@ -1,0 +1,108 @@
+import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { DESKTOP } from './pages';
+
+/**
+ * Счётчик посещений (F1_P51). Настоящий счётчик в тестах не грузится: вместо
+ * `umami.js` подсовывается заглушка, которая складывает события в
+ * sessionStorage — там они переживают переход на другую страницу.
+ *
+ * Проверяется то, ради чего всё затевалось: клик по контакту и открытый
+ * кадр долетают до счётчика с понятными именами, адрес почты в отчёт не
+ * попадает, и переход по ссылке не ждёт, пока уйдёт отчёт.
+ *
+ * Если номер сайта в `site.ts` пуст, счётчика на страницах нет и проверять
+ * нечего — тесты пропускаются.
+ */
+
+type Event = [string, Record<string, string | number> | undefined];
+
+const STUB = `window.umami = { track(name, data) {
+  const all = JSON.parse(sessionStorage.getItem('events') || '[]');
+  all.push([name, data]);
+  sessionStorage.setItem('events', JSON.stringify(all));
+} };`;
+
+const events = (page: Page): Promise<Event[]> =>
+  page.evaluate(() => JSON.parse(sessionStorage.getItem('events') || '[]'));
+
+test.beforeEach(async ({ page }) => {
+  await page.setViewportSize(DESKTOP);
+  await page.route('**/umami.js', (route) =>
+    route.fulfill({ contentType: 'text/javascript', body: STUB }),
+  );
+  // Чужие сайты не открываем: Instagram и почта — это только клик.
+  await page.context().route(/instagram\.com/, (route) => route.abort());
+
+  await page.goto('/contact/');
+  const counter = await page.locator('script[data-website-id]').count();
+  test.skip(counter === 0, 'номер сайта Umami не вписан — счётчика на сайте нет');
+  await page.waitForFunction(() => !!window.umami);
+});
+
+test('клик по почте — это контакт, а адрес почты в отчёт не идёт', async ({ page }) => {
+  await page.evaluate(() => {
+    // Почтовую программу не открываем: переход по mailto: гасится.
+    document.addEventListener('click', (e) => e.preventDefault());
+  });
+  await page.locator('main a[href^="mailto:"]').first().click();
+
+  const got = await events(page);
+  expect(got).toContainEqual(['Контакт', expect.objectContaining({ через: 'почта' })]);
+  expect(JSON.stringify(got)).not.toContain('@');
+});
+
+test('клик по Instagram — это контакт', async ({ page }) => {
+  await page.locator('main a[href*="instagram.com"]').first().click();
+  await expect.poll(() => events(page)).toContainEqual([
+    'Контакт',
+    expect.objectContaining({ через: 'Instagram' }),
+  ]);
+});
+
+test('ссылка в меню: клик посчитан, и переход не ждёт отчёта', async ({ page }) => {
+  await page.locator('header nav a[href*="people"]').click();
+  await expect(page).toHaveURL(/\/people\/$/);
+  expect(await events(page)).toContainEqual([
+    'Клик',
+    expect.objectContaining({ где: 'шапка', куда: '/people/' }),
+  ]);
+});
+
+test('переключение языка', async ({ page }) => {
+  await page.locator('header a[hreflang="sr"]').click();
+  await expect(page).toHaveURL(/\/sr\//);
+  expect(await events(page)).toContainEqual(['Язык', { на: 'sr' }]);
+});
+
+test('кадр: какой открыли, как пролистали, сколько посмотрели', async ({ page }) => {
+  await page.goto('/people/');
+  await page.waitForFunction(() => !!window.umami);
+
+  await page.locator('a.shot').first().click();
+  await page.locator('.viewer__nav--next').click();
+  await page.keyboard.press('ArrowRight');
+  await page.keyboard.press('Escape');
+  // Окно закрывается не мгновенно — событие о закрытии приходит следом.
+  await expect.poll(async () => (await events(page)).some(([name]) => name === 'Просмотр закрыт')).toBe(true);
+
+  const got = (await events(page)).filter(([name]) => name !== 'Клик');
+  expect(got.map(([name, data]) => [name, data?.['как'] ?? data?.['кадров']])).toEqual([
+    ['Кадр', 'из ленты'],
+    ['Кадр', 'стрелка'],
+    ['Кадр', 'клавиша'],
+    ['Просмотр закрыт', 3],
+  ]);
+  // Кадр назван по файлу, без хэша сборки: `010-circuit`, а не `010-circuit.CYvaYAXU`.
+  for (const [, data] of got.slice(0, 3)) expect(String(data?.['кадр'])).toMatch(/^[\w-]+$/);
+  // Кнопки просмотрщика общим счётчиком кликов не считаются — только как кадр.
+  expect((await events(page)).filter(([name]) => name === 'Клик')).toEqual([]);
+});
+
+test('кадр по присланной ссылке', async ({ page }) => {
+  await page.goto('/people/#photo-2');
+  await expect.poll(() => events(page)).toContainEqual([
+    'Кадр',
+    expect.objectContaining({ как: 'по ссылке' }),
+  ]);
+});

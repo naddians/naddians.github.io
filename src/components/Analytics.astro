@@ -1,0 +1,92 @@
+---
+import { UMAMI_WEBSITE_ID } from '../data/site';
+---
+
+{/*
+  Счётчик посещений Umami (F1_P51). Без кук — значит без баннера про них.
+  Base.astro вставляет этот блок, только когда номер сайта вписан в site.ts.
+
+  - Файл счётчика лежит у нас (`public/umami.js`), а не на их сервере:
+    браузеру не нужно знакомиться с чужим доменом, пока грузятся кадры.
+  - `defer` — счётчик выполняется после разбора страницы и кадрам не мешает.
+  - `data-domains` — считать только живой сайт: локальная сборка и тесты
+    в статистику не попадают.
+  - `data-exclude-hash` — просмотрщик пишет в адрес `#photo-4` на каждый кадр;
+    без этого каждый пролистанный кадр считался бы новой страницей. Кадры
+    считаются отдельным событием.
+  - `data-performance` — заодно мерить скорость у живых посетителей: когда
+    появился главный кадр, прыгала ли вёрстка.
+*/}
+<script
+  is:inline
+  defer
+  src={`${import.meta.env.BASE_URL}umami.js`}
+  data-website-id={UMAMI_WEBSITE_ID}
+  data-domains="naddians.photo"
+  data-exclude-hash="true"
+  data-performance="true"
+></script>
+
+<script>
+  /**
+   * Клики по всему, что нажимается (F1_P51, просьба заказчицы — «разметить
+   * вообще всё кликабельное»). Один слушатель на всю страницу, а не метка
+   * на каждой ссылке: новая кнопка посчитается сама.
+   *
+   * Метки Umami (`data-umami-event`) здесь не годятся: на ссылке он сначала
+   * дожидается ответа своего сервера и только потом пускает по ней, то есть
+   * каждый переход по меню тормозил бы на время запроса. Здесь отчёт уходит
+   * параллельно, а переход не ждёт — браузер дошлёт его сам (keepalive).
+   *
+   * Кадры в ленте и кнопки просмотрщика тут не считаются: их считает сам
+   * просмотрщик, точнее — какой кадр и как до него дошли (PhotoViewer.astro).
+   */
+  import { count } from '../utils/count';
+
+  /** Где на странице стоит ссылка — словами, а не классом из вёрстки. */
+  const PLACES: Record<string, string> = {
+    card: 'карточка раздела',
+    'cta__link': 'призыв внизу',
+    'hero__about-link': 'главная, «обо мне»',
+    'contact-button': 'кнопка контакта',
+    'archive__open': 'открытый архив',
+    'series__anchor': 'название серии',
+    'notfound__back': 'страница 404',
+    skip: 'пропустить меню',
+  };
+
+  const place = (el: Element) => {
+    if (el.closest('header')) return 'шапка';
+    if (el.closest('footer')) return 'подвал';
+    if (el.closest('.series-nav')) return 'список серий';
+    const name = [...el.classList].find((c) => PLACES[c]);
+    return name ? PLACES[name] : (el.classList[0] ?? 'страница');
+  };
+
+  const label = (el: Element) =>
+    (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 50);
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const el = (event.target as Element).closest('a, button');
+      if (!el || el.matches('a.shot') || el.closest('dialog')) return;
+
+      const where = place(el);
+      const href = el instanceof HTMLAnchorElement ? el.href : '';
+
+      // Адрес почты в отчёт не идёт — только то, что нажали именно её.
+      if (href.startsWith('mailto:')) return count('Контакт', { через: 'почта', где: where });
+      if (/instagram\.com/.test(href)) return count('Контакт', { через: 'Instagram', где: where });
+      if (el.hasAttribute('hreflang')) return count('Язык', { на: el.getAttribute('hreflang')! });
+
+      let to = '';
+      if (href) {
+        const url = new URL(href);
+        to = url.origin === location.origin ? url.pathname + url.hash : url.host + url.pathname;
+      }
+      count('Клик', { что: label(el), куда: to, где: where });
+    },
+    true,
+  );
+</script>
