@@ -1487,8 +1487,13 @@ html.is-viewing {
 /* Условия — короткой строкой с красной чертой слева, как в макете, который
    выбрала заказчица: это не абзац для чтения, а правило, которое должно
    бросаться в глаза до того, как человек нажмёт на папку. */
-.archive__terms {
+.page-head .archive__terms {
   margin-top: 16px;
+  /* Ширина как у абзацев на Image use (62 знака при 16px), хотя шрифт здесь
+     мельче: по 62 знака своего, 14px, строка рвалась раньше, чем на той
+     странице, и на компьютере давала лишний перенос (решение заказчицы
+     2026-10-07, вариант A из макетов). */
+  max-width: calc(var(--text-max) * 16 / 14);
   padding-left: 12px;
   border-left: 2px solid var(--accent);
   font-size: 0.875rem;
@@ -1499,15 +1504,18 @@ html.is-viewing {
   font-weight: 500;
 }
 
+/* Нижний отступ — как у страницы условий: с прежним, бо́льшим, ссылки
+   подвала уходили за нижний край экрана ноутбука. */
 .archive {
-  padding-block: 40px clamp(56px, 6vw, 96px);
+  padding-block: 40px clamp(40px, 4.5vw, 64px);
 }
 
 .archive__list {
   margin: 0;
   padding: 0;
   list-style: none;
-  max-width: var(--text-max);
+  /* Линии между строками — той же длины, что на Image use. */
+  max-width: 800px;
 }
 
 .archive__item {
