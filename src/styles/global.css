@@ -1482,6 +1482,72 @@ html.is-viewing {
   max-width: var(--text-max);
 }
 
+/* ---------- Открытый архив (F1_P93) ---------- */
+
+/* Условия — короткой строкой с красной чертой слева, как в макете, который
+   выбрала заказчица: это не абзац для чтения, а правило, которое должно
+   бросаться в глаза до того, как человек нажмёт на папку. */
+.archive__terms {
+  margin-top: 16px;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+  font-size: 0.875rem;
+}
+
+.archive__terms b {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.archive {
+  padding-block: 40px clamp(56px, 6vw, 96px);
+}
+
+.archive__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: var(--text-max);
+}
+
+.archive__item {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 14px;
+  padding-block: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.archive__thumb {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+}
+
+.archive__name {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.archive__meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* Ссылка на папку — главное действие строки, поэтому подчёркнута сразу
+   красным, а не серым, как остальные ссылки на сайте. Высота — зона нажатия. */
+.archive__open {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
 /* ---------- Кнопки контактов ---------- */
 
 .contact-buttons {

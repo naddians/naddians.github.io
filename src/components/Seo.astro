@@ -91,6 +91,13 @@ const websiteLd = {
     индексируется как прежде: запрет только на картинки. */}
 {route === 'about' && <meta name="robots" content="noimageindex" />}
 
+{/* Открытый архив (F1_P93, решение заказчицы 2026-10-07) поиску не
+    показывается вовсе: страницу дают по ссылке. Из карты сайта она тоже
+    убрана (astro.config.mjs), в меню и подвале её нет. В robots.txt запрета
+    нет намеренно: там адрес увидел бы любой, а робот, которому запрещено
+    заходить, не прочёл бы и этот noindex. */}
+{route === 'freearchive' && <meta name="robots" content="noindex, nofollow" />}
+
 {alternates.map((alt) => <link rel="alternate" hreflang={alt.code} href={alt.href} />)}
 <link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl('en', route)} />
 

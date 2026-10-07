@@ -44,6 +44,8 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      // Открытый архив в карту сайта не попадает: он закрыт от поиска (F1_P93).
+      filter: (page) => !page.includes('/freearchive/'),
       i18n: {
         defaultLocale: 'en',
         locales: { en: 'en', sr: 'sr-Latn', de: 'de' },

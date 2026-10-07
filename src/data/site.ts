@@ -64,6 +64,49 @@ export const EVENTS: readonly {
   },
 ];
 
+/**
+ * Открытый архив — /freearchive/ (F1_P93). Мероприятия, которые заказчица
+ * отдаёт бесплатно целиком: каждое — папка на Google Диске. Не все отснятые
+ * события, а только те, что она решила открыть: Спа и Сильверстоун сюда не
+ * входят. Раунды T4 — отдельными строками, у каждого своя папка.
+ *
+ * `photo` — миниатюра, путь внутри src/photos/ (кадры берутся с сайта).
+ * Порядок на странице = порядок здесь, новые сверху.
+ */
+export const FREE_ARCHIVE: readonly {
+  series: string;
+  round: string;
+  venue: string;
+  year: number;
+  drive: string;
+  photo: string;
+}[] = [
+  {
+    series: 'Serbian Drift Championship',
+    round: 'Round 3',
+    venue: 'SDC Drift Racetrack, Novi Beograd',
+    year: 2026,
+    drive: 'https://drive.google.com/drive/folders/1Jc28hnt6O9J5JI0pMnA4Am0z9BtNuZGn?usp=share_link',
+    photo: 'beyond/280-drift.jpg',
+  },
+  {
+    series: 'T4 Series Serbia',
+    round: 'Round 6',
+    venue: 'Autokomerc Karting Centar',
+    year: 2026,
+    drive: 'https://drive.google.com/drive/folders/1OvbbxWJsXIZftJSaJg0r-qVhCpVIAGj_?usp=sharing',
+    photo: 'beyond/110-t4.jpg',
+  },
+  {
+    series: 'T4 Series Serbia',
+    round: 'Round 5',
+    venue: 'Autokomerc Karting Centar',
+    year: 2026,
+    drive: 'https://drive.google.com/drive/folders/1jUN4mqCX9QXRSEs6m_BsRZRTlt3JZxUx?usp=share_link',
+    photo: 'beyond/270-t4.jpg',
+  },
+];
+
 /** Коллаборации. Заголовок блока — «Collaborations», не «Publications» (ТЗ §3.1 п.6). */
 export const COLLABS = [
   { handle: 'mclaren_fans_serbia' },

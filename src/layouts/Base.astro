@@ -47,7 +47,7 @@ const SKIP_LABEL: Record<Locale, string> = {
           странице контактов блок был бы повтором — остаются галереи.
           На условиях использования (F1_P60) внизу свой блок «как спросить»
           с той же ссылкой: два «напишите мне» подряд. */}
-      {!['', 'about', 'contact', 'license'].includes(route) && <Cta locale={locale} />}
+      {!['', 'about', 'contact', 'license', 'freearchive'].includes(route) && <Cta locale={locale} />}
     </main>
     <Footer locale={locale} />
   </body>

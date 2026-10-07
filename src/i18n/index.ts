@@ -36,6 +36,8 @@ export const ROUTES = [
   'about',
   'contact',
   'license',
+  // Открытый архив (F1_P93): закрыт от поиска, в меню и подвале ссылки нет.
+  'freearchive',
 ] as const;
 export type Route = (typeof ROUTES)[number];
 

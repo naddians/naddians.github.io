@@ -126,7 +126,7 @@
       },
       {
         "label": "Fragen Sie mich zuerst",
-        "text": "Schreiben Sie mir, bevor Sie ein Bild irgendwo veröffentlichen, und warten Sie meine Antwort ab. Die Erlaubnis wird schriftlich per E-Mail erteilt, und zwar für diese eine Nutzung."
+        "text": "Schreiben Sie mir, bevor Sie ein Bild irgendwo veröffentlichen, und warten Sie meine Antwort ab. Die Erlaubnis wird schriftlich per E-Mail erteilt, und zwar für diese eine Nutzung. Ausgenommen sind Galerien, die ich per Download-Link freigegeben habe: Dort genügt die Namensnennung."
       },
       {
         "label": "Nennen Sie mich als Autorin",
@@ -171,6 +171,14 @@
     "text": "Diese Seite ist von der Strecke abgekommen. Alles Sehenswerte liegt zurück auf der Ideallinie.",
     "back": "Zurück zur Ideallinie"
   },
+  "freearchive": {
+    "title": "Mit Ihnen geteilt",
+    "termsBefore": "Kostenlos für den privaten Gebrauch. Wenn Sie ein Foto veröffentlichen, nennen Sie mich — ",
+    "termsMid": " — und markieren Sie ",
+    "termsAfter": " in sozialen Netzwerken. Nicht zum Verkauf und nicht für kommerzielle Nutzung.",
+    "eventsTitle": "Ausgewählte Events",
+    "open": "Auf Google Drive öffnen"
+  },
   "footer": {
     "rights": "Alle Rechte vorbehalten."
   },
@@ -206,6 +214,10 @@
     "license": {
       "title": "Bildnutzung — Nadia Stelmashuk",
       "description": "Wie Fotografien von Nadia Stelmashuk genutzt werden dürfen: kostenlos für private, nicht kommerzielle Zwecke, mit schriftlicher Erlaubnis und Namensnennung."
+    },
+    "freearchive": {
+      "title": "Mit Ihnen geteilt — Nadia Stelmashuk",
+      "description": "Ausgewählte Motorsport-Events von Nadia Stelmashuk, kostenlos zum Herunterladen für den privaten Gebrauch."
     }
   }
 }

@@ -73,3 +73,15 @@ test('карта сайта содержит все страницы', async ({ 
   const missing = PAGES.filter((path) => !urls.some((url) => new URL(url).pathname === path));
   expect(missing, 'страниц нет в карте сайта').toEqual([]);
 });
+
+test('открытый архив закрыт от поиска во всех языках', async ({ request }) => {
+  // Страницу дают по ссылке (F1_P93): поиску она не показывается, в карте
+  // сайта её нет. Эта проверка ловит случайное открытие в будущем.
+  const sitemap = await (await request.get('/sitemap-0.xml')).text();
+  expect(sitemap, 'архив в карте сайта').not.toContain('freearchive');
+
+  for (const path of ['/freearchive/', '/de/freearchive/', '/sr/freearchive/']) {
+    const html = await (await request.get(path)).text();
+    expect(html, `${path}: нет noindex`).toMatch(/<meta name="robots" content="noindex[^"]*"/);
+  }
+});

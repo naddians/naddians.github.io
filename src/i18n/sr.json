@@ -126,7 +126,7 @@
       },
       {
         "label": "Prvo me pitajte",
-        "text": "Pišite mi pre nego što kadar bilo gde objavite i sačekajte odgovor. Saglasnost dajem pismeno, mejlom, i to za tu upotrebu."
+        "text": "Pišite mi pre nego što kadar bilo gde objavite i sačekajte odgovor. Saglasnost dajem pismeno, mejlom, i to za tu upotrebu. Izuzetak su galerije koje sam podelila linkom za preuzimanje: za njih je dovoljno navesti autora."
       },
       {
         "label": "Navedite autora",
@@ -171,6 +171,14 @@
     "text": "Ova stranica je izletela sa staze. Sve vredno je nazad na trkačkoj liniji.",
     "back": "Nazad na trkačku liniju"
   },
+  "freearchive": {
+    "title": "Podeljeno s vama",
+    "termsBefore": "Besplatno za ličnu upotrebu. Ako objavite fotografiju, navedite me kao autora — ",
+    "termsMid": " — i označite ",
+    "termsAfter": " na društvenim mrežama. Nije za prodaju ni komercijalnu upotrebu.",
+    "eventsTitle": "Izabrani događaji",
+    "open": "Otvori na Google Drive-u"
+  },
   "footer": {
     "rights": "Sva prava zadržana."
   },
@@ -206,6 +214,10 @@
     "license": {
       "title": "Korišćenje slika — Nadia Stelmashuk",
       "description": "Kako se koriste fotografije Nadie Stelmashuk: besplatno, za lične i nekomercijalne svrhe, uz pismenu saglasnost i navođenje autora."
+    },
+    "freearchive": {
+      "title": "Podeljeno s vama — Nadia Stelmashuk",
+      "description": "Izabrani motosport događaji Nadie Stelmashuk, besplatni za preuzimanje za ličnu upotrebu."
     }
   }
 }

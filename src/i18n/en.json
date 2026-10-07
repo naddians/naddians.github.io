@@ -121,7 +121,7 @@
       },
       {
         "label": "Ask me first",
-        "text": "Write to me before you publish a frame anywhere, and wait for my answer. Permission is given in writing, by email, and for that use."
+        "text": "Write to me before you publish a frame anywhere, and wait for my answer. Permission is given in writing, by email, and for that use. The exception is galleries I've shared openly by download link: for those, credit is enough."
       },
       {
         "label": "Credit me",
@@ -166,6 +166,14 @@
     "text": "This page went off the track. Everything worth seeing is back on the racing line.",
     "back": "Back to the racing line"
   },
+  "freearchive": {
+    "title": "Shared with you",
+    "termsBefore": "Free for personal use. If you post a photo, credit me — ",
+    "termsMid": " — and tag ",
+    "termsAfter": " on social media. Not for sale or commercial use.",
+    "eventsTitle": "Selected events",
+    "open": "Open on Google Drive"
+  },
   "footer": {
     "rights": "All rights reserved."
   },
@@ -201,6 +209,10 @@
     "license": {
       "title": "Image use — Nadia Stelmashuk",
       "description": "How to use photographs by Nadia Stelmashuk: free of charge for personal, non-commercial use, with written permission and credit to the photographer."
+    },
+    "freearchive": {
+      "title": "Shared with you — Nadia Stelmashuk",
+      "description": "Selected motorsport events by Nadia Stelmashuk, free to download for personal use."
     }
   }
 }

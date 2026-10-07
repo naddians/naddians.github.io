@@ -1,0 +1,73 @@
+---
+import { Picture } from 'astro:assets';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Base from '../../layouts/Base.astro';
+import { t, type Locale } from '../../i18n';
+import { AUTHOR, CONTACTS, FREE_ARCHIVE } from '../../data/site';
+import { photoAt } from '../../utils/photos';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const dict = t(locale);
+
+// Открытый архив (F1_P93): мероприятия, которые заказчица отдаёт бесплатно,
+// папками на Google Диске. Страница по ссылке — поиску закрыта (Seo.astro),
+// в карте сайта, меню и подвале её нет.
+//
+// Вид выбран заказчицей из макетов 2026-10-07: строки с квадратной миниатюрой
+// слева. Отвергнуты: голый список (как на Image use) и обложки во всю ширину.
+// Подпись под заголовком убрана по её просьбе — «много текста»; то, что здесь
+// не все съёмки, а только открытые, говорит подзаголовок списка.
+const events = FREE_ARCHIVE.map((event) => ({ ...event, image: photoAt(event.photo) }));
+---
+
+<Base locale={locale} route={'freearchive'}>
+  <div class="wrap page-head">
+    <h1>{dict.freearchive.title}</h1>
+    {/* Условия здесь — исключение из пункта «Ask me first» на Image use:
+        разрешение уже дано, достаточно подписи. Та страница об этом тоже
+        говорит, чтобы они не спорили друг с другом. */}
+    <p class="archive__terms">
+      {dict.freearchive.termsBefore}<b>{AUTHOR.name}</b>{dict.freearchive.termsMid}<b>@{CONTACTS.instagram}</b>{dict.freearchive.termsAfter}{' '}
+      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.nav.license}</a>
+    </p>
+  </div>
+
+  <section class="wrap archive">
+    <h2 class="section__title">{dict.freearchive.eventsTitle}</h2>
+    <ul class="archive__list">
+      {
+        events.map((event) => (
+          <li class="archive__item">
+            {event.image && (
+              <Picture
+                src={event.image}
+                alt=""
+                formats={['avif', 'webp']}
+                widths={[96, 192, 288]}
+                sizes="96px"
+                loading="lazy"
+                decoding="async"
+                class="archive__thumb"
+              />
+            )}
+            <div>
+              <h3 class="archive__name">
+                {event.series} · {event.round}
+              </h3>
+              <p class="archive__meta">
+                {event.year} · {event.venue}
+              </p>
+              <a class="archive__open" href={event.drive} target="_blank" rel="noopener">
+                {dict.freearchive.open} ↗
+              </a>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</Base>
