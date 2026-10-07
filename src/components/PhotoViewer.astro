@@ -99,9 +99,13 @@ const words = t(locale).gallery.viewer;
       seen.add(current);
       // Кадр — по имени файла без хэша сборки (`010-circuit`), а не по номеру:
       // номер меняется при каждой перестановке ленты.
+      // Серия — у разделов, разложенных по сериям (Beyond F1): так видно,
+      // кадры какой серии открывают чаще. У остальных разделов её нет.
+      const series = shot.closest('.series')?.querySelector('.series__anchor')?.getAttribute('aria-label');
       track('Кадр', {
         кадр: shot.pathname.split('/').pop()!.replace(/\.[^.]+\.[^.]+$/, ''),
         как: how,
+        ...(series && { серия: series }),
       });
       const picture = shot.querySelector('img');
 

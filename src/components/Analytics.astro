@@ -99,8 +99,17 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
       if (el.matches('.archive__open')) {
         return count('Открытый архив: съёмка', { съёмка: text(el.closest('.archive__item')?.querySelector('.archive__name')) });
       }
-      if (el.closest('.series-nav')) return count('Серия из списка', { серия: text(el) });
-      if (el.matches('.series__anchor')) return count('Ссылка на серию скопирована', { серия: text(el) });
+      // У каждой серии свой счётчик — по её названию, вместе с разделом:
+      // «Beyond F1: T4 Series Serbia» (заказчица: «разделим все серии, чтобы
+      // понимать, какие более интересны»). Название берётся полное, из
+      // заголовка серии: в списке над лентой оно бывает сокращено.
+      // Список серий сейчас есть только в Beyond F1, но строится в любой
+      // галерее, где серий больше одной.
+      const series = el.closest('.series-nav') ? 'из списка' : el.matches('.series__anchor') ? 'скопировали ссылку' : '';
+      if (series) {
+        const title = document.querySelector(`${new URL(href).hash} .series__anchor`)?.getAttribute('aria-label') || text(el);
+        return count(`${target(location.href)}: ${title}`.slice(0, 50), { как: series });
+      }
       if (el.matches('summary')) return count('Условия работы: пункт', { пункт: text(el) });
       if (el.matches('.skip')) return count('Пропустить меню');
       if (href) return count('Ссылка в тексте', { куда: to });

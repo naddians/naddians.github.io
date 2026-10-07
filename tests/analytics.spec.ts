@@ -127,6 +127,28 @@ test('кадр: какой открыли, как пролистали, скол
   for (const [, data] of got.slice(0, 3)) expect(String(data?.['кадр'])).toMatch(/^[\w-]+$/);
 });
 
+test('у каждой серии свой счётчик — по полному названию', async ({ page }) => {
+  await page.goto('/beyond/');
+  await ready(page);
+  // В списке серия сокращена до «Porsche Supercup», в счётчике — полное имя.
+  await page.locator('.series-nav a[href="#porsche"]').click();
+  await page.locator('.series__anchor[href="#t4"]').click();
+  await expect.poll(() => events(page)).toEqual([
+    ['Beyond F1: Porsche Mobil 1 Supercup', { как: 'из списка' }],
+    ['Beyond F1: T4 Series Serbia', { как: 'скопировали ссылку' }],
+  ]);
+});
+
+test('кадр в Beyond знает свою серию', async ({ page }) => {
+  await page.goto('/beyond/');
+  await ready(page);
+  await page.locator('#t4 a.shot').first().click();
+  await expect.poll(() => events(page)).toContainEqual([
+    'Кадр',
+    expect.objectContaining({ серия: 'T4 Series Serbia', как: 'из ленты' }),
+  ]);
+});
+
 test('кадр по присланной ссылке', async ({ page }) => {
   await page.goto('/people/#photo-2');
   await expect.poll(() => events(page)).toContainEqual([
