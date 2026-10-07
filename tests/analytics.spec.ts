@@ -23,6 +23,12 @@ const STUB = `window.umami = { track(name, data) {
   sessionStorage.setItem('events', JSON.stringify(all));
 } };`;
 
+/** Страница догрузилась: и счётчик, и наш слушатель нажатий уже на месте. */
+const ready = async (page: Page) => {
+  await page.waitForLoadState('domcontentloaded');
+  await page.waitForFunction(() => !!window.umami);
+};
+
 const events = (page: Page): Promise<Event[]> =>
   page.evaluate(() => JSON.parse(sessionStorage.getItem('events') || '[]'));
 
@@ -37,7 +43,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/contact/');
   const counter = await page.locator('script[data-website-id]').count();
   test.skip(counter === 0, 'номер сайта Umami не вписан — счётчика на сайте нет');
-  await page.waitForFunction(() => !!window.umami);
+  await ready(page);
 });
 
 test('клик по почте — это контакт, а адрес почты в отчёт не идёт', async ({ page }) => {
@@ -60,12 +66,36 @@ test('клик по Instagram — это контакт', async ({ page }) => {
   ]);
 });
 
-test('ссылка в меню: клик посчитан, и переход не ждёт отчёта', async ({ page }) => {
+test('ссылка в меню: нажатие посчитано, и переход не ждёт отчёта', async ({ page }) => {
   await page.locator('header nav a[href*="people"]').click();
   await expect(page).toHaveURL(/\/people\/$/);
-  expect(await events(page)).toContainEqual([
-    'Клик',
-    expect.objectContaining({ где: 'шапка', куда: '/people/' }),
+  expect(await events(page)).toContainEqual(['Меню', { куда: 'People' }]);
+});
+
+test('Instagram партнёра — не контакт', async ({ page }) => {
+  await page.goto('/about/');
+  await ready(page);
+  await page.locator('main a[href*="instagram.com/formula1srbija"]').click();
+  await expect.poll(() => events(page)).toContainEqual(['Instagram партнёра', { кто: 'formula1srbija' }]);
+  expect((await events(page)).map(([name]) => name)).not.toContain('Контакт');
+});
+
+test('у нажатий понятные имена, а не общее «Клик»', async ({ page }) => {
+  // Пункт условий работы — на той же странице контактов.
+  await page.locator('summary').first().click();
+  await page.goto('/');
+  await ready(page);
+  await page.locator('a.card[href*="track"]').click();
+  await page.waitForURL(/\/track\/$/);
+  await ready(page);
+  await page.locator('footer a[href*="license"]').click();
+  await expect(page).toHaveURL(/\/license\/$/);
+
+  const names = (await events(page)).map(([name, data]) => [name, Object.values(data ?? {})[0]]);
+  expect(names).toEqual([
+    ['Условия работы: пункт', expect.any(String)],
+    ['Карточка раздела', 'Track'],
+    ['Подвал', 'Условия использования'],
   ]);
 });
 
@@ -77,7 +107,7 @@ test('переключение языка', async ({ page }) => {
 
 test('кадр: какой открыли, как пролистали, сколько посмотрели', async ({ page }) => {
   await page.goto('/people/');
-  await page.waitForFunction(() => !!window.umami);
+  await ready(page);
 
   await page.locator('a.shot').first().click();
   await page.locator('.viewer__nav--next').click();
@@ -86,7 +116,7 @@ test('кадр: какой открыли, как пролистали, скол
   // Окно закрывается не мгновенно — событие о закрытии приходит следом.
   await expect.poll(async () => (await events(page)).some(([name]) => name === 'Просмотр закрыт')).toBe(true);
 
-  const got = (await events(page)).filter(([name]) => name !== 'Клик');
+  const got = await events(page);
   expect(got.map(([name, data]) => [name, data?.['как'] ?? data?.['кадров']])).toEqual([
     ['Кадр', 'из ленты'],
     ['Кадр', 'стрелка'],
@@ -95,8 +125,6 @@ test('кадр: какой открыли, как пролистали, скол
   ]);
   // Кадр назван по файлу, без хэша сборки: `010-circuit`, а не `010-circuit.CYvaYAXU`.
   for (const [, data] of got.slice(0, 3)) expect(String(data?.['кадр'])).toMatch(/^[\w-]+$/);
-  // Кнопки просмотрщика общим счётчиком кликов не считаются — только как кадр.
-  expect((await events(page)).filter(([name]) => name === 'Клик')).toEqual([]);
 });
 
 test('кадр по присланной ссылке', async ({ page }) => {

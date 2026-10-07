@@ -29,9 +29,13 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
 
 <script>
   /**
-   * Клики по всему, что нажимается (F1_P51, просьба заказчицы — «разметить
+   * Нажатия на всё, что нажимается (F1_P51, просьба заказчицы — «разметить
    * вообще всё кликабельное»). Один слушатель на всю страницу, а не метка
-   * на каждой ссылке: новая кнопка посчитается сама.
+   * на каждой ссылке. У каждого нажатия своё понятное имя — «Меню»,
+   * «Карточка раздела», «Напишите мне», — а не общее «Клик» (заказчица
+   * 2026-10-07: «вместо тупо клик разметить нормально, что это такое»).
+   * Что не узнано — уходит как «Другое нажатие» со всеми подробностями,
+   * чтобы новая кнопка не пропала молча, а была видна и получила своё имя.
    *
    * Метки Umami (`data-umami-event`) здесь не годятся: на ссылке он сначала
    * дожидается ответа своего сервера и только потом пускает по ней, то есть
@@ -43,49 +47,65 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
    */
   import { count } from '../utils/count';
 
-  /** Где на странице стоит ссылка — словами, а не классом из вёрстки. */
-  const PLACES: Record<string, string> = {
-    card: 'карточка раздела',
-    'cta__link': 'призыв внизу',
-    'hero__about-link': 'главная, «обо мне»',
-    'contact-button': 'кнопка контакта',
-    'archive__open': 'открытый архив',
-    'series__anchor': 'название серии',
-    'notfound__back': 'страница 404',
-    skip: 'пропустить меню',
+  /** Страницы — по-русски и без языка: People на сербском — тоже People. */
+  const PAGES: Record<string, string> = {
+    '': 'главная',
+    track: 'Track',
+    people: 'People',
+    atmosphere: 'Atmosphere',
+    beyond: 'Beyond F1',
+    about: 'Обо мне',
+    contact: 'Контакты',
+    license: 'Условия использования',
+    freearchive: 'Открытый архив',
   };
 
-  const place = (el: Element) => {
-    if (el.closest('header')) return 'шапка';
-    if (el.closest('footer')) return 'подвал';
-    if (el.closest('.series-nav')) return 'список серий';
-    const name = [...el.classList].find((c) => PLACES[c]);
-    return name ? PLACES[name] : (el.classList[0] ?? 'страница');
+  /** Куда ведёт ссылка: страница сайта словами или чужой сайт. */
+  const target = (href: string) => {
+    const url = new URL(href);
+    if (url.origin !== location.origin) return url.host + url.pathname;
+    const slug = url.pathname.replace(/^\/(sr|de)(?=\/|$)/, '').replace(/^\/|\/$/g, '');
+    const page = PAGES[slug] ?? url.pathname;
+    return url.hash === '#working-together' ? `${page}, условия работы` : page;
   };
 
-  const label = (el: Element) =>
-    (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 50);
+  const text = (el: Element | null | undefined) =>
+    (el?.getAttribute('aria-label') || el?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 50);
 
   document.addEventListener(
     'click',
     (event) => {
-      const el = (event.target as Element).closest('a, button');
+      const el = (event.target as Element).closest('a, button, summary');
       if (!el || el.matches('a.shot') || el.closest('dialog')) return;
 
-      const where = place(el);
       const href = el instanceof HTMLAnchorElement ? el.href : '';
+      const to = href ? target(href) : '';
+      const where = el.closest('header') ? 'шапка' : el.closest('footer') ? 'подвал' : 'страница';
 
       // Адрес почты в отчёт не идёт — только то, что нажали именно её.
       if (href.startsWith('mailto:')) return count('Контакт', { через: 'почта', где: where });
-      if (/instagram\.com/.test(href)) return count('Контакт', { через: 'Instagram', где: where });
-      if (el.hasAttribute('hreflang')) return count('Язык', { на: el.getAttribute('hreflang')! });
-
-      let to = '';
-      if (href) {
-        const url = new URL(href);
-        to = url.origin === location.origin ? url.pathname + url.hash : url.host + url.pathname;
+      // Свой Instagram помечен rel="me" — так ссылка на него отличается
+      // от ссылок на тех, с кем работали («Обо мне»).
+      if (/instagram\.com/.test(href)) {
+        return el.matches('[rel~="me"]')
+          ? count('Контакт', { через: 'Instagram', где: where })
+          : count('Instagram партнёра', { кто: new URL(href).pathname.replace(/\//g, '') });
       }
-      count('Клик', { что: label(el), куда: to, где: where });
+      if (el.hasAttribute('hreflang')) return count('Язык', { на: el.getAttribute('hreflang')! });
+      if (el.closest('header')) return count('Меню', { куда: to });
+      if (el.closest('footer')) return count('Подвал', { куда: to });
+      if (el.matches('.card')) return count('Карточка раздела', { раздел: to });
+      if (el.matches('.cta__link')) return count('Напишите мне');
+      if (el.matches('.archive__open')) {
+        return count('Открытый архив: съёмка', { съёмка: text(el.closest('.archive__item')?.querySelector('.archive__name')) });
+      }
+      if (el.closest('.series-nav')) return count('Серия из списка', { серия: text(el) });
+      if (el.matches('.series__anchor')) return count('Ссылка на серию скопирована', { серия: text(el) });
+      if (el.matches('summary')) return count('Условия работы: пункт', { пункт: text(el) });
+      if (el.matches('.skip')) return count('Пропустить меню');
+      if (href) return count('Ссылка в тексте', { куда: to });
+
+      count('Другое нажатие', { что: text(el), куда: to });
     },
     true,
   );
