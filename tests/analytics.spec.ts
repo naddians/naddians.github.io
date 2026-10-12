@@ -156,3 +156,24 @@ test('кадр по присланной ссылке', async ({ page }) => {
     expect.objectContaining({ как: 'по ссылке' }),
   ]);
 });
+
+test('открытый архив: своя ссылка в подвале и свой счётчик у каждой съёмки', async ({ page }) => {
+  await page.goto('/about/');
+  await ready(page);
+  await page.locator('footer a.footer__archive').click();
+  await expect(page).toHaveURL(/\/freearchive\/$/);
+  await ready(page);
+  // Google Диск не открываем: нужна только отметка о нажатии.
+  await page.context().route(/drive\.google\.com/, (route) => route.abort());
+  for (const link of await page.locator('.archive__open').all()) await link.click();
+
+  // Пустые подробности заглушка хранит как null (JSON), поэтому сравниваем
+  // имена, а подробности — только у ссылки в подвале.
+  await expect.poll(async () => (await events(page)).map(([name]) => name)).toEqual([
+    'Подвал: открытый архив',
+    'Архив: Serbian Drift Championship · Round 3',
+    'Архив: T4 Series Serbia · Round 6',
+    'Архив: T4 Series Serbia · Round 5',
+  ]);
+  expect((await events(page))[0][1]).toEqual({ откуда: 'Обо мне' });
+});

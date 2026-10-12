@@ -44,6 +44,15 @@ const FOOTER_NAV_LABEL: Record<Locale, string> = {
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'about')}>{dict.nav.about}</a>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'contact')}>{dict.nav.contact}</a>
       <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.nav.license}</a>
+      {/* Открытый архив (F1_P93, решение заказчицы 2026-10-12): страница
+          по-прежнему закрыта от поиска (noindex), но больше не прячется от
+          посетителей. Подпись короткая — «Archive», «Archiv», «Arhiva»: так ряд
+          ссылок умещается в одну строку на телефоне во всех трёх языках, а
+          что внутри только выбранные съёмки, говорит сама страница. Отвергнуты
+          «Free photos», название страницы («Shared with you»), «Free archive»
+          и отдельная ссылка под копирайтом. Класс — для своего счётчика
+          нажатий (Analytics.astro). */}
+      <a class="contact-link footer__archive" href={getRelativeLocaleUrl(locale, 'freearchive')}>{dict.nav.freearchive}</a>
     </nav>
   </div>
 </footer>

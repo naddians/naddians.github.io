@@ -93,11 +93,18 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
       }
       if (el.hasAttribute('hreflang')) return count('Язык', { на: el.getAttribute('hreflang')! });
       if (el.closest('header')) return count('Меню', { куда: to });
+      // Ссылка на открытый архив в подвале — свой счётчик, отдельно от
+      // остальных ссылок подвала (заказчица 2026-10-12: «нужен уникальный
+      // для этой ссылки»). Откуда нажали — какая страница.
+      if (el.matches('.footer__archive')) return count('Подвал: открытый архив', { откуда: target(location.href) });
       if (el.closest('footer')) return count('Подвал', { куда: to });
       if (el.matches('.card')) return count('Карточка раздела', { раздел: to });
       if (el.matches('.cta__link')) return count('Напишите мне');
+      // У каждой съёмки в открытом архиве свой счётчик, как у серий ниже:
+      // «Архив: T4 Series Serbia · Round 6». Слово короткое, потому что имя
+      // события у Umami — не длиннее 50 знаков, а названия съёмок длинные.
       if (el.matches('.archive__open')) {
-        return count('Открытый архив: съёмка', { съёмка: text(el.closest('.archive__item')?.querySelector('.archive__name')) });
+        return count(`Архив: ${text(el.closest('.archive__item')?.querySelector('.archive__name'))}`.slice(0, 50));
       }
       // У каждой серии свой счётчик — по её названию, вместе с разделом:
       // «Beyond F1: T4 Series Serbia» (заказчица: «разделим все серии, чтобы
