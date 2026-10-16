@@ -38,10 +38,20 @@ const dict = t(locale);
                 {event.venue} · {event.year}
                 <br />
                 <span class="list__meta">{event.series.join(' · ')}</span>
-                {event.accredited && (
+                {event.includes && (
                   <>
                     <br />
-                    <span class="list__badge">{dict.about.accredited}</span>
+                    <span class="list__meta list__meta--sub">
+                      {dict.about.including} {event.includes.join(' · ')}
+                    </span>
+                  </>
+                )}
+                {(event.accredited || event.trackAccess) && (
+                  <>
+                    <br />
+                    <span class="list__badge">
+                      {event.accredited ? dict.about.accredited : dict.about.trackAccess}
+                    </span>
                   </>
                 )}
               </li>

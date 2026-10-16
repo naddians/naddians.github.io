@@ -40,14 +40,31 @@ export const AUTHOR = {
 /**
  * Отснятые события. Сгруппированы по уик-эндам — так видно выезды, а не отдельные гонки.
  * `accredited` — официальная медиа-аккредитация: на странице плашка «Media accredited»
- * под строкой серии. Ставится только там, где она реально была (у T4 такого понятия нет).
+ * под строкой серии. Ставится только там, где она реально была.
+ * `trackAccess` — плашка «Track access» там, где допуск к трассе был, а
+ * аккредитации в полном смысле не было: на картинге выдали жилет фотографа,
+ * но не бейдж (решение заказчицы 2026-10-16). Обе плашки сразу не ставятся.
+ * `includes` — серия, которая шла внутри этапа другой серии: строкой ниже,
+ * мельче, с «incl.» (вариант B из макетов, 2026-10-16).
  */
 export const EVENTS: readonly {
   venue: string;
   year: number;
   series: readonly string[];
+  includes?: readonly string[];
   accredited?: boolean;
+  trackAccess?: boolean;
 }[] = [
+  {
+    // Srpski sportski karting savez, 10–11 октября 2026. Название — как в
+    // открытом архиве (FREE_ARCHIVE ниже), коротко, по просьбе заказчицы.
+    // T4 Round 8 шёл в рамках этого этапа SKSS — со слов заказчицы.
+    venue: 'Karting Centar Jagodina',
+    year: 2026,
+    series: ['SKSS', 'Round 6'],
+    includes: ['T4 Series Serbia', 'Round 8'],
+    trackAccess: true,
+  },
   {
     venue: 'SDC Drift Racetrack, Novi Beograd',
     year: 2026,
@@ -63,6 +80,7 @@ export const EVENTS: readonly {
     venue: 'Autokomerc Karting Centar',
     year: 2026,
     series: ['T4 Series Serbia', 'Round 5', 'Round 6'],
+    trackAccess: true,
   },
   {
     venue: 'Silverstone',
