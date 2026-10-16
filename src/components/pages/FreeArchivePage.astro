@@ -31,8 +31,9 @@ const events = FREE_ARCHIVE.map((event) => ({ ...event, image: photoAt(event.pho
         разрешение уже дано, достаточно подписи. Та страница об этом тоже
         говорит, чтобы они не спорили друг с другом. */}
     <p class="archive__terms">
-      {dict.freearchive.termsBefore}<b>{AUTHOR.name}</b>{dict.freearchive.termsMid}<b>@{CONTACTS.instagram}</b>{dict.freearchive.termsAfter}{' '}
-      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.nav.license}</a>
+      {dict.freearchive.termsBefore}<b>{AUTHOR.name}</b>{dict.freearchive.termsMid}<b>@{CONTACTS.instagram}</b>{dict.freearchive.termsAfter}
+      <br />
+      <a class="contact-link" href={getRelativeLocaleUrl(locale, 'license')}>{dict.freearchive.allTerms}</a>
     </p>
   </div>
 
