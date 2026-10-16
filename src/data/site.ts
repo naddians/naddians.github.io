@@ -89,6 +89,16 @@ export const FREE_ARCHIVE: readonly {
   photo: string;
 }[] = [
   {
+    // Srpski sportski karting savez — заказчица попросила писать коротко, SKSS.
+    // Кадров серии на сайте нет: миниатюра лежит отдельно, в src/photos/archive/.
+    series: 'SKSS',
+    round: 'Round 6',
+    venue: 'Karting Centar Jagodina',
+    year: 2026,
+    drive: 'https://drive.google.com/drive/folders/16dpm-WJyTlxJKAGK66heYhamYVOHIfkj?usp=sharing',
+    photo: 'archive/skss-r6.jpg',
+  },
+  {
     series: 'Serbian Drift Championship',
     round: 'Round 3',
     venue: 'SDC Drift Racetrack, Novi Beograd',
