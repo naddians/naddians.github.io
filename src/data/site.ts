@@ -58,10 +58,10 @@ export const EVENTS: readonly {
   {
     // Srpski sportski karting savez, 10–11 октября 2026. Название — как в
     // открытом архиве (FREE_ARCHIVE ниже), коротко, по просьбе заказчицы.
-    // T4 Round 8 шёл в рамках этого этапа SKSS — со слов заказчицы.
+    // T4 Round 8 шёл в рамках этого этапа SSKS — со слов заказчицы.
     venue: 'Karting Centar Jagodina',
     year: 2026,
-    series: ['SKSS', 'Round 6'],
+    series: ['SSKS', 'Round 6'],
     includes: ['T4 Series Serbia', 'Round 8'],
     trackAccess: true,
   },
@@ -107,9 +107,9 @@ export const FREE_ARCHIVE: readonly {
   photo: string;
 }[] = [
   {
-    // Srpski sportski karting savez — заказчица попросила писать коротко, SKSS.
+    // Srpski sportski karting savez — заказчица попросила писать коротко, SSKS.
     // Кадров серии на сайте нет: миниатюра лежит отдельно, в src/photos/archive/.
-    series: 'SKSS',
+    series: 'SSKS',
     round: 'Round 6',
     venue: 'Karting Centar Jagodina',
     year: 2026,

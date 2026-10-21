@@ -171,7 +171,7 @@ test('открытый архив: своя ссылка в подвале и с
   // имена, а подробности — только у ссылки в подвале.
   await expect.poll(async () => (await events(page)).map(([name]) => name)).toEqual([
     'Подвал: открытый архив',
-    'Архив: SKSS · Round 6',
+    'Архив: SSKS · Round 6',
     'Архив: Serbian Drift Championship · Round 3',
     'Архив: T4 Series Serbia · Round 6',
     'Архив: T4 Series Serbia · Round 5',
