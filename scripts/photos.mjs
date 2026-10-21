@@ -356,8 +356,18 @@ async function processGallery(gallery, covers, series) {
   await mkdir(gallery.out, { recursive: true });
   await clearGenerated(gallery.out);
 
+  // В разделе с сериями у каждой серии свой счёт с 010: имя файла и так
+  // несёт серию (010-drift.jpg), а порядок серий на странице задаёт
+  // BEYOND_SERIES. Сквозной счёт сдвигал все серии после вставленной —
+  // добавили Rotax Mini перед дрифтом, и у дрифта сменились все имена,
+  // а с ними миниатюра в открытом архиве (2026-10-21).
   let index = 0;
+  let group;
   for (const file of files) {
+    if (gallery.grouped && file.group !== group) {
+      group = file.group;
+      index = 0;
+    }
     index += STEP;
     const number = String(index).padStart(3, '0');
 

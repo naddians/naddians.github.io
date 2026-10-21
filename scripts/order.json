@@ -221,5 +221,28 @@
     "172427_001A4046_sdc_r3_proglasenje_pobednika_i_dodela_nagrada_Vukosavljević.jpg",
     "170237_001A3603_sdc_r3_proglasenje_pobednika_i_dodela_nagrada.jpg",
     "170516_001A3687_sdc_r3_proglasenje_pobednika_i_dodela_nagrada.jpg"
+  ],
+  "_beyond/rotax-mini": [
+    "ВНИМАНИЕ: порядок здесь редакторский, а не от метрики (2026-10-21).",
+    "Из 25 отобранных заказчицей кадров собрали 12 за несколько заходов: минимум",
+    "похожих, больше брызг и проводок, самый эффектный первым — фонтан из-под",
+    "карта. Между гонкой — портреты для паузы, в конце старт и финиш с клетчатым",
+    "флагом. Остальные 13 кадров отложены в inbox/_отложенное/rotax-mini/.",
+    "НЕ ЗАПУСКАТЬ `npm run sharpness -- beyond/rotax-mini --apply` — прогон",
+    "перетасует список и разрушит подборку."
+  ],
+  "beyond/rotax-mini": [
+    "095226_001A5507_82_rotax_mini.jpg",
+    "094800_001A5320_19_rotax_mini.jpg",
+    "114307_001A8209_55_rotax_mini.jpg",
+    "142322_001A0164_55_rotax_mini.jpg",
+    "094825_001A5336_12_rotax_mini.jpg",
+    "094927_001A5365_19_rotax_mini.jpg",
+    "094927_001A5363_19_rotax_mini.jpg",
+    "150126_001A4610.jpg",
+    "114423_001A8304_20_rotax_mini.jpg",
+    "094725_001A5291_12_20_rotax_mini.jpg",
+    "164143_001A1693_55_20_rotax_mini.jpg",
+    "165145_001A1736_55_rotax_mini.jpg"
   ]
 }

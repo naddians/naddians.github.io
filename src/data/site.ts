@@ -122,7 +122,7 @@ export const FREE_ARCHIVE: readonly {
     venue: 'SDC Drift Racetrack, Novi Beograd',
     year: 2026,
     drive: 'https://drive.google.com/drive/folders/1Jc28hnt6O9J5JI0pMnA4Am0z9BtNuZGn?usp=share_link',
-    photo: 'beyond/280-drift.jpg',
+    photo: 'beyond/010-drift.jpg',
   },
   {
     series: 'T4 Series Serbia',
@@ -130,7 +130,7 @@ export const FREE_ARCHIVE: readonly {
     venue: 'Autokomerc Karting Centar',
     year: 2026,
     drive: 'https://drive.google.com/drive/folders/1OvbbxWJsXIZftJSaJg0r-qVhCpVIAGj_?usp=sharing',
-    photo: 'beyond/110-t4.jpg',
+    photo: 'beyond/010-t4.jpg',
   },
   {
     series: 'T4 Series Serbia',
@@ -138,7 +138,7 @@ export const FREE_ARCHIVE: readonly {
     venue: 'Autokomerc Karting Centar',
     year: 2026,
     drive: 'https://drive.google.com/drive/folders/1jUN4mqCX9QXRSEs6m_BsRZRTlt3JZxUx?usp=share_link',
-    photo: 'beyond/270-t4.jpg',
+    photo: 'beyond/170-t4.jpg',
   },
 ];
 
@@ -166,7 +166,9 @@ export type GallerySlug = (typeof GALLERIES)[number];
  *
  * `slug` = имя подпапки в inbox/beyond/ и хвост в имени файла
  * (`inbox/beyond/porsche/что-угодно.jpg` → `src/photos/beyond/010-porsche.jpg`).
- * Порядок групп на странице = порядок в этом списке.
+ * Порядок групп на странице = порядок в этом списке. Номер в имени файла у
+ * каждой серии свой, с 010, поэтому новая серия в середине списка не
+ * переименовывает кадры соседних.
  *
  * Новая серия = новая строка здесь + папка в inbox/beyond/. Когда какая-то из
  * них перерастёт общий раздел, она без переделок переезжает на свою страницу.
@@ -180,6 +182,8 @@ export const BEYOND_SERIES = [
   { slug: 'porsche', title: 'Porsche Mobil 1 Supercup', short: 'Porsche Supercup' },
   { slug: 'f2', title: 'Formula 2' },
   { slug: 't4', title: 'T4 Series Serbia' },
+  { slug: 'rotax-mini', title: 'Rotax Mini' },
+  { slug: 'rotax-micro', title: 'Rotax Micro' },
   { slug: 'drift', title: 'Serbian Drift Championship' },
 ] as const;
 
