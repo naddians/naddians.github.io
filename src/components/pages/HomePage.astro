@@ -61,7 +61,10 @@ const series = groupsIn('beyond')
       cover: photoAt(item.cover ?? '') ?? group.photos[0].image,
       focus: item.focus,
     };
-  });
+  })
+  // На главной серии идут от конца BEYOND_SERIES к началу (F1_P99, просьба
+  // заказчицы 2026-10-28); на самой странице Beyond порядок прежний.
+  .reverse();
 
 /**
  * Авторство кадров главной (F1_P25) — тем же способом, что в PhotoGrid.astro

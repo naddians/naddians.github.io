@@ -495,6 +495,11 @@ Pages падает раз в год на десять минут. Настоящ
 
 ## Сделано
 
+**F1_P99. Серии Beyond F1 на главной — в обратном порядке.** Сделано 2026-10-28.
+Плитки серий на главной идут от конца списка к началу: Serbian Drift Championship,
+Rotax Micro, Rotax Mini, T4 Series Serbia, Formula 2, Porsche Mobil 1 Supercup.
+На странице Beyond порядок прежний, Porsche первым.
+
 **F1_P97. Главная двумя полками: Formula 1 и серии Beyond F1.** Сделано 2026-10-28.
 Вместо четырёх карточек разделов — две полки: «Formula 1» (On-Track, People,
 Circuit) и «Beyond F1», где у каждой серии своя плитка со ссылкой на её место на
