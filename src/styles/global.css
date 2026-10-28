@@ -621,9 +621,8 @@ html[data-l10n='de'] .l10n[data-locale='de'] {
   font-size: clamp(min(1.75rem, 9.7cqw), 0.5rem + 4.3cqw, 3rem);
 }
 
-/* Пояснение к разделу показывается везде, включая телефон, — раньше на телефоне
-   оно было скрыто (F1_P15). Чтобы оно и там осталось одной строкой, на узкой
-   карточке показывается короткий вариант текста (см. .card__desc-short ниже). */
+/* Пояснение к разделу — короткое, первый оборот текста (строки `short`
+   в src/i18n/*.json). На телефоне его с F1_P97 нет: см. .cards--f1 ниже. */
 .card__desc {
   display: block;
   position: relative;
@@ -642,24 +641,73 @@ html[data-l10n='de'] .l10n[data-locale='de'] {
   text-wrap: balance;
 }
 
-/* Узкая карточка получает короткое пояснение — первый оборот того же текста,
-   до двоеточия или тире (строки `short` в src/i18n/*.json). Полное на такой
-   ширине разворачивалось в две-три строки: под крупным названием это выглядело
-   мятым и закрывало кадр.
-   Порог — ширина карточки, а не окна: на планшете карточка одна в ряд и шире,
-   чем две в ряд на компьютере. Считается внутренняя ширина, без полей (так
-   работает @container), 420px — это телефон и компьютер примерно до 1050px. */
-.card__desc-full {
-  display: none;
+/* Главная двумя полками: «Formula 1» и серии Beyond F1 (F1_P97, вариант M2b
+   из макетов 2026-10-28). Карточки во всю ширину стояли одна под другой, и на
+   телефоне до Beyond листали три экрана. Теперь плитки мельче: на телефоне
+   первый раздел F1 полосой во всю ширину, остальное по два в ряд, на
+   компьютере обе полки по три в ряд. Серии начинаются на полутора экранах
+   телефона вместо двух с лишним. */
+.section__title--next {
+  margin-top: clamp(40px, 4vw, 64px);
 }
 
-@container (min-width: 420px) {
-  .card__desc-short {
-    display: none;
+.cards--f1,
+.cards--series {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.cards--f1 .card,
+.cards--series .card {
+  aspect-ratio: 1 / 1;
+  padding: 14px;
+}
+
+/* Плитка мельче карточки, и затемнение под подписью выше: название серии
+   бывает в две строки. */
+.cards--f1 .card__scrim,
+.cards--series .card__scrim {
+  height: 55%;
+  background: linear-gradient(180deg, rgba(10, 10, 11, 0) 0%, rgba(10, 10, 11, 0.85) 100%);
+}
+
+.cards--f1 .card__title,
+.cards--series .card__title {
+  font-size: clamp(15px, 7.5cqw, 26px);
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.cards--f1 .card__desc {
+  display: none;
+  margin-top: 4px;
+  font-size: clamp(12px, 5cqw, 16px);
+}
+
+@media (max-width: 699px) {
+  .cards--f1 .card:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+@media (min-width: 700px) {
+  .cards--f1,
+  .cards--series {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .card__desc-full {
-    display: inline;
+  .cards--f1 .card,
+  .cards--series .card {
+    aspect-ratio: 3 / 2;
+    padding: clamp(20px, 2vw, 32px);
+  }
+
+  .cards--f1 .card__title {
+    font-size: clamp(18px, 5.5cqw, 30px);
+  }
+
+  .cards--f1 .card__desc {
+    display: block;
   }
 }
 

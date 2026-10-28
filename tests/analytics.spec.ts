@@ -99,6 +99,14 @@ test('у нажатий понятные имена, а не общее «Кли
   ]);
 });
 
+test('плитка серии на главной — в счётчик серии, «с главной»', async ({ page }) => {
+  await page.goto('/');
+  await ready(page);
+  await page.locator('a.card--series[href$="#t4"]').click();
+  await page.waitForURL(/\/beyond\/#t4$/);
+  expect(await events(page)).toContainEqual(['Beyond F1: T4 Series Serbia', { как: 'с главной' }]);
+});
+
 test('переключение языка', async ({ page }) => {
   await page.locator('header a[hreflang="sr"]').click();
   await expect(page).toHaveURL(/\/sr\//);

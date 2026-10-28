@@ -177,11 +177,26 @@ export type GallerySlug = (typeof GALLERIES)[number];
  * Нет `short` — в оглавлении стоит `title` как есть. Сокращать можно не всё:
  * «Porsche Supercup» заказчица разрешила, а «Serbian» у дрифта — важная часть
  * названия и выпадать не должна (2026-10-01).
+ *
+ * `cover` — кадр плитки серии на главной (путь внутри src/photos/), `focus` —
+ * его видимая часть, как в CARD_FOCUS. Нет `cover` — на плитке первый кадр
+ * серии. У Порше третий кадр: тот же, что стоял на карточке Beyond, пока
+ * главная не разложила раздел по сериям (F1_P97).
+ * Номер кадра в `cover` сменится, если перед ним добавят кадры (`npm run
+ * photos` пересчитывает номера) — тогда обложку поправить здесь же.
  */
 export const BEYOND_SERIES = [
-  { slug: 'porsche', title: 'Porsche Mobil 1 Supercup', short: 'Porsche Supercup' },
+  {
+    slug: 'porsche',
+    title: 'Porsche Mobil 1 Supercup',
+    short: 'Porsche Supercup',
+    cover: 'beyond/030-porsche.jpg',
+    focus: '50% 100%',
+  },
   { slug: 'f2', title: 'Formula 2' },
-  { slug: 't4', title: 'T4 Series Serbia' },
+  // Обложка — карт с проводкой, выбор заказчицы 2026-10-28. Кадр вертикальный,
+  // карт у нижнего края: 100% поднимает его из-под подписи.
+  { slug: 't4', title: 'T4 Series Serbia', cover: 'beyond/300-t4.jpg', focus: '50% 100%' },
   { slug: 'rotax-mini', title: 'Rotax Mini' },
   { slug: 'rotax-micro', title: 'Rotax Micro' },
   { slug: 'drift', title: 'Serbian Drift Championship' },

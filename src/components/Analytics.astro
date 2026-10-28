@@ -98,7 +98,8 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
       // для этой ссылки»). Откуда нажали — какая страница.
       if (el.matches('.footer__archive')) return count('Подвал: открытый архив', { откуда: target(location.href) });
       if (el.closest('footer')) return count('Подвал', { куда: to });
-      if (el.matches('.card')) return count('Карточка раздела', { раздел: to });
+      // Плитка серии — тоже .card, но считается ниже, вместе с серией.
+      if (el.matches('.card:not(.card--series)')) return count('Карточка раздела', { раздел: to });
       if (el.matches('.cta__link')) return count('Напишите мне');
       // У каждой съёмки в открытом архиве свой счётчик, как у серий ниже:
       // «Архив: T4 Series Serbia · Round 6». Слово короткое, потому что имя
@@ -112,10 +113,20 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
       // заголовка серии: в списке над лентой оно бывает сокращено.
       // Список серий сейчас есть только в Beyond F1, но строится в любой
       // галерее, где серий больше одной.
-      const series = el.closest('.series-nav') ? 'из списка' : el.matches('.series__anchor') ? 'скопировали ссылку' : '';
+      // Плитка серии на главной (F1_P97) идёт в тот же счётчик серии, что и
+      // список в самом разделе: «Beyond F1: T4 Series Serbia», как — «с главной».
+      // Раздел здесь — куда ведёт плитка, а не где нажали.
+      const series = el.closest('.series-nav')
+        ? 'из списка'
+        : el.matches('.series__anchor')
+          ? 'скопировали ссылку'
+          : el.matches('.card--series')
+            ? 'с главной'
+            : '';
       if (series) {
         const title = document.querySelector(`${new URL(href).hash} .series__anchor`)?.getAttribute('aria-label') || text(el);
-        return count(`${target(location.href)}: ${title}`.slice(0, 50), { как: series });
+        const page = el.matches('.card--series') ? to : target(location.href);
+        return count(`${page}: ${title}`.slice(0, 50), { как: series });
       }
       if (el.matches('summary')) return count('Условия работы: пункт', { пункт: text(el) });
       if (el.matches('.skip')) return count('Пропустить меню');

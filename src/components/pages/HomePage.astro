@@ -3,8 +3,8 @@ import { Picture, getImage } from 'astro:assets';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import Base from '../../layouts/Base.astro';
 import { t, type Locale, type Route } from '../../i18n';
-import { AUTHOR, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
-import { photoAt, photosIn } from '../../utils/photos';
+import { AUTHOR, BEYOND_SERIES, CARD_FOCUS, COVERS, GALLERIES } from '../../data/site';
+import { groupsIn, photoAt, photosIn } from '../../utils/photos';
 import { licenseLinks } from '../../utils/license';
 
 interface Props {
@@ -29,6 +29,41 @@ const HERO_LADDER = [640, 1024, 1600, 2200, 2800];
 const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.width] : [];
 
 /**
+ * Разделы на главной — двумя полками (F1_P97, выбор заказчицы из макетов
+ * 2026-10-28): «Formula 1» — три раздела про то, что в кадре, и «Beyond F1» —
+ * по плитке на каждую серию, а не одна карточка на весь раздел. Одна карточка
+ * стояла последней: на телефоне до неё листали три экрана, и что на сайте есть
+ * не только Формула 1, оставалось незамеченным.
+ *
+ * Пустой раздел и серия без кадров плитки не получают — по той же причине, что
+ * и строки в меню (см. Header.astro): наружу они выходят вместе с кадрами.
+ * Плитка серии ведёт на её якорь на странице Beyond (/beyond/#t4, F1_P78).
+ */
+const f1 = GALLERIES.filter((slug) => slug !== 'beyond' && photosIn(slug).length > 0).map((slug) => ({
+  slug,
+  // Обложка та же, что уходит в превью ссылки (COVERS): раздел выглядит
+  // одинаково и на главной, и в мессенджере, а менять её по-прежнему
+  // в одном месте — src/data/site.ts.
+  cover: photoAt(COVERS[slug] ?? ''),
+  // Видимая часть кадра — по умолчанию середина. Разделам, у которых сюжет
+  // упирается в подпись, кадр сдвигается (CARD_FOCUS в src/data/site.ts).
+  focus: CARD_FOCUS[slug],
+}));
+
+const series = groupsIn('beyond')
+  .filter((group) => group.slug)
+  .map((group) => {
+    const item: { cover?: string; focus?: string } =
+      BEYOND_SERIES.find((s) => s.slug === group.slug) ?? {};
+    return {
+      slug: group.slug,
+      title: group.title,
+      cover: photoAt(item.cover ?? '') ?? group.photos[0].image,
+      focus: item.focus,
+    };
+  });
+
+/**
  * Авторство кадров главной (F1_P25) — тем же способом, что в PhotoGrid.astro
  * и SectionHero.astro: в самих файлах его нет, Astro срезает метаданные при
  * пересборке размеров, поэтому автор указан разметкой (см. AUTHOR в site.ts).
@@ -40,10 +75,10 @@ const heroWidths = hero ? [...HERO_LADDER.filter((w) => w < hero.width), hero.wi
  */
 const homePhotos = [
   ...(hero ? [{ image: hero, widths: heroWidths, lead: true }] : []),
-  // Тот же отбор, что у карточек ниже: у раздела без кадров карточки на странице
+  // Те же кадры, что на плитках ниже: у раздела без кадров плитки на странице
   // нет, и заявлять её кадр в разметке нечего.
-  ...GALLERIES.filter((slug) => photosIn(slug).length > 0)
-    .map((slug) => photoAt(COVERS[slug] ?? ''))
+  ...[...f1, ...series]
+    .map(({ cover }) => cover)
     .filter((cover) => cover !== undefined)
     .map((cover) => ({
       image: cover,
@@ -139,23 +174,11 @@ const imageLd = {
       и линию рисует нижняя граница самого героя — иначе на стыке вышли бы две
       подряд. */}
   <section class="wrap wrap--wide section">
-    <h2 class="section__title">{dict.home.galleriesTitle}</h2>
-    <div class="cards">
-      {
-        // Пустой раздел карточки не получает — по той же причине, что и строки
-        // в меню (см. Header.astro): наружу он выходит вместе с кадрами.
-        GALLERIES.filter((slug) => photosIn(slug).length > 0).map((slug) => {
-          // Обложка та же, что уходит в превью ссылки (COVERS): раздел выглядит
-          // одинаково и на главной, и в мессенджере, а менять её по-прежнему
-          // в одном месте — src/data/site.ts.
-          const cover = photoAt(COVERS[slug] ?? '');
-          // Видимая часть кадра в карточке — по умолчанию середина. Разделам,
-          // у которых сюжет упирается в подпись, кадр сдвигается (CARD_FOCUS
-          // в src/data/site.ts). Сдвиг свой, не тот, что у шапки раздела:
-          // там полоса во всю ширину, здесь прямоугольник 5×4.
-          const focus = CARD_FOCUS[slug];
-
-          return (
+    {f1.length > 0 && (
+      <>
+        <h2 class="section__title">{dict.home.f1Title}</h2>
+        <div class="cards cards--f1">
+          {f1.map(({ slug, cover, focus }, index) => (
             <a class="card" href={getRelativeLocaleUrl(locale, slug as Route)}>
               {cover && (
                 <Picture
@@ -163,7 +186,7 @@ const imageLd = {
                   alt=""
                   formats={['avif', 'webp']}
                   widths={[800, 1600, 2400].filter((w) => w <= cover.width)}
-                  sizes="(min-width: 700px) 50vw, 100vw"
+                  sizes={index === 0 ? '(min-width: 700px) 33vw, 100vw' : '(min-width: 700px) 33vw, 50vw'}
                   loading="lazy"
                   decoding="async"
                   pictureAttributes={{ class: 'card__media' }}
@@ -173,17 +196,40 @@ const imageLd = {
               )}
               <div class="card__scrim" />
               <h3 class="card__title">{dict.galleries[slug].title}</h3>
-              {/* Два варианта пояснения: на узкой карточке полное разворачивалось
-                  в две-три строки и загораживало кадр. Какое показать, решает
-                  ширина самой карточки, а не окна (global.css, @container). */}
-              <p class="card__desc">
-                <span class="card__desc-short">{dict.galleries[slug].short}</span>
-                <span class="card__desc-full">{dict.galleries[slug].description}</span>
-              </p>
+              {/* На телефоне пояснения нет: плитки там вдвое у́же прежних
+                  карточек, и под названием места для него не остаётся. На
+                  компьютере — короткое, полное в треть ширины не входит. */}
+              <p class="card__desc">{dict.galleries[slug].short}</p>
             </a>
-          );
-        })
-      }
-    </div>
+          ))}
+        </div>
+      </>
+    )}
+
+    {series.length > 0 && (
+      <>
+        <h2 class="section__title section__title--next">{dict.nav.beyond}</h2>
+        <div class="cards cards--series">
+          {series.map(({ slug, title, cover, focus }) => (
+            <a class="card card--series" href={`${getRelativeLocaleUrl(locale, 'beyond')}#${slug}`}>
+              <Picture
+                src={cover}
+                alt=""
+                formats={['avif', 'webp']}
+                widths={[400, 800, 1600].filter((w) => w <= cover.width)}
+                sizes="(min-width: 700px) 33vw, 50vw"
+                loading="lazy"
+                decoding="async"
+                pictureAttributes={{ class: 'card__media' }}
+                class="card__image"
+                style={focus ? `object-position: ${focus}` : undefined}
+              />
+              <div class="card__scrim" />
+              <h3 class="card__title">{title}</h3>
+            </a>
+          ))}
+        </div>
+      </>
+    )}
   </section>
 </Base>
