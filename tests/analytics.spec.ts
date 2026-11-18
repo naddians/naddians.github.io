@@ -69,7 +69,8 @@ test('клик по Instagram — это контакт', async ({ page }) => {
 test('ссылка в меню: нажатие посчитано, и переход не ждёт отчёта', async ({ page }) => {
   await page.locator('header nav a[href*="people"]').click();
   await expect(page).toHaveURL(/\/people\/$/);
-  expect(await events(page)).toContainEqual(['Меню', { куда: 'People' }]);
+  // У каждого пункта меню свой счётчик (F1_P101).
+  expect((await events(page)).map(([name]) => name)).toContain('Меню: People');
 });
 
 test('Instagram партнёра — не контакт', async ({ page }) => {
@@ -185,4 +186,31 @@ test('открытый архив: своя ссылка в подвале и с
     'Архив: T4 Series Serbia · Round 5',
   ]);
   expect((await events(page))[0][1]).toEqual({ откуда: 'Обо мне' });
+});
+
+test('прокрутка: 25, 50, 75 и 100 % — у каждой страницы свои, по разу', async ({ page }) => {
+  await page.goto('/track/');
+  await ready(page);
+  // Листаем колесом до самого низа, потом вверх и снова вниз: отметки не повторяются.
+  for (let i = 0; i < 3; i++) {
+    await page.mouse.wheel(0, 100000);
+    await page.waitForTimeout(300);
+  }
+  await page.mouse.wheel(0, -100000);
+  await page.waitForTimeout(300);
+  await page.mouse.wheel(0, 100000);
+  await expect.poll(async () => (await events(page)).map(([name]) => name)).toEqual([
+    'Прокрутка: Track, 25 %',
+    'Прокрутка: Track, 50 %',
+    'Прокрутка: Track, 75 %',
+    'Прокрутка: Track, 100 %',
+  ]);
+});
+
+test('прокрутка: прыжок по ссылке на серию — не прокрутка', async ({ page }) => {
+  await page.goto('/beyond/#drift');
+  await ready(page);
+  await page.locator('.series-nav a[href="#porsche"]').click();
+  await page.waitForTimeout(500);
+  expect((await events(page)).map(([name]) => name).filter((n) => n.startsWith('Прокрутка'))).toEqual([]);
 });

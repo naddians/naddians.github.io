@@ -139,4 +139,47 @@ import { UMAMI_WEBSITE_ID } from '../data/site';
     },
     true,
   );
+
+  /**
+   * Глубина прокрутки (F1_P102). Заказчица 2026-11-19: многие открывают сайт
+   * и никуда не нажимают — а смотрят ли они ленту? Отметки 25, 50, 75 и 100 %
+   * страницы, у каждой страницы свои: «Прокрутка: Track, 50 %» (одно общее
+   * событие прятало бы страницу в подробностях — как было с «Меню»).
+   * Каждая отметка уходит не больше раза за открытие страницы.
+   *
+   * Считается только прокрутка самого человека: пока он не листал сам
+   * (колесо, палец, клавиши прокрутки, полоса прокрутки), прыжки страницы
+   * не в счёт. Иначе ссылка на серию Beyond F1 (`#t4`) или пункт списка серий,
+   * которые сами уводят вниз, давали бы «50 %» без единого движения.
+   * Поэтому нажатие по ссылке или кнопке прокрутку не «включает».
+   */
+  const STEPS = [25, 50, 75, 100];
+  const reached = new Set<number>();
+  const page = target(location.href);
+  let touched = false;
+
+  const depth = () => {
+    if (!touched) return;
+    const doc = document.documentElement;
+    // Страница целиком на экране — прокручивать нечего, и считать нечего.
+    if (doc.scrollHeight <= innerHeight + 1) return;
+    // Нижний край экрана относительно всей страницы; 2px — на дробные пиксели,
+    // иначе 100 % на телефоне иногда не набиралось бы.
+    const share = ((scrollY + innerHeight + 2) / doc.scrollHeight) * 100;
+    for (const step of STEPS) {
+      if (share >= step && !reached.has(step)) {
+        reached.add(step);
+        count(`Прокрутка: ${page}, ${step} %`.slice(0, 50));
+      }
+    }
+  };
+
+  const SCROLL_KEYS = ['ArrowDown', 'PageDown', 'End', ' '];
+  const touch = () => (touched = true);
+  addEventListener('wheel', touch, { passive: true });
+  addEventListener('touchmove', touch, { passive: true });
+  addEventListener('keydown', (e) => SCROLL_KEYS.includes(e.key) && !(e.target as Element).closest?.('a, button, summary, input, textarea') && touch());
+  // Полоса прокрутки: нажатие мимо ссылок и кнопок.
+  addEventListener('pointerdown', (e) => !(e.target as Element).closest?.('a, button, summary, dialog') && touch(), { passive: true });
+  addEventListener('scroll', depth, { passive: true });
 </script>
